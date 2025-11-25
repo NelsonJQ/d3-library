@@ -2,126 +2,85 @@
 
 A standalone, memory-optimized HTML application for viewing and searching Dofus game documents in multiple languages with bilingual support.
 
+Access here :
+
+https://nelsonjq.github.io/d3-library/
+---
+
 ## Features
 
-### 1. **Lazy Loading & Memory Optimization**
-- ✅ Initial load shows only the document index (no content displayed)
-- ✅ Documents are loaded on-demand when selected from the sidebar
-- ✅ IndexedDB caching: subsequent page reloads use cached data (no API calls)
-- ✅ Images load only on mouse hover over documents
+### 1. **UI Elements and Features**
+The application provides a rich and interactive user interface designed for ease of use and accessibility. Below are the key UI elements and features:
 
-### 2. **Language & View Modes**
-- ✅ Single-language mode (default): Spanish, English, French, Portuguese, German
-- ✅ Bilingual mode: side-by-side column view with synchronized scrolling
-- ✅ Second language selector when in bilingual mode (exclude current language)
-- ✅ Bilingual titles appear within each language column (not above)
+#### **Available Languages**
+- The application supports the following languages:
+  - **Spanish (ES)** (default)
+  - **English (EN)**
+  - **French (FR)**
+  - **Portuguese (PT)**
+  - **German (DE)**
+- Users can switch between these languages using the **Language Selector** in the sidebar.
 
-### 3. **Search & Navigation**
-- ✅ Real-time search across all documents
-- ✅ Keyboard shortcuts: Ctrl+F (focus search), Escape (clear search)
-- ✅ Search highlighting with yellow background
-- ✅ Click index items to load and view documents
+#### **Bilingual Mode**
+- **Single-Language Mode**: Displays content in one selected language.
+- **Bilingual Mode**: Displays content side-by-side in two languages, with synchronized scrolling for easy comparison.
+  - Users can select a **primary language** and a **secondary language** (excluding the primary language).
+  - Titles and subtitles are displayed within each language column.
 
-### 4. **Image Handling**
-- ✅ Auto-converts `##png,ID##` format to actual image URLs
-- ✅ Images from: `https://api.e-bou.fr/img/unity/UI/documents/`
-- ✅ Lazy-loading: images only load when hovering over the document
+#### **Search and Navigation**
+- **Real-Time Search**: Search across all documents with results displayed instantly.
+- **Search Highlighting**: Matches are highlighted in yellow within the document content.
+- **Keyboard Shortcuts**:
+  - `Ctrl+F` (or `Cmd+F`): Focus on the search bar.
+  - `Escape`: Clear the search input.
+- **Document Index**: A collapsible sidebar lists all available documents. Clicking on a document title loads its content.
 
-### 5. **Responsive Design**
-- ✅ Collapsible sidebar (hamburger menu)
-- ✅ Mobile-friendly layout
-- ✅ Synchronized scrolling in bilingual mode
+#### **Image Handling**
+- Converts placeholders like `##png,ID##` into actual image URLs.
+- Images are lazy-loaded and only fetched when hovered over, reducing initial load time and memory usage.
 
-## File Structure
+#### **Accessibility Features**
+- **Dark/Light Theme Toggle**: Switch between light and dark themes.
+- **Font Size Adjustment**: Increase or decrease font size (80% to 150%).
+- **Line Height Adjustment**: Adjust line spacing for better readability.
+- **Toolbar Visibility**: The accessibility toolbar appears on scroll or mouse movement and hides after a few seconds of inactivity.
 
-```
-d3-library/
-├── index.html              # Main application (all-in-one)
-├── config.json             # Optional: configuration file (for reference)
-├── README.md               # This file
-└── Dofus_ingame_library_bilingual_html_export.ipynb
-```
-
-## Configuration
-
-The configuration is **embedded directly in `index.html`** to avoid CORS issues when opening files locally.
-
-If you need to modify settings, edit the `config` object in the `<script>` section of `index.html`:
-
-```javascript
-let config = {
-  "api": {
-    "baseUrl": "https://api.beta.dofusdb.fr",
-    "endpoints": { "documents": "/documents" },
-    "defaultLimit": 50
-  },
-  "ui": {
-    "defaultLanguage": "es",
-    "supportedLanguages": ["en", "fr", "es", "pt", "de", "it"]
-  },
-  "features": {
-    "imageProcessing": true,
-    "imageBaseUrl": "https://api.e-bou.fr/img/unity/UI/documents/"
-  }
-}
-```
-
-**Note:** `config.json` is provided for reference but is not loaded by the app due to CORS restrictions when using the `file://` protocol.
-
-## Usage
-
-1. Open `index.html` in a modern web browser
-2. Browse the document index on the left sidebar
-3. Click any document title to load and view its content
-4. Use language buttons to switch primary language
-5. Toggle "Bilingual" to switch between single and dual-column view
-6. In bilingual mode, use "Second language:" buttons to choose the second language
-
-## Technical Details
-
-### Caching Strategy
-- **IndexedDB**: Stores fetched documents locally
-- **On First Load**: Fetches from API and caches
-- **On Subsequent Loads**: Reads from cache (instant loading)
-- **No Cache Expiry**: Documents persist until manually cleared
-
-### Image Loading
-- Images converted from `##format,ID##` to actual URLs
-- Lazy-loaded on document hover to save bandwidth
-- Placeholder src="" until hover event
-
-### Synchronized Scrolling
-- Works in bilingual mode using percentage-based sync
-- Maintains alignment between different-length content
-- Disabled when switching languages or view modes
-
-### Memory Optimization
-- Only visible documents rendered in DOM
-- Single document displayed at a time (on-demand)
-- Images lazy-loaded on hover
-- Reuses cache on page reload
-
-## Browser Compatibility
-
-- Chrome/Edge 88+
-- Firefox 85+
-- Safari 14+
-- Requires IndexedDB support for caching
-
-## Known Limitations
-
-- First API call required to populate cache
-- Search operates on cached documents only
-- Bilingual mode title position (in-column) differs from single-language header
-
-## Future Enhancements
-
-- Pagination for large result sets
-- Advanced filtering by document class
-- Offline service worker support
-- Export documents to PDF
-- User preferences persistence
+#### **Responsive Design**
+- Fully responsive layout with a collapsible sidebar for smaller screens.
+- Optimized for both desktop and mobile devices.
 
 ---
 
-Last updated: November 25, 2025
+### 2. **Caching Strategy and Memory Optimization**
+
+#### **Caching Strategy**
+- The application uses **IndexedDB**, a **NoSQL database** built into modern browsers, to store documents locally.
+- **How it works**:
+  - On the first load, documents are fetched from the API and cached in IndexedDB.
+  - On subsequent loads, the application retrieves documents from the cache, ensuring faster load times and reduced API calls.
+  - The cache persists until manually cleared or updated.
+- **Cache Expiry**:
+  - The application checks for new documents daily. If new documents are detected, the cache is updated automatically.
+
+#### **Memory Optimization**
+- **Lazy Loading**:
+  - Documents are loaded on demand when selected from the sidebar.
+  - Images are fetched only when hovered over.
+- **Virtual Scrolling**:
+  - Only visible content is rendered in the DOM, reducing memory usage.
+- **Synchronized Scrolling**:
+  - In bilingual mode, scrolling is percentage-based to maintain alignment between columns of different lengths.
+
+---
+
+### 3. **Data Source and Copyright Disclaimer**
+
+#### **Data Source**
+- The application retrieves data from the **DofusDB API** (`https://api.beta.dofusdb.fr`), which provides access to Dofus game documents.
+
+#### **Copyright Disclaimer**
+- All data and content displayed in this application are the property of **Ankama Games**.
+- Ankama Games is the creator and owner of the Dofus game and its associated content.
+- Data is retrieved via **DofusDB.fr** and used under the terms of their API.
+
+> **Disclaimer**: This application is a fan-made project and is not affiliated with or endorsed by Ankama Games. All rights to the content belong to Ankama Games. For more information, visit [Ankama Games](https://www.ankama.com/fr/games).
