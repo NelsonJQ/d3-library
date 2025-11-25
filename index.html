@@ -16,12 +16,28 @@
             line-height: 1.6;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            overflow-x: hidden;
+            overflow: hidden;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #1a1a1a;
+            --text-secondary: #3c9764;
+            --border-color: #e9ecef;
+            --accent-color: #c3d85b;
+        }
+
+        body.dark-theme {
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #404040;
+            --accent-color: #7a8fff;
         }
 
         .layout {
             display: flex;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
         }
 
         /* ===== SIDEBAR ===== */
@@ -35,6 +51,8 @@
             height: 100vh;
             z-index: 1000;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            top: 0;
+            left: 0;
         }
 
         .sidebar.hidden {
@@ -227,10 +245,57 @@
             margin-left: 320px;
             transition: margin-left 0.3s ease;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            height: 100vh;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: #999 transparent;
+            padding-bottom: 40px;
         }
 
         .main-content.sidebar-hidden {
             margin-left: 0;
+        }
+
+        /* Scrollable container that holds all documents */
+        .documents-scroll-container {
+            flex: 1;
+            overflow: visible;
+            width: 100%;
+        }
+
+        /* Prevent scrollbar from overlapping content */
+        .main-content::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: #999;
+            border-radius: 8px;
+            min-height: 100px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+
+        body.dark-theme .main-content {
+            scrollbar-color: #666 transparent;
+        }
+
+        body.dark-theme .main-content::-webkit-scrollbar-thumb {
+            background: #666;
+        }
+
+        body.dark-theme .main-content::-webkit-scrollbar-thumb:hover {
+            background: #888;
         }
 
         .document-section {
@@ -241,6 +306,11 @@
             margin-bottom: 40px;
             transition: all 0.3s ease;
             min-height: auto;
+        }
+
+        body.dark-theme .document-section {
+            background: var(--bg-primary);
+            color: var(--text-primary);
         }
 
         .document-section.search-hidden {
@@ -260,32 +330,36 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 40px;
+            padding: 25px 40px;
             text-align: center;
         }
 
+        body.dark-theme .header {
+            background: linear-gradient(135deg, #5a6fd9 0%, #6a4195 100%);
+        }
+
         .title-section {
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .title {
-            font-size: 2.2em;
-            margin-bottom: 8px;
+            font-size: 1.6em;
+            margin-bottom: 6px;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             word-break: break-word;
         }
 
         .subtitle {
-            font-size: 1.1em;
+            font-size: 0.95em;
             opacity: 0.9;
             font-style: italic;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .author {
-            font-size: 1em;
-            margin-top: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
             opacity: 0.8;
         }
 
@@ -297,9 +371,12 @@
         .content-column {
             flex: 1;
             padding: 30px;
-            overflow-y: auto;
-            max-height: 80vh;
+            overflow-y: visible;
             border-right: 2px solid #e9ecef;
+        }
+
+        body.dark-theme .content-column {
+            border-right-color: var(--border-color);
         }
 
         .content-column.single {
@@ -310,6 +387,11 @@
             font-size: 1.05em;
             line-height: 1.8;
             text-align: justify;
+            color: var(--text-primary);
+        }
+
+        body.dark-theme .content {
+            color: var(--text-primary);
         }
 
         .content p {
@@ -347,6 +429,12 @@
             border-top: 2px solid #e9ecef;
             font-size: 0.9em;
             color: #6c757d;
+        }
+
+        body.dark-theme .metadata {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-top-color: var(--border-color);
         }
 
         .metadata-item {
@@ -390,6 +478,177 @@
             border-radius: 5px;
             margin: 20px;
             border: 1px solid #f5c6cb;
+        }
+
+        /* ===== LOADING ANIMATION ===== */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(74, 95, 122, 0.2);
+            border-top: 3px solid #4a5f7a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-container p {
+            color: #4a5f7a;
+            font-size: 14px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== FOOTER DISCLAIMER ===== */
+        .footer-disclaimer {
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #6c757d;
+            line-height: 1.5;
+        }
+
+        body.dark-theme .footer-disclaimer {
+            background: var(--bg-secondary);
+            border-top-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        /* ===== ACCESSIBILITY TOOLBAR ===== */
+        .accessibility-toolbar {
+            position: fixed;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 12px 18px;
+            background: linear-gradient(135deg, #7ec654 0%, #6eb240 100%);
+            border: 2px solid #5a8a2f;
+            border-radius: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 999;
+            box-shadow: 0 8px 24px rgba(126, 198, 84, 0.3);
+            transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .accessibility-toolbar.visible {
+            bottom: 20px;
+        }
+
+        body.dark-theme .accessibility-toolbar {
+            background: linear-gradient(135deg, #5a8a2f 0%, #4a6b1f 100%);
+            border-color: #7ec654;
+            box-shadow: 0 8px 24px rgba(126, 198, 84, 0.2);
+        }
+
+        .toolbar-btn {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .toolbar-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .toolbar-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+        }
+
+        .font-size-display {
+            font-size: 12px;
+            color: white;
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .line-height-slider {
+            width: 100px;
+            height: 5px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.25);
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .line-height-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            border: 3px solid #7ec654;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .line-height-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            border: 3px solid #7ec654;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .theme-toggle-btn {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
         }
 
         /* ===== LANGUAGE MODE TOGGLE ===== */
@@ -538,15 +797,33 @@
         </div>
 
         <div class="main-content" id="mainContent">
-            <div class="loading-indicator">
-                <div class="loading-spinner"></div>
-                <p style="margin-top: 10px;">Fetching documents from API...</p>
+            <!-- Accessibility Toolbar (Fixed at bottom) -->
+            <div class="accessibility-toolbar" id="accessibilityToolbar">
+                <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle dark/light theme">
+                    🌙
+                </button>
+
+                <button class="toolbar-btn" id="decreaseFontBtn" title="Decrease font size">−</button>
+                <span class="font-size-display" id="fontSizeDisplay">100%</span>
+                <button class="toolbar-btn" id="increaseFontBtn" title="Increase font size">+</button>
+
+                <input type="range" id="lineHeightSlider" class="line-height-slider" min="1.6" max="2.4" step="0.1" value="1.8" title="Adjust line spacing">
+            </div>
+
+            <!-- Documents scroll container -->
+            <div class="documents-scroll-container" id="documentsContainer">
+                <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+                    <div class="loading-spinner" style="margin: 20px auto;"></div>
+                    <h2>Loading documents...</h2>
+                    <p style="margin-top: 10px; font-size: 14px;">If this message persists, check the browser console (F12) for errors.</p>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // ===== CONFIGURATION =====
+        // ===== CONFIGURATION (EMBEDDED) =====
+        // Configuration is embedded here to avoid CORS issues with file:// protocol
         let config = {
             api: {
                 baseUrl: "https://api.beta.dofusdb.fr",
@@ -567,6 +844,11 @@
                 cache: true,
                 imageProcessing: true,
                 imageBaseUrl: "https://api.e-bou.fr/img/unity/UI/documents/"
+            },
+            performance: {
+                lazyLoadThreshold: 200,
+                virtualScrollingEnabled: true,
+                cacheExpiry: 86400
             }
         };
 
@@ -582,21 +864,11 @@
             currentViewIndex: 0,
             syncScrollEnabled: true,
             documentsLoaded: false,
-            loadedImagesCache: new Set()
+            loadedImagesCache: new Set(),
+            currentDisplayedDocId: null,  // Track which document is currently shown
+            fontSizePercent: 100,
+            lineHeightValue: 1.8
         };
-
-        // ===== LOAD CONFIG FROM FILE =====
-        async function loadConfig() {
-            try {
-                const response = await fetch("config.json");
-                if (response.ok) {
-                    const fileConfig = await response.json();
-                    config = { ...config, ...fileConfig };
-                }
-            } catch (error) {
-                console.warn("Could not load config.json, using defaults:", error);
-            }
-        }
 
         // ===== INDEXEDDB CACHE MANAGEMENT =====
         const DB_NAME = "DofusLibraryDB";
@@ -629,6 +901,10 @@
                     request.onerror = () => reject(request.error);
                     request.onsuccess = () => {
                         const docs = request.result;
+                        console.log("Retrieved from cache:", docs.length, "documents");
+                        if (docs.length > 0) {
+                            console.log("First cached document:", docs[0]);
+                        }
                         resolve(docs.length > 0 ? docs : null);
                     };
                 });
@@ -661,6 +937,30 @@
             }
         }
 
+        // ===== IMAGE HOVER LOADING =====
+        function setupImageHoverLoading(container) {
+            if (!container) return;
+
+            const lazyImages = container.querySelectorAll("img[data-src]");
+
+            lazyImages.forEach((img) => {
+                const dataSrc = img.getAttribute("data-src");
+
+                // Load image immediately
+                if (dataSrc) {
+                    const preload = new Image();
+                    preload.onload = () => {
+                        img.src = dataSrc;
+                        img.removeAttribute("data-src");
+                    };
+                    preload.onerror = () => {
+                        console.error("Failed to load image:", dataSrc);
+                    };
+                    preload.src = dataSrc;
+                }
+            });
+        }
+
         // ===== IMAGE URL PROCESSOR =====
         function processImageUrls(htmlContent) {
             if (!config.features.imageProcessing) return htmlContent;
@@ -672,8 +972,15 @@
                 return `${config.features.imageBaseUrl}${id}.${extension}`;
             });
 
-            // Convert images to lazy load
-            processed = convertImagesToLazy(processed);
+            // Convert img tags to lazy load - replace src with data-src
+            // Remove src entirely and use only data-src for lazy loading
+            processed = processed.replace(/<img([^>]*?)src="([^"]*)"([^>]*)>/gi, (match, prefix, src, suffix) => {
+                if (src) {
+                    return `<img${prefix}data-src="${src}"${suffix}>`;
+                }
+                return match;
+            });
+
             return processed;
         }
 
@@ -690,46 +997,163 @@
         // ===== FETCH DOCUMENTS FROM API =====
         async function fetchDocuments() {
             try {
+                console.log("Starting fetchDocuments...");
+                
                 // Try to load from cache first
                 const cachedDocs = await getCachedDocuments();
+                const lastFetchDate = localStorage.getItem('lastFetchDate');
+                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+                
                 if (cachedDocs && cachedDocs.length > 0) {
                     console.log(`Loaded ${cachedDocs.length} documents from cache`);
                     appState.allDocuments = cachedDocs;
                     appState.documentsLoaded = true;
                     updateUI();
                     renderIndexOnly();
+                    console.log("Finished loading from cache");
+                    
+                    // Check if cache is stale (older than today)
+                    if (lastFetchDate !== today) {
+                        console.log("Cache is older than today, checking for new documents...");
+                        checkForNewDocuments(cachedDocs.length, today);
+                    }
                     return;
                 }
 
-                const url = `${config.api.baseUrl}${config.api.endpoints.documents}?$limit=${config.api.defaultLimit}&$skip=0`;
-                console.log("Fetching from API:", url);
+                console.log("No cache found, fetching all documents from API with pagination...");
+                await fetchAllDocumentsFromAPI(today);
+                
+            } catch (error) {
+                console.error("Error fetching documents:", error);
+                const errorMsg = error.message || String(error);
+                const container = document.getElementById("documentsContainer");
+                if (container) {
+                    container.innerHTML = `
+                        <div class="error-message">
+                            <h3>Error Loading Documents</h3>
+                            <p>${errorMsg}</p>
+                            <p>Please check the API endpoint or try refreshing the page.</p>
+                            <p><small>Check browser console for more details (F12)</small></p>
+                        </div>
+                    `;
+                }
+            }
+        }
 
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`API error: ${response.status}`);
+        // Check if new documents have been added to the API
+        async function checkForNewDocuments(cachedCount, today) {
+            try {
+                console.log("Checking API for new documents...");
+                const response = await fetch(`${config.api.baseUrl}${config.api.endpoints.documents}?$limit=1&$skip=0`, {
+                    headers: {
+                        'Referer': window.location.origin
+                    }
+                });
 
-                const data = await response.json();
-                if (!data.data || !Array.isArray(data.data)) {
-                    throw new Error("Invalid API response format");
+                if (!response.ok) {
+                    console.warn("Could not check for new documents, API error");
+                    return;
                 }
 
-                appState.allDocuments = data.data;
+                const data = await response.json();
+                const apiTotal = data.total;
+                
+                console.log(`Cache has ${cachedCount} docs, API reports ${apiTotal} total docs`);
+
+                if (apiTotal > cachedCount) {
+                    console.log(`New documents detected (${apiTotal - cachedCount} new), fetching all documents...`);
+                    // Show loading animation
+                    const container = document.getElementById("documentsContainer");
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="loading-container">
+                                <div class="loading-spinner"></div>
+                                <p>Updating documents...</p>
+                            </div>
+                        `;
+                    }
+                    
+                    await fetchAllDocumentsFromAPI(today);
+                } else {
+                    console.log("Cache is up to date");
+                    localStorage.setItem('lastFetchDate', today);
+                }
+            } catch (error) {
+                console.warn("Error checking for new documents:", error);
+                // Silently fail - don't interrupt user experience
+            }
+        }
+
+        // Fetch all documents from API with pagination
+        async function fetchAllDocumentsFromAPI(today) {
+            try {
+                // Show loading animation
+                const container = document.getElementById("documentsContainer");
+                if (container) {
+                    container.innerHTML = `
+                        <div class="loading-container">
+                            <div class="loading-spinner"></div>
+                            <p>Loading documents...</p>
+                        </div>
+                    `;
+                }
+                
+                let allDocs = [];
+                let skip = 0;
+                const limit = 50;
+                let totalDocs = Infinity;
+                const delayMs = 700; // 700ms delay between requests
+
+                // Fetch all documents using pagination
+                while (skip < totalDocs) {
+                    const url = `${config.api.baseUrl}${config.api.endpoints.documents}?$limit=${limit}&$skip=${skip}`;
+                    console.log(`Fetching batch: skip=${skip}, limit=${limit}`);
+
+                    const response = await fetch(url, {
+                        headers: {
+                            'Referer': window.location.origin
+                        }
+                    });
+                    console.log(`API Response status for skip=${skip}:`, response.status);
+                    
+                    if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+                    const data = await response.json();
+                    
+                    if (!data.data || !Array.isArray(data.data)) {
+                        throw new Error("Invalid API response format");
+                    }
+
+                    // On first response, get the total count
+                    if (skip === 0) {
+                        totalDocs = data.total;
+                        console.log(`API reports total documents: ${totalDocs}`);
+                    }
+
+                    allDocs = allDocs.concat(data.data);
+                    console.log(`Batch loaded: ${data.data.length} docs, Total so far: ${allDocs.length}/${totalDocs}`);
+
+                    skip += limit;
+
+                    // Add delay before next request (except for the last one)
+                    if (skip < totalDocs) {
+                        await new Promise(resolve => setTimeout(resolve, delayMs));
+                    }
+                }
+
+                appState.allDocuments = allDocs;
                 appState.documentsLoaded = true;
 
-                // Cache the documents
+                // Cache all the documents and update fetch date
                 await cacheDocuments(appState.allDocuments);
+                localStorage.setItem('lastFetchDate', today);
 
-                console.log(`Fetched ${appState.allDocuments.length} documents`);
+                console.log(`Successfully fetched all ${appState.allDocuments.length} documents`);
                 updateUI();
                 renderIndexOnly();
             } catch (error) {
-                console.error("Error fetching documents:", error);
-                document.getElementById("mainContent").innerHTML = `
-                    <div class="error-message">
-                        <h3>Error Loading Documents</h3>
-                        <p>${error.message}</p>
-                        <p>Please check the API endpoint or try refreshing the page.</p>
-                    </div>
-                `;
+                console.error("Error fetching documents from API:", error);
+                throw error;
             }
         }
 
@@ -746,48 +1170,73 @@
 
             if (appState.allDocuments.length === 0) {
                 indexList.innerHTML = '<li style="text-align: center; padding: 20px; color: #bdc3c7;">No documents found</li>';
+                document.getElementById("mainContent").innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+                        <h2>No documents available</h2>
+                        <p>Unable to load documents from the API.</p>
+                    </div>
+                `;
                 return;
             }
 
+            // Debug: Check document structure
+            console.log("Documents to render:", appState.allDocuments.length);
+            console.log("First document structure:", appState.allDocuments[0]);
+
             appState.allDocuments.forEach((doc, idx) => {
-                const title = getTitle(doc, appState.currentLanguage);
-                const li = document.createElement("li");
-                li.className = "index-item";
-                li.setAttribute("data-doc-id", doc.id);
-                li.setAttribute("data-index", idx);
+                try {
+                    const title = getTitle(doc, appState.currentLanguage);
+                    const li = document.createElement("li");
+                    li.className = "index-item";
+                    
+                    // Use doc.id or fallback to index
+                    const docId = doc.id || idx;
+                    li.setAttribute("data-doc-id", docId);
+                    li.setAttribute("data-index", idx);
 
-                li.innerHTML = `
-                    <a onclick="loadAndScrollToDocument('${doc.id}')">
-                        <div class="index-title">${escapeHtml(title)}</div>
-                        <div class="index-id">ID: ${doc.id}</div>
-                    </a>
-                `;
+                    li.innerHTML = `
+                        <a onclick="loadAndScrollToDocument('${docId}')">
+                            <div class="index-title">${escapeHtml(title)}</div>
+                            <div class="index-id">ID: ${docId}</div>
+                        </a>
+                    `;
 
-                indexList.appendChild(li);
+                    indexList.appendChild(li);
+                } catch (e) {
+                    console.error("Error rendering index item:", e, doc);
+                }
             });
 
             // Clear main content and show empty message
-            document.getElementById("mainContent").innerHTML = `
-                <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
-                    <h2>👈 Select a document from the index</h2>
-                    <p style="margin-top: 10px; font-size: 16px;">Click on any document title to view its content</p>
-                </div>
-            `;
+            const container = document.getElementById("documentsContainer");
+            if (container) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+                        <h2>👈 Select a document from the index</h2>
+                        <p style="margin-top: 10px; font-size: 16px;">Click on any document title to view its content</p>
+                    </div>
+                `;
+            }
         }
 
         // ===== RENDER DOCUMENTS =====
         function renderDocuments() {
-            const mainContent = document.getElementById("mainContent");
-            mainContent.innerHTML = "";
+            const container = document.getElementById("documentsContainer");
+            if (!container) {
+                console.error("Documents container not found");
+                return;
+            }
+            
+            container.innerHTML = "";
 
             if (appState.displayedDocuments.length === 0) {
-                mainContent.innerHTML = '<div class="error-message"><h3>No documents to display</h3></div>';
+                container.innerHTML = '<div class="error-message"><h3>No documents to display</h3></div>';
                 return;
             }
 
             appState.displayedDocuments.forEach((doc) => {
                 const section = createDocumentSection(doc);
-                mainContent.appendChild(section);
+                container.appendChild(section);
             });
 
             renderIndex();
@@ -925,7 +1374,8 @@
         }
 
         function getContent(doc, lang) {
-            return typeof doc.content === 'object' ? (doc.content[lang] || "Content not available") : "Content not available";
+            const content = typeof doc.content === 'object' ? (doc.content[lang] || "Content not available") : "Content not available";
+            return content;
         }
 
         function escapeHtml(text) {
@@ -1002,25 +1452,42 @@
 
         // ===== NAVIGATION =====
         function loadAndScrollToDocument(docId) {
-            // Find the document in displayedDocuments or allDocuments
-            const doc = appState.displayedDocuments.find(d => d.id === docId) || 
-                       appState.allDocuments.find(d => d.id === docId);
-
-            if (!doc) return;
-
-            // Check if document is already in main content
-            let section = document.getElementById(`doc-${docId}`);
-
-            if (!section) {
-                // Create the document section
-                appState.displayedDocuments = [doc];
-                renderDocuments();
+            // Find the document in allDocuments - convert both to string for comparison
+            const doc = appState.allDocuments.find(d => String(d.id) === String(docId));
+            if (!doc) {
+                console.error("Document not found:", docId);
+                return;
             }
 
-            // Scroll to it
+            // Track the currently displayed document
+            appState.currentDisplayedDocId = docId;
+
+            // Clear main content and render just this document
+            const container = document.getElementById("documentsContainer");
+            if (!container) {
+                console.error("Documents container not found");
+                return;
+            }
+            
+            container.innerHTML = "";
+
+            try {
+                const section = createDocumentSection(doc);
+                container.appendChild(section);
+            } catch (error) {
+                console.error("Error creating document section:", error);
+                container.innerHTML = `<div class="error-message"><h3>Error loading document</h3><p>${error.message}</p></div>`;
+                return;
+            }
+
+            // Scroll to it and update index
             setTimeout(() => {
-                scrollToDocument(docId);
-            }, 100);
+                updateActiveIndex(docId);
+                const anchor = document.getElementById(`anchor-${docId}`);
+                if (anchor) {
+                    anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            }, 50);
         }
 
         function scrollToDocument(docId) {
@@ -1063,15 +1530,20 @@
         function setLanguage(lang) {
             appState.currentLanguage = lang;
 
-            document.querySelectorAll(".lang-btn").forEach(btn => {
+            document.querySelectorAll(".language-selector:not(#secondLanguageSelector) .lang-btn").forEach(btn => {
                 btn.classList.remove("active");
                 if (btn.getAttribute("data-lang") === lang) {
                     btn.classList.add("active");
                 }
             });
 
-            appState.displayedDocuments = [...appState.allDocuments];
-            renderDocuments();
+            // If a document is currently displayed, reload it with new language
+            if (appState.currentDisplayedDocId) {
+                loadAndScrollToDocument(appState.currentDisplayedDocId);
+            } else {
+                // Otherwise, just update the index
+                renderIndexOnly();
+            }
 
             if (appState.currentSearchTerm) {
                 performSearch();
@@ -1102,10 +1574,11 @@
                 secondLangSelector.style.display = "none";
             }
 
-            // Re-render current document if displayed
-            if (appState.displayedDocuments.length > 0) {
-                renderDocuments();
+            // If a document is currently displayed, reload it in the new view mode
+            if (appState.currentDisplayedDocId) {
+                loadAndScrollToDocument(appState.currentDisplayedDocId);
             }
+            // Otherwise don't show anything (user hasn't selected a document yet)
         }
 
         // ===== SET SECOND LANGUAGE =====
@@ -1125,9 +1598,9 @@
                 }
             });
 
-            // Re-render if in bilingual mode
-            if (appState.bilingualMode && appState.displayedDocuments.length > 0) {
-                renderDocuments();
+            // If a document is currently displayed, reload it with new second language
+            if (appState.bilingualMode && appState.currentDisplayedDocId) {
+                loadAndScrollToDocument(appState.currentDisplayedDocId);
             }
         }
 
@@ -1181,33 +1654,247 @@
             content2.addEventListener("scroll", () => syncScroll(content2, content1), true);
         }
 
+        // ===== TOOLBAR VISIBILITY MANAGEMENT =====
+        let toolbarHideTimeout;
+        const toolbarVisibilityDuration = 3500; // Show for 3.5 seconds
+
+        function showToolbar() {
+            const toolbar = document.getElementById('accessibilityToolbar');
+            if (toolbar) {
+                toolbar.classList.add('visible');
+                
+                // Clear existing timeout
+                if (toolbarHideTimeout) {
+                    clearTimeout(toolbarHideTimeout);
+                }
+                
+                // Set new timeout to hide after duration
+                toolbarHideTimeout = setTimeout(() => {
+                    toolbar.classList.remove('visible');
+                }, toolbarVisibilityDuration);
+            }
+        }
+
+        // Show toolbar on scroll
+        function setupToolbarVisibility() {
+            const mainContent = document.getElementById('mainContent');
+            
+            if (mainContent) {
+                mainContent.addEventListener('scroll', showToolbar, { passive: true });
+            }
+            
+            // Show toolbar on mouse movement
+            document.addEventListener('mousemove', showToolbar, { passive: true });
+            
+            // Keep toolbar visible when hovering over it
+            const toolbar = document.getElementById('accessibilityToolbar');
+            if (toolbar) {
+                toolbar.addEventListener('mouseenter', () => {
+                    if (toolbarHideTimeout) {
+                        clearTimeout(toolbarHideTimeout);
+                    }
+                    toolbar.classList.add('visible');
+                });
+                
+                toolbar.addEventListener('mouseleave', () => {
+                    toolbarHideTimeout = setTimeout(() => {
+                        toolbar.classList.remove('visible');
+                    }, toolbarVisibilityDuration);
+                });
+            }
+        }
+
+        // ===== ACCESSIBILITY FEATURES =====
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('appTheme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+                const btn = document.getElementById('themeToggleBtn');
+                if (btn) btn.textContent = '☀️';
+            }
+            updateGradientBackground();
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            localStorage.setItem('appTheme', isDark ? 'dark' : 'light');
+            
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) btn.textContent = isDark ? '☀️' : '🌙';
+            
+            updateGradientBackground();
+        }
+
+        function updateGradientBackground() {
+            // Optional: Update body background for dark mode
+            if (document.body.classList.contains('dark-theme')) {
+                document.body.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)';
+            } else {
+                document.body.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+            }
+        }
+
+        // Font Size Management
+        function initFontSize() {
+            const savedSize = localStorage.getItem('appFontSize') || '100';
+            appState.fontSizePercent = parseInt(savedSize);
+            applyFontSize();
+        }
+
+        function changeFontSize(delta) {
+            appState.fontSizePercent = Math.max(80, Math.min(150, appState.fontSizePercent + delta));
+            localStorage.setItem('appFontSize', appState.fontSizePercent);
+            applyFontSize();
+        }
+
+        function applyFontSize() {
+            const scale = appState.fontSizePercent / 100;
+            const rootElement = document.documentElement;
+            rootElement.style.setProperty('--base-font-scale', scale);
+            
+            // Apply to content
+            document.querySelectorAll('.content').forEach(el => {
+                el.style.fontSize = (1.05 * scale) + 'em';
+            });
+            
+            document.querySelectorAll('.title').forEach(el => {
+                if (el.style.fontSize && el.style.fontSize.includes('1.8em')) {
+                    // Bilingual mode title
+                    el.style.fontSize = (1.8 * scale) + 'em';
+                } else {
+                    // Single mode title
+                    el.style.fontSize = (1.6 * scale) + 'em';
+                }
+            });
+
+            // Update display
+            const display = document.getElementById('fontSizeDisplay');
+            if (display) display.textContent = appState.fontSizePercent + '%';
+        }
+
+        // Line Height Management
+        function initLineHeight() {
+            const savedLineHeight = localStorage.getItem('appLineHeight') || '1.8';
+            appState.lineHeightValue = parseFloat(savedLineHeight);
+            applyLineHeight();
+            
+            // Set slider to saved value
+            const slider = document.getElementById('lineHeightSlider');
+            if (slider) {
+                slider.value = appState.lineHeightValue;
+            }
+        }
+
+        function changeLineHeight(value) {
+            appState.lineHeightValue = parseFloat(value);
+            localStorage.setItem('appLineHeight', appState.lineHeightValue);
+            applyLineHeight();
+        }
+
+        function applyLineHeight() {
+            document.querySelectorAll('.content').forEach(el => {
+                el.style.lineHeight = appState.lineHeightValue;
+            });
+        }
+
+        // Initialize accessibility features on load
+        function initAccessibilityFeatures() {
+            appState.fontSizePercent = 100;
+            appState.lineHeightMode = 'normal';
+            
+            initTheme();
+            initFontSize();
+            initLineHeight();
+        }
+
         // ===== EVENT LISTENERS =====
         document.addEventListener("DOMContentLoaded", async function () {
-            await loadConfig();
-            await fetchDocuments();
+            console.log("DOMContentLoaded fired");
+            
+            // Expose cache clear function for debugging
+            window.clearCache = async function() {
+                try {
+                    const db = await initDB();
+                    const transaction = db.transaction([STORE_NAME], "readwrite");
+                    const store = transaction.objectStore(STORE_NAME);
+                    store.clear();
+                    console.log("Cache cleared. Reload the page to fetch fresh data.");
+                    return true;
+                } catch (error) {
+                    console.error("Error clearing cache:", error);
+                    return false;
+                }
+            };
+            console.log("Type 'clearCache()' in console to clear IndexedDB cache and reload");
+            
+            // Initialize accessibility features
+            initAccessibilityFeatures();
+            
+            // Setup toolbar visibility (before documents load)
+            setupToolbarVisibility();
+            
+            // Config is now embedded, no need to load from file
+            try {
+                await fetchDocuments();
+                console.log("fetchDocuments completed");
+            } catch (error) {
+                console.error("fetchDocuments error:", error);
+            }
 
-            document.getElementById("toggleBtn").addEventListener("click", toggleSidebar);
-            document.getElementById("searchInput").addEventListener("input", performSearch);
-            document.getElementById("clearSearch").addEventListener("click", clearSearch);
+            try {
+                // Main navigation listeners with null checks
+                const toggleBtn = document.getElementById("toggleBtn");
+                if (toggleBtn) toggleBtn.addEventListener("click", toggleSidebar);
+                
+                const searchInput = document.getElementById("searchInput");
+                if (searchInput) searchInput.addEventListener("input", performSearch);
+                
+                const clearSearch = document.getElementById("clearSearch");
+                if (clearSearch) clearSearch.addEventListener("click", clearSearch);
 
-            document.querySelectorAll(".lang-btn").forEach(btn => {
-                btn.addEventListener("click", (e) => {
-                    setLanguage(e.target.getAttribute("data-lang"));
+                // Accessibility feature listeners with null checks
+                const themeToggleBtn = document.getElementById("themeToggleBtn");
+                if (themeToggleBtn) themeToggleBtn.addEventListener("click", toggleTheme);
+                
+                const increaseFontBtn = document.getElementById("increaseFontBtn");
+                if (increaseFontBtn) increaseFontBtn.addEventListener("click", () => changeFontSize(10));
+                
+                const decreaseFontBtn = document.getElementById("decreaseFontBtn");
+                if (decreaseFontBtn) decreaseFontBtn.addEventListener("click", () => changeFontSize(-10));
+                
+                const lineHeightSlider = document.getElementById("lineHeightSlider");
+                if (lineHeightSlider) {
+                    lineHeightSlider.addEventListener("input", (e) => {
+                        changeLineHeight(e.target.value);
+                    });
+                }
+
+                // First language selector (primary language)
+                document.querySelectorAll(".language-selector:not(#secondLanguageSelector) .lang-btn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        setLanguage(e.target.getAttribute("data-lang"));
+                    });
                 });
-            });
 
-            // Second language selector (inside bilingual mode)
-            document.querySelectorAll("#secondLanguageSelector .lang-btn").forEach(btn => {
-                btn.addEventListener("click", (e) => {
-                    setSecondLanguage(e.target.getAttribute("data-lang"));
+                // Second language selector (inside bilingual mode)
+                document.querySelectorAll("#secondLanguageSelector .lang-btn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        setSecondLanguage(e.target.getAttribute("data-lang"));
+                    });
                 });
-            });
 
-            document.querySelectorAll(".view-mode-btn").forEach(btn => {
-                btn.addEventListener("click", (e) => {
-                    setViewMode(e.target.getAttribute("data-mode"));
+                document.querySelectorAll(".view-mode-btn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        setViewMode(e.target.getAttribute("data-mode"));
+                    });
                 });
-            });
+
+                console.log("Event listeners attached successfully");
+            } catch (error) {
+                console.error("Error attaching event listeners:", error);
+            }
 
             // Keyboard shortcuts
             document.addEventListener("keydown", (e) => {
@@ -1221,5 +1908,10 @@
             });
         });
     </script>
+
+    <!-- Footer Disclaimer -->
+    <footer class="footer-disclaimer">
+        Data belongs to Ankama Games (c) https://www.ankama.com/fr/games and is being retrieved via DofusDB.fr
+    </footer>
 </body>
 </html>

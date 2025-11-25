@@ -36,18 +36,20 @@ A standalone, memory-optimized HTML application for viewing and searching Dofus 
 
 ```
 d3-library/
-├── index.html              # Main application
-├── config.json             # Configuration file
-├── README.md              # This file
+├── index.html              # Main application (all-in-one)
+├── config.json             # Optional: configuration file (for reference)
+├── README.md               # This file
 └── Dofus_ingame_library_bilingual_html_export.ipynb
 ```
 
-## Configuration (config.json)
+## Configuration
 
-Edit `config.json` to customize behavior:
+The configuration is **embedded directly in `index.html`** to avoid CORS issues when opening files locally.
 
-```json
-{
+If you need to modify settings, edit the `config` object in the `<script>` section of `index.html`:
+
+```javascript
+let config = {
   "api": {
     "baseUrl": "https://api.beta.dofusdb.fr",
     "endpoints": { "documents": "/documents" },
@@ -63,6 +65,8 @@ Edit `config.json` to customize behavior:
   }
 }
 ```
+
+**Note:** `config.json` is provided for reference but is not loaded by the app due to CORS restrictions when using the `file://` protocol.
 
 ## Usage
 
