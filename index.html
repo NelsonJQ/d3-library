@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dofus Ingame Library - Bilingual Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 320px;
+            background: #2c3e50;
+            color: white;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-320px);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: #34495e;
+            border-bottom: 1px solid #4a5f7a;
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+        }
+
+        .sidebar-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .language-selector {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .lang-btn {
+            flex: 1;
+            padding: 6px 8px;
+            background: #4a5f7a;
+            color: white;
+            border: 2px solid #4a5f7a;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: #3498db;
+            border-color: #3498db;
+        }
+
+        .lang-btn:hover {
+            background: #556b7e;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 35px 10px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            background: #4a5f7a;
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: #bdc3c7;
+        }
+
+        .search-input:focus {
+            background: #556b7e;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #bdc3c7;
+            pointer-events: none;
+        }
+
+        .search-results {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .clear-search {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .clear-search:hover {
+            background: #c0392b;
+        }
+
+        .index-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .index-item {
+            border-bottom: 1px solid #4a5f7a;
+            transition: all 0.3s ease;
+        }
+
+        .index-item.hidden {
+            display: none;
+        }
+
+        .index-item.highlighted {
+            background: #f39c12;
+        }
+
+        .index-item a {
+            display: block;
+            padding: 15px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .index-item a:hover {
+            background: #34495e;
+        }
+
+        .index-item.active a {
+            background: #3498db;
+            padding-left: 24px;
+            border-left: 4px solid #2980b9;
+        }
+
+        .index-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .index-id {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1002;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-btn:hover {
+            background: #2980b9;
+        }
+
+        .toggle-btn.sidebar-open {
+            left: 340px;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: 320px;
+            transition: margin-left 0.3s ease;
+            padding: 20px;
+        }
+
+        .main-content.sidebar-hidden {
+            margin-left: 0;
+        }
+
+        .document-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 40px;
+            transition: all 0.3s ease;
+            min-height: auto;
+        }
+
+        .document-section.search-hidden {
+            display: none;
+        }
+
+        .document-section.search-highlighted {
+            border: 3px solid #f39c12;
+            box-shadow: 0 15px 40px rgba(243, 156, 18, 0.3);
+        }
+
+        .document-anchor {
+            position: absolute;
+            top: -80px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .title-section {
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            word-break: break-word;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+
+        .author {
+            font-size: 1em;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+
+        .content-wrapper {
+            display: flex;
+            min-height: 400px;
+        }
+
+        .content-column {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+            border-right: 2px solid #e9ecef;
+        }
+
+        .content-column.single {
+            border-right: none;
+        }
+
+        .content {
+            font-size: 1.05em;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .content p {
+            margin-bottom: 12px;
+            text-indent: 1.2em;
+        }
+
+        .content p:first-child {
+            text-indent: 0;
+        }
+
+        .content p.spacer {
+            margin-bottom: 20px;
+            text-indent: 0;
+        }
+
+        .content img {
+            max-width: 100%;
+            height: auto;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-break {
+            border: none;
+            border-top: 2px dashed #ccc;
+            margin: 25px 0;
+            opacity: 0.6;
+        }
+
+        .metadata {
+            background: #f8f9fa;
+            padding: 20px 40px;
+            border-top: 2px solid #e9ecef;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .metadata-item {
+            margin-bottom: 5px;
+        }
+
+        .highlight-match {
+            background: yellow;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .loading-indicator {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* ===== LANGUAGE MODE TOGGLE ===== */
+        .view-mode-toggle {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .view-mode-btn {
+            flex: 1;
+            padding: 6px 8px;
+            background: #4a5f7a;
+            color: white;
+            border: 2px solid #4a5f7a;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s ease;
+        }
+
+        .view-mode-btn.active {
+            background: #e74c3c;
+            border-color: #e74c3c;
+        }
+
+        .view-mode-btn:hover {
+            background: #556b7e;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .content-column {
+                max-height: 60vh;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 280px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .toggle-btn.sidebar-open {
+                left: 300px;
+            }
+
+            .content-wrapper {
+                flex-direction: column;
+            }
+
+            .content-column {
+                border-right: none;
+                border-bottom: 2px solid #e9ecef;
+                max-height: 50vh;
+            }
+
+            .content-column:last-child {
+                border-bottom: none;
+            }
+
+            .title {
+                font-size: 1.8em;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+        }
+
+        /* ===== SCROLLBAR STYLING ===== */
+        .content-column::-webkit-scrollbar,
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .content-column::-webkit-scrollbar-track,
+        .sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .content-column::-webkit-scrollbar-thumb,
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        .content-column::-webkit-scrollbar-thumb:hover,
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <button class="toggle-btn" id="toggleBtn" title="Toggle sidebar">☰</button>
+
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">📚 Document Collection</div>
+                <div class="sidebar-subtitle" id="docCount">Loading...</div>
+
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="es" title="Español">ES</button>
+                    <button class="lang-btn" data-lang="en" title="English">EN</button>
+                    <button class="lang-btn" data-lang="fr" title="Français">FR</button>
+                    <button class="lang-btn" data-lang="pt" title="Português">PT</button>
+                    <button class="lang-btn" data-lang="de" title="Deutsch">DE</button>
+                </div>
+
+                <div class="view-mode-toggle">
+                    <button class="view-mode-btn active" data-mode="single" title="Single language">Single</button>
+                    <button class="view-mode-btn" data-mode="bilingual" title="Bilingual view">Bilingual</button>
+                </div>
+
+                <div id="secondLanguageSelector" class="language-selector" style="display: none; margin-top: 10px;">
+                    <span style="display: block; font-size: 12px; color: #bdc3c7; margin-bottom: 5px;">Second language:</span>
+                    <button class="lang-btn" data-lang="fr" title="Français">FR</button>
+                    <button class="lang-btn" data-lang="en" title="English">EN</button>
+                    <button class="lang-btn" data-lang="pt" title="Português">PT</button>
+                    <button class="lang-btn" data-lang="de" title="Deutsch">DE</button>
+                </div>
+
+                <div class="search-container">
+                    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search..." autocomplete="off">
+                    <span class="search-icon">🔍</span>
+                    <div class="search-results" id="searchResults"></div>
+                    <button class="clear-search" id="clearSearch" title="Clear search">✕ Clear</button>
+                </div>
+            </div>
+
+            <ul class="index-list" id="indexList">
+                <li style="text-align: center; padding: 30px; color: #bdc3c7;">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top: 10px;">Loading documents...</p>
+                </li>
+            </ul>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="loading-indicator">
+                <div class="loading-spinner"></div>
+                <p style="margin-top: 10px;">Fetching documents from API...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        let config = {
+            api: {
+                baseUrl: "https://api.beta.dofusdb.fr",
+                endpoints: { documents: "/documents" },
+                defaultLimit: 50,
+                maxDocumentsPerPage: 25
+            },
+            ui: {
+                sidebarWidth: 320,
+                defaultLanguage: "es",
+                supportedLanguages: ["en", "fr", "es", "pt", "de", "it"],
+                enableBilingualMode: true
+            },
+            features: {
+                search: true,
+                syncScroll: true,
+                lazyLoading: true,
+                cache: true,
+                imageProcessing: true,
+                imageBaseUrl: "https://api.e-bou.fr/img/unity/UI/documents/"
+            }
+        };
+
+        let appState = {
+            sidebarVisible: true,
+            currentLanguage: config.ui.defaultLanguage,
+            bilingualMode: false,
+            secondLanguage: "fr",
+            currentSearchTerm: "",
+            searchMatches: [],
+            allDocuments: [],
+            displayedDocuments: [],
+            currentViewIndex: 0,
+            syncScrollEnabled: true,
+            documentsLoaded: false,
+            loadedImagesCache: new Set()
+        };
+
+        // ===== LOAD CONFIG FROM FILE =====
+        async function loadConfig() {
+            try {
+                const response = await fetch("config.json");
+                if (response.ok) {
+                    const fileConfig = await response.json();
+                    config = { ...config, ...fileConfig };
+                }
+            } catch (error) {
+                console.warn("Could not load config.json, using defaults:", error);
+            }
+        }
+
+        // ===== INDEXEDDB CACHE MANAGEMENT =====
+        const DB_NAME = "DofusLibraryDB";
+        const STORE_NAME = "documents";
+
+        async function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, 1);
+
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => resolve(request.result);
+
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: "id" });
+                    }
+                };
+            });
+        }
+
+        async function getCachedDocuments() {
+            try {
+                const db = await initDB();
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction([STORE_NAME], "readonly");
+                    const store = transaction.objectStore(STORE_NAME);
+                    const request = store.getAll();
+
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => {
+                        const docs = request.result;
+                        resolve(docs.length > 0 ? docs : null);
+                    };
+                });
+            } catch (error) {
+                console.warn("Cache read error:", error);
+                return null;
+            }
+        }
+
+        async function cacheDocuments(documents) {
+            try {
+                const db = await initDB();
+                const transaction = db.transaction([STORE_NAME], "readwrite");
+                const store = transaction.objectStore(STORE_NAME);
+
+                // Clear existing documents
+                store.clear();
+
+                // Add new documents
+                documents.forEach(doc => {
+                    store.add(doc);
+                });
+
+                return new Promise((resolve, reject) => {
+                    transaction.onerror = () => reject(transaction.error);
+                    transaction.oncomplete = () => resolve(true);
+                });
+            } catch (error) {
+                console.warn("Cache write error:", error);
+            }
+        }
+
+        // ===== IMAGE URL PROCESSOR =====
+        function processImageUrls(htmlContent) {
+            if (!config.features.imageProcessing) return htmlContent;
+
+            // Convert ##png,ID## format to actual image URLs
+            const imagePattern = /##(png|jpg|jpeg|gif),(\d+)##/gi;
+            let processed = htmlContent.replace(imagePattern, (match, format, id) => {
+                const extension = format.toLowerCase() === 'jpg' ? 'jpg' : format.toLowerCase();
+                return `${config.features.imageBaseUrl}${id}.${extension}`;
+            });
+
+            // Convert images to lazy load
+            processed = convertImagesToLazy(processed);
+            return processed;
+        }
+
+        // ===== REMOVE IMG TAGS (OPTIONAL) =====
+        function removeImgTags(text) {
+            return text.replace(/<img[^>]*\/?>/gi, '');
+        }
+
+        // ===== CLEAN HTML TAGS =====
+        function cleanHtmlTags(text) {
+            return text.replace(/<[^>]+>/g, '');
+        }
+
+        // ===== FETCH DOCUMENTS FROM API =====
+        async function fetchDocuments() {
+            try {
+                // Try to load from cache first
+                const cachedDocs = await getCachedDocuments();
+                if (cachedDocs && cachedDocs.length > 0) {
+                    console.log(`Loaded ${cachedDocs.length} documents from cache`);
+                    appState.allDocuments = cachedDocs;
+                    appState.documentsLoaded = true;
+                    updateUI();
+                    renderIndexOnly();
+                    return;
+                }
+
+                const url = `${config.api.baseUrl}${config.api.endpoints.documents}?$limit=${config.api.defaultLimit}&$skip=0`;
+                console.log("Fetching from API:", url);
+
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+                const data = await response.json();
+                if (!data.data || !Array.isArray(data.data)) {
+                    throw new Error("Invalid API response format");
+                }
+
+                appState.allDocuments = data.data;
+                appState.documentsLoaded = true;
+
+                // Cache the documents
+                await cacheDocuments(appState.allDocuments);
+
+                console.log(`Fetched ${appState.allDocuments.length} documents`);
+                updateUI();
+                renderIndexOnly();
+            } catch (error) {
+                console.error("Error fetching documents:", error);
+                document.getElementById("mainContent").innerHTML = `
+                    <div class="error-message">
+                        <h3>Error Loading Documents</h3>
+                        <p>${error.message}</p>
+                        <p>Please check the API endpoint or try refreshing the page.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ===== UPDATE UI ELEMENTS =====
+        function updateUI() {
+            const docCount = document.getElementById("docCount");
+            docCount.textContent = `${appState.allDocuments.length} documents loaded`;
+        }
+
+        // ===== RENDER INDEX ONLY =====
+        function renderIndexOnly() {
+            const indexList = document.getElementById("indexList");
+            indexList.innerHTML = "";
+
+            if (appState.allDocuments.length === 0) {
+                indexList.innerHTML = '<li style="text-align: center; padding: 20px; color: #bdc3c7;">No documents found</li>';
+                return;
+            }
+
+            appState.allDocuments.forEach((doc, idx) => {
+                const title = getTitle(doc, appState.currentLanguage);
+                const li = document.createElement("li");
+                li.className = "index-item";
+                li.setAttribute("data-doc-id", doc.id);
+                li.setAttribute("data-index", idx);
+
+                li.innerHTML = `
+                    <a onclick="loadAndScrollToDocument('${doc.id}')">
+                        <div class="index-title">${escapeHtml(title)}</div>
+                        <div class="index-id">ID: ${doc.id}</div>
+                    </a>
+                `;
+
+                indexList.appendChild(li);
+            });
+
+            // Clear main content and show empty message
+            document.getElementById("mainContent").innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
+                    <h2>👈 Select a document from the index</h2>
+                    <p style="margin-top: 10px; font-size: 16px;">Click on any document title to view its content</p>
+                </div>
+            `;
+        }
+
+        // ===== RENDER DOCUMENTS =====
+        function renderDocuments() {
+            const mainContent = document.getElementById("mainContent");
+            mainContent.innerHTML = "";
+
+            if (appState.displayedDocuments.length === 0) {
+                mainContent.innerHTML = '<div class="error-message"><h3>No documents to display</h3></div>';
+                return;
+            }
+
+            appState.displayedDocuments.forEach((doc) => {
+                const section = createDocumentSection(doc);
+                mainContent.appendChild(section);
+            });
+
+            renderIndex();
+            setupScrollListeners();
+        }
+
+        // ===== RENDER INDEX LIST =====
+        function renderIndex() {
+            const indexList = document.getElementById("indexList");
+            indexList.innerHTML = "";
+
+            if (appState.displayedDocuments.length === 0) {
+                indexList.innerHTML = '<li style="text-align: center; padding: 20px; color: #bdc3c7;">No documents found</li>';
+                return;
+            }
+
+            appState.displayedDocuments.forEach((doc, idx) => {
+                const title = getTitle(doc, appState.currentLanguage);
+                const li = document.createElement("li");
+                li.className = "index-item";
+                li.setAttribute("data-doc-id", doc.id);
+                li.setAttribute("data-index", idx);
+
+                li.innerHTML = `
+                    <a onclick="loadAndScrollToDocument('${doc.id}')">
+                        <div class="index-title">${escapeHtml(title)}</div>
+                        <div class="index-id">ID: ${doc.id}</div>
+                    </a>
+                `;
+
+                indexList.appendChild(li);
+            });
+        }
+
+        // ===== CREATE DOCUMENT SECTION =====
+        function createDocumentSection(doc) {
+            const section = document.createElement("div");
+            section.className = "document-section";
+            section.id = `doc-${doc.id}`;
+            section.setAttribute("data-doc-id", doc.id);
+
+            const title1 = getTitle(doc, appState.currentLanguage);
+            const subtitle1 = getSubtitle(doc, appState.currentLanguage);
+            const author1 = cleanHtmlTags(getAuthor(doc, appState.currentLanguage));
+            let content1 = getContent(doc, appState.currentLanguage);
+            content1 = processImageUrls(content1);
+
+            if (!appState.bilingualMode) {
+                // Single language mode
+                section.innerHTML = `
+                    <div class="document-anchor" id="anchor-${doc.id}"></div>
+                    <div class="header">
+                        <div class="title-section">
+                            <h1 class="title">${escapeHtml(title1)}</h1>
+                        </div>
+                        <div class="subtitle">${escapeHtml(subtitle1)}</div>
+                        <div class="author">By ${escapeHtml(author1)}</div>
+                    </div>
+                    <div class="content-wrapper">
+                        <div class="content-column single" id="content1-${doc.id}" data-doc-id="${doc.id}">
+                            <div class="content">${content1}</div>
+                        </div>
+                    </div>
+                    <div class="metadata">
+                        <div class="metadata-item"><strong>Document ID:</strong> ${doc.id}</div>
+                        <div class="metadata-item"><strong>Class:</strong> ${doc.className || "N/A"}</div>
+                        <div class="metadata-item"><strong>Created:</strong> ${doc.createdAt || "N/A"}</div>
+                        <div class="metadata-item"><strong>Updated:</strong> ${doc.updatedAt || "N/A"}</div>
+                    </div>
+                `;
+
+                // Setup hover-based image loading
+                const contentColumn = section.querySelector(".content-column");
+                setupImageHoverLoading(contentColumn);
+            } else {
+                // Bilingual mode - titles in columns
+                const title2 = getTitle(doc, appState.secondLanguage);
+                const subtitle2 = getSubtitle(doc, appState.secondLanguage);
+                const author2 = cleanHtmlTags(getAuthor(doc, appState.secondLanguage));
+                let content2 = getContent(doc, appState.secondLanguage);
+                content2 = processImageUrls(content2);
+
+                section.innerHTML = `
+                    <div class="document-anchor" id="anchor-${doc.id}"></div>
+                    <div class="header">
+                        <div class="author">By ${escapeHtml(author1)} / ${escapeHtml(author2)}</div>
+                    </div>
+                    <div class="content-wrapper">
+                        <div class="content-column" id="content1-${doc.id}" data-doc-id="${doc.id}">
+                            <div class="title-section">
+                                <h2 class="title" style="font-size: 1.8em; margin-bottom: 15px;">${escapeHtml(title1)}</h2>
+                                <div class="subtitle">${escapeHtml(subtitle1)}</div>
+                            </div>
+                            <div class="content">${content1}</div>
+                        </div>
+                        <div class="content-column" id="content2-${doc.id}" data-doc-id="${doc.id}" style="border-right: none;">
+                            <div class="title-section">
+                                <h2 class="title" style="font-size: 1.8em; margin-bottom: 15px;">${escapeHtml(title2)}</h2>
+                                <div class="subtitle">${escapeHtml(subtitle2)}</div>
+                            </div>
+                            <div class="content">${content2}</div>
+                        </div>
+                    </div>
+                    <div class="metadata">
+                        <div class="metadata-item"><strong>Document ID:</strong> ${doc.id}</div>
+                        <div class="metadata-item"><strong>Class:</strong> ${doc.className || "N/A"}</div>
+                        <div class="metadata-item"><strong>Created:</strong> ${doc.createdAt || "N/A"}</div>
+                        <div class="metadata-item"><strong>Updated:</strong> ${doc.updatedAt || "N/A"}</div>
+                    </div>
+                `;
+
+                // Setup synchronized scrolling and image loading
+                setTimeout(() => {
+                    setupSyncScrolling(doc.id);
+                }, 100);
+
+                const columns = section.querySelectorAll(".content-column");
+                columns.forEach(col => setupImageHoverLoading(col));
+            }
+
+            return section;
+        }
+
+        // ===== HELPER FUNCTIONS =====
+        function getTitle(doc, lang) {
+            return typeof doc.title === 'object' ? (doc.title[lang] || "Title not available") : "Title not available";
+        }
+
+        function getSubtitle(doc, lang) {
+            return typeof doc.subTitle === 'object' ? (doc.subTitle[lang] || "") : "";
+        }
+
+        function getAuthor(doc, lang) {
+            return typeof doc.author === 'object' ? (doc.author[lang] || "Author not available") : "Author not available";
+        }
+
+        function getContent(doc, lang) {
+            return typeof doc.content === 'object' ? (doc.content[lang] || "Content not available") : "Content not available";
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ===== SEARCH FUNCTIONALITY =====
+        function performSearch() {
+            const searchTerm = document.getElementById("searchInput").value.toLowerCase().trim();
+            const clearBtn = document.getElementById("clearSearch");
+
+            appState.currentSearchTerm = searchTerm;
+
+            if (searchTerm === "") {
+                clearSearch();
+                return;
+            }
+
+            clearBtn.style.display = "block";
+
+            const filteredDocs = appState.allDocuments.filter(doc => {
+                const title = getTitle(doc, appState.currentLanguage).toLowerCase();
+                const subtitle = getSubtitle(doc, appState.currentLanguage).toLowerCase();
+                const author = getAuthor(doc, appState.currentLanguage).toLowerCase();
+                const content = getContent(doc, appState.currentLanguage).toLowerCase();
+
+                return title.includes(searchTerm) || subtitle.includes(searchTerm) ||
+                       author.includes(searchTerm) || content.includes(searchTerm);
+            });
+
+            appState.displayedDocuments = filteredDocs;
+            appState.searchMatches = filteredDocs.map(d => d.id);
+
+            const resultCount = filteredDocs.length;
+            document.getElementById("searchResults").textContent = `${resultCount} result(s)`;
+
+            renderDocuments();
+            highlightSearchTerms();
+
+            if (resultCount > 0) {
+                setTimeout(() => {
+                    scrollToDocument(appState.searchMatches[0]);
+                }, 300);
+            }
+        }
+
+        function highlightSearchTerms() {
+            if (!appState.currentSearchTerm) return;
+
+            document.querySelectorAll(".content").forEach(contentEl => {
+                const text = contentEl.innerHTML;
+                const regex = new RegExp(`(${escapeRegex(appState.currentSearchTerm)})`, "gi");
+                contentEl.innerHTML = text.replace(regex, '<span class="highlight-match">$1</span>');
+            });
+        }
+
+        function escapeRegex(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function clearSearch() {
+            document.getElementById("searchInput").value = "";
+            document.getElementById("searchResults").textContent = "";
+            document.getElementById("clearSearch").style.display = "none";
+
+            appState.currentSearchTerm = "";
+            appState.displayedDocuments = [...appState.allDocuments];
+            appState.searchMatches = [];
+
+            renderDocuments();
+        }
+
+        // ===== NAVIGATION =====
+        function loadAndScrollToDocument(docId) {
+            // Find the document in displayedDocuments or allDocuments
+            const doc = appState.displayedDocuments.find(d => d.id === docId) || 
+                       appState.allDocuments.find(d => d.id === docId);
+
+            if (!doc) return;
+
+            // Check if document is already in main content
+            let section = document.getElementById(`doc-${docId}`);
+
+            if (!section) {
+                // Create the document section
+                appState.displayedDocuments = [doc];
+                renderDocuments();
+            }
+
+            // Scroll to it
+            setTimeout(() => {
+                scrollToDocument(docId);
+            }, 100);
+        }
+
+        function scrollToDocument(docId) {
+            const anchor = document.getElementById(`anchor-${docId}`);
+            if (anchor) {
+                anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+                updateActiveIndex(docId);
+            }
+        }
+
+        function updateActiveIndex(docId) {
+            document.querySelectorAll(".index-item").forEach(item => item.classList.remove("active"));
+            const activeItem = document.querySelector(`[data-doc-id="${docId}"]`);
+            if (activeItem) {
+                activeItem.classList.add("active");
+                activeItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+        }
+
+        // ===== SIDEBAR TOGGLE =====
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const mainContent = document.getElementById("mainContent");
+            const toggleBtn = document.getElementById("toggleBtn");
+
+            appState.sidebarVisible = !appState.sidebarVisible;
+
+            if (appState.sidebarVisible) {
+                sidebar.classList.remove("hidden");
+                mainContent.classList.remove("sidebar-hidden");
+                toggleBtn.classList.add("sidebar-open");
+            } else {
+                sidebar.classList.add("hidden");
+                mainContent.classList.add("sidebar-hidden");
+                toggleBtn.classList.remove("sidebar-open");
+            }
+        }
+
+        // ===== LANGUAGE SELECTION =====
+        function setLanguage(lang) {
+            appState.currentLanguage = lang;
+
+            document.querySelectorAll(".lang-btn").forEach(btn => {
+                btn.classList.remove("active");
+                if (btn.getAttribute("data-lang") === lang) {
+                    btn.classList.add("active");
+                }
+            });
+
+            appState.displayedDocuments = [...appState.allDocuments];
+            renderDocuments();
+
+            if (appState.currentSearchTerm) {
+                performSearch();
+            }
+        }
+
+        // ===== VIEW MODE TOGGLE =====
+        function setViewMode(mode) {
+            appState.bilingualMode = (mode === "bilingual");
+
+            document.querySelectorAll(".view-mode-btn").forEach(btn => {
+                btn.classList.remove("active");
+                if (btn.getAttribute("data-mode") === mode) {
+                    btn.classList.add("active");
+                }
+            });
+
+            // Show/hide second language selector
+            const secondLangSelector = document.getElementById("secondLanguageSelector");
+            if (appState.bilingualMode) {
+                secondLangSelector.style.display = "block";
+                // Set first option as active
+                const firstBtn = secondLangSelector.querySelector(".lang-btn");
+                if (firstBtn) {
+                    setSecondLanguage(firstBtn.getAttribute("data-lang"));
+                }
+            } else {
+                secondLangSelector.style.display = "none";
+            }
+
+            // Re-render current document if displayed
+            if (appState.displayedDocuments.length > 0) {
+                renderDocuments();
+            }
+        }
+
+        // ===== SET SECOND LANGUAGE =====
+        function setSecondLanguage(lang) {
+            if (lang === appState.currentLanguage) {
+                // Don't allow same language as primary
+                return;
+            }
+
+            appState.secondLanguage = lang;
+
+            const secondLangSelector = document.getElementById("secondLanguageSelector");
+            secondLangSelector.querySelectorAll(".lang-btn").forEach(btn => {
+                btn.classList.remove("active");
+                if (btn.getAttribute("data-lang") === lang) {
+                    btn.classList.add("active");
+                }
+            });
+
+            // Re-render if in bilingual mode
+            if (appState.bilingualMode && appState.displayedDocuments.length > 0) {
+                renderDocuments();
+            }
+        }
+
+        // ===== SCROLL LISTENER FOR ACTIVE INDEX =====
+        function setupScrollListeners() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const docId = entry.target.getAttribute("data-doc-id");
+                        if (docId) {
+                            updateActiveIndex(docId);
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll(".document-section").forEach(doc => observer.observe(doc));
+        }
+
+        // ===== SYNCHRONIZED SCROLLING =====
+        function setupSyncScrolling(docId) {
+            const content1 = document.getElementById(`content1-${docId}`);
+            const content2 = document.getElementById(`content2-${docId}`);
+
+            if (!content1 || !content2 || !appState.bilingualMode) return;
+
+            // Remove old listeners
+            content1.onscroll = null;
+            content2.onscroll = null;
+
+            let isScrolling = false;
+
+            function syncScroll(source, target) {
+                if (!isScrolling && appState.syncScrollEnabled && appState.bilingualMode) {
+                    isScrolling = true;
+                    const sourceHeight = source.scrollHeight - source.clientHeight;
+                    const targetHeight = target.scrollHeight - target.clientHeight;
+
+                    if (sourceHeight > 0) {
+                        const scrollPercentage = source.scrollTop / sourceHeight;
+                        target.scrollTop = scrollPercentage * targetHeight;
+                    }
+
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 50);
+                }
+            }
+
+            content1.addEventListener("scroll", () => syncScroll(content1, content2), true);
+            content2.addEventListener("scroll", () => syncScroll(content2, content1), true);
+        }
+
+        // ===== EVENT LISTENERS =====
+        document.addEventListener("DOMContentLoaded", async function () {
+            await loadConfig();
+            await fetchDocuments();
+
+            document.getElementById("toggleBtn").addEventListener("click", toggleSidebar);
+            document.getElementById("searchInput").addEventListener("input", performSearch);
+            document.getElementById("clearSearch").addEventListener("click", clearSearch);
+
+            document.querySelectorAll(".lang-btn").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    setLanguage(e.target.getAttribute("data-lang"));
+                });
+            });
+
+            // Second language selector (inside bilingual mode)
+            document.querySelectorAll("#secondLanguageSelector .lang-btn").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    setSecondLanguage(e.target.getAttribute("data-lang"));
+                });
+            });
+
+            document.querySelectorAll(".view-mode-btn").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    setViewMode(e.target.getAttribute("data-mode"));
+                });
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener("keydown", (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === "f") {
+                    e.preventDefault();
+                    document.getElementById("searchInput").focus();
+                }
+                if (e.key === "Escape") {
+                    clearSearch();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
