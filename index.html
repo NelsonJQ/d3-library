@@ -36,6 +36,7 @@
 
         .layout {
             display: flex;
+            flex-direction: column;
             height: 100vh;
             overflow: hidden;
         }
@@ -48,7 +49,7 @@
             overflow-y: auto;
             transition: transform 0.3s ease;
             position: fixed;
-            height: 100vh;
+            height: 100vh; /* Adjusted to ensure full viewport height */
             z-index: 1000;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             top: 0;
@@ -119,7 +120,7 @@
             border-radius: 5px;
             font-size: 14px;
             background: #4a5f7a;
-            color: white;
+            color: #ecf0f1;
             outline: none;
             transition: all 0.3s ease;
         }
@@ -248,16 +249,35 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            height: 100vh;
             overflow-y: scroll;
             overflow-x: hidden;
             scrollbar-width: thin;
             scrollbar-color: #999 transparent;
-            padding-bottom: 40px;
+            padding-bottom: 60px; /* Increased padding to prevent footer overlap */
         }
 
         .main-content.sidebar-hidden {
             margin-left: 0;
+        }
+
+        /* Footer styling */
+        .footer-disclaimer {
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #6c757d;
+            line-height: 1.5;
+            position: relative; /* Changed from absolute to relative */
+            bottom: 0;
+            width: 100%;
+        }
+
+        body.dark-theme .footer-disclaimer {
+            background: var(--bg-secondary);
+            border-top-color: var(--border-color);
+            color: var(--text-secondary);
         }
 
         /* Scrollable container that holds all documents */
@@ -328,7 +348,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #7ec654 0%, #6eb240 100%);
             color: white;
             padding: 25px 40px;
             text-align: center;
@@ -524,6 +544,9 @@
             font-size: 12px;
             color: #6c757d;
             line-height: 1.5;
+            position: relative; /* Changed from absolute to relative */
+            bottom: 0;
+            width: 100%;
         }
 
         body.dark-theme .footer-disclaimer {
@@ -535,7 +558,7 @@
         /* ===== ACCESSIBILITY TOOLBAR ===== */
         .accessibility-toolbar {
             position: fixed;
-            bottom: -80px;
+            bottom: 50px; /* Adjusted to 50px */
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -549,11 +572,11 @@
             justify-content: center;
             z-index: 999;
             box-shadow: 0 8px 24px rgba(126, 198, 84, 0.3);
-            transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.3s ease; /* Restored transition effect */
         }
 
         .accessibility-toolbar.visible {
-            bottom: 20px;
+            bottom: 50px;
         }
 
         body.dark-theme .accessibility-toolbar {
@@ -818,6 +841,11 @@
                     <p style="margin-top: 10px; font-size: 14px;">If this message persists, check the browser console (F12) for errors.</p>
                 </div>
             </div>
+
+            <!-- Footer disclaimer moved inside mainContent -->
+            <footer class="footer-disclaimer">
+                Data copyright belongs to Ankama Games (c) https://www.ankama.com/fr/games, data retrieved via DofusDB.fr
+            </footer>
         </div>
     </div>
 
@@ -867,7 +895,8 @@
             loadedImagesCache: new Set(),
             currentDisplayedDocId: null,  // Track which document is currently shown
             fontSizePercent: 100,
-            lineHeightValue: 1.8
+            lineHeightValue: 1.8,
+            searchTimeout: null  // For debouncing search
         };
 
         // ===== INDEXEDDB CACHE MANAGEMENT =====
@@ -946,12 +975,22 @@
             lazyImages.forEach((img) => {
                 const dataSrc = img.getAttribute("data-src");
 
-                // Load image immediately
                 if (dataSrc) {
+                    // Check if already loaded in session cache
+                    if (appState.loadedImagesCache.has(dataSrc)) {
+                        img.src = dataSrc;
+                        img.removeAttribute("data-src");
+                        console.log("Loading from session cache:", dataSrc);
+                        return;
+                    }
+
+                    // Preload image only if not cached
                     const preload = new Image();
                     preload.onload = () => {
                         img.src = dataSrc;
                         img.removeAttribute("data-src");
+                        appState.loadedImagesCache.add(dataSrc);
+                        console.log("Loaded and cached:", dataSrc);
                     };
                     preload.onerror = () => {
                         console.error("Failed to load image:", dataSrc);
@@ -1179,16 +1218,12 @@
                 return;
             }
 
-            // Debug: Check document structure
-            console.log("Documents to render:", appState.allDocuments.length);
-            console.log("First document structure:", appState.allDocuments[0]);
-
             appState.allDocuments.forEach((doc, idx) => {
                 try {
                     const title = getTitle(doc, appState.currentLanguage);
                     const li = document.createElement("li");
                     li.className = "index-item";
-                    
+
                     // Use doc.id or fallback to index
                     const docId = doc.id || idx;
                     li.setAttribute("data-doc-id", docId);
@@ -1196,8 +1231,8 @@
 
                     li.innerHTML = `
                         <a onclick="loadAndScrollToDocument('${docId}')">
-                            <div class="index-title">${escapeHtml(title)}</div>
-                            <div class="index-id">ID: ${docId}</div>
+                            <div class="index-title" style="white-space: normal; display: inline;">${escapeHtml(title)}</div>
+                            <span class="index-id" style="font-style: italic; color: inherit;">[ID: ${docId}]</span>
                         </a>
                     `;
 
@@ -1217,6 +1252,33 @@
                     </div>
                 `;
             }
+        }
+
+        function renderIndex() {
+            const indexList = document.getElementById("indexList");
+            indexList.innerHTML = "";
+
+            if (appState.displayedDocuments.length === 0) {
+                indexList.innerHTML = '<li style="text-align: center; padding: 20px; color: #bdc3c7;">No documents found</li>';
+                return;
+            }
+
+            appState.displayedDocuments.forEach((doc, idx) => {
+                const title = getTitle(doc, appState.currentLanguage);
+                const li = document.createElement("li");
+                li.className = "index-item";
+                li.setAttribute("data-doc-id", doc.id);
+                li.setAttribute("data-index", idx);
+
+                li.innerHTML = `
+                    <a onclick="loadAndScrollToDocument('${doc.id}')">
+                        <div class="index-title" style="white-space: normal; display: inline;">${escapeHtml(title)}</div>
+                        <span class="index-id" style="font-style: italic; color: inherit;">[ID: ${doc.id}]</span>
+                    </a>
+                `;
+
+                indexList.appendChild(li);
+            });
         }
 
         // ===== RENDER DOCUMENTS =====
@@ -1242,6 +1304,7 @@
             renderIndex();
             setupScrollListeners();
         }
+        
 
         // ===== RENDER INDEX LIST =====
         function renderIndex() {
@@ -1262,8 +1325,8 @@
 
                 li.innerHTML = `
                     <a onclick="loadAndScrollToDocument('${doc.id}')">
-                        <div class="index-title">${escapeHtml(title)}</div>
-                        <div class="index-id">ID: ${doc.id}</div>
+                        <div class="index-title" style="white-space: normal; display: inline;">${escapeHtml(title)}</div>
+                        <span class="index-id" style="font-style: italic; color: inherit;">[ID: ${doc.id}]</span>
                     </a>
                 `;
 
@@ -1362,7 +1425,8 @@
 
         // ===== HELPER FUNCTIONS =====
         function getTitle(doc, lang) {
-            return typeof doc.title === 'object' ? (doc.title[lang] || "Title not available") : "Title not available";
+            const rawTitle = typeof doc.title === 'object' ? (doc.title[lang] || "Title not available") : "Title not available";
+            return cleanHtmlTags(rawTitle);
         }
 
         function getSubtitle(doc, lang) {
@@ -1386,42 +1450,73 @@
 
         // ===== SEARCH FUNCTIONALITY =====
         function performSearch() {
-            const searchTerm = document.getElementById("searchInput").value.toLowerCase().trim();
+            const searchInput = document.getElementById("searchInput");
+            const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : "";
             const clearBtn = document.getElementById("clearSearch");
 
             appState.currentSearchTerm = searchTerm;
 
-            if (searchTerm === "") {
-                clearSearch();
+            // Clear any existing timeout
+            if (appState.searchTimeout) {
+                clearTimeout(appState.searchTimeout);
+            }
+
+            // Require at least 3 characters to start search
+            if (searchTerm.length < 3) {
+                // Don't clear the input - just don't search yet
+                clearBtn.style.display = "none";
+                document.getElementById("searchResults").textContent = "";
                 return;
             }
 
-            clearBtn.style.display = "block";
+            // Debounce search by 300ms
+            appState.searchTimeout = setTimeout(() => {
+                const filteredDocs = appState.allDocuments.filter(doc => {
+                    const title = getTitle(doc, appState.currentLanguage).toLowerCase();
+                    const subtitle = getSubtitle(doc, appState.currentLanguage).toLowerCase();
+                    const author = getAuthor(doc, appState.currentLanguage).toLowerCase();
+                    const content = getContent(doc, appState.currentLanguage).toLowerCase();
 
-            const filteredDocs = appState.allDocuments.filter(doc => {
-                const title = getTitle(doc, appState.currentLanguage).toLowerCase();
-                const subtitle = getSubtitle(doc, appState.currentLanguage).toLowerCase();
-                const author = getAuthor(doc, appState.currentLanguage).toLowerCase();
-                const content = getContent(doc, appState.currentLanguage).toLowerCase();
+                    return title.includes(searchTerm) || subtitle.includes(searchTerm) ||
+                           author.includes(searchTerm) || content.includes(searchTerm);
+                });
 
-                return title.includes(searchTerm) || subtitle.includes(searchTerm) ||
-                       author.includes(searchTerm) || content.includes(searchTerm);
-            });
+                appState.displayedDocuments = filteredDocs;
+                appState.searchMatches = filteredDocs.map(d => d.id);
 
-            appState.displayedDocuments = filteredDocs;
-            appState.searchMatches = filteredDocs.map(d => d.id);
+                const resultCount = filteredDocs.length;
+                clearBtn.style.display = "block";
+                document.getElementById("searchResults").textContent = `${resultCount} result(s)`;
 
-            const resultCount = filteredDocs.length;
-            document.getElementById("searchResults").textContent = `${resultCount} result(s)`;
+                // Only update the index, don't render all documents
+                renderSearchIndex();
+            }, 300);
+        }
 
-            renderDocuments();
-            highlightSearchTerms();
+        function renderSearchIndex() {
+            const indexList = document.getElementById("indexList");
+            indexList.innerHTML = "";
 
-            if (resultCount > 0) {
-                setTimeout(() => {
-                    scrollToDocument(appState.searchMatches[0]);
-                }, 300);
+            if (appState.displayedDocuments.length === 0) {
+                indexList.innerHTML = '<li style="text-align: center; padding: 20px; color: #bdc3c7;">No results found</li>';
+                return;
             }
+
+            appState.displayedDocuments.forEach((doc) => {
+                const title = getTitle(doc, appState.currentLanguage);
+                const li = document.createElement("li");
+                li.className = "index-item";
+                li.setAttribute("data-doc-id", doc.id);
+
+                li.innerHTML = `
+                    <a onclick="loadAndScrollToDocument('${doc.id}')">
+                        <div class="index-title">${escapeHtml(title)}</div>
+                        <div class="index-id">ID: ${doc.id}</div>
+                    </a>
+                `;
+
+                indexList.appendChild(li);
+            });
         }
 
         function highlightSearchTerms() {
@@ -1439,7 +1534,10 @@
         }
 
         function clearSearch() {
-            document.getElementById("searchInput").value = "";
+            const searchInput = document.getElementById("searchInput");
+            if (searchInput) {
+                searchInput.value = "";
+            }
             document.getElementById("searchResults").textContent = "";
             document.getElementById("clearSearch").style.display = "none";
 
@@ -1447,7 +1545,13 @@
             appState.displayedDocuments = [...appState.allDocuments];
             appState.searchMatches = [];
 
-            renderDocuments();
+            // Clear timeout if exists
+            if (appState.searchTimeout) {
+                clearTimeout(appState.searchTimeout);
+            }
+
+            // Just update the index, show initial document selection screen
+            renderIndexOnly();
         }
 
         // ===== NAVIGATION =====
@@ -1545,7 +1649,8 @@
                 renderIndexOnly();
             }
 
-            if (appState.currentSearchTerm) {
+            // Only re-search if there's an active search term
+            if (appState.currentSearchTerm && appState.currentSearchTerm.length >= 3) {
                 performSearch();
             }
         }
@@ -1849,10 +1954,12 @@
                 if (toggleBtn) toggleBtn.addEventListener("click", toggleSidebar);
                 
                 const searchInput = document.getElementById("searchInput");
-                if (searchInput) searchInput.addEventListener("input", performSearch);
+                if (searchInput) {
+                    searchInput.addEventListener("input", performSearch);
+                }
                 
-                const clearSearch = document.getElementById("clearSearch");
-                if (clearSearch) clearSearch.addEventListener("click", clearSearch);
+                const clearSearchBtn = document.getElementById("clearSearch");
+                if (clearSearchBtn) clearSearchBtn.addEventListener("click", clearSearch);
 
                 // Accessibility feature listeners with null checks
                 const themeToggleBtn = document.getElementById("themeToggleBtn");
@@ -1891,6 +1998,36 @@
                     });
                 });
 
+                // Language selector buttons - update current language and re-render index
+                document.querySelectorAll('.lang-btn').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const selectedLanguage = button.getAttribute('data-lang');
+                        if (!selectedLanguage) return;
+
+                        // Check if the button belongs to the main language selector
+                        const isMainLanguageButton = button.closest('.language-selector') && button.closest('#secondLanguageSelector') === null;
+
+                        if (isMainLanguageButton) {
+                            // Update appState with the new main language
+                            appState.currentLanguage = selectedLanguage;
+
+                            // Update the active button styling for main language
+                            document.querySelectorAll('.language-selector .lang-btn').forEach(btn => btn.classList.remove('active'));
+                            button.classList.add('active');
+
+                            // Re-render the index list with the new main language
+                            renderIndexOnly();
+                        } else {
+                            // Update appState with the new secondary language
+                            appState.secondLanguage = selectedLanguage;
+
+                            // Update the active button styling for secondary language
+                            document.querySelectorAll('#secondLanguageSelector .lang-btn').forEach(btn => btn.classList.remove('active'));
+                            button.classList.add('active');
+                        }
+                    });
+                });
+
                 console.log("Event listeners attached successfully");
             } catch (error) {
                 console.error("Error attaching event listeners:", error);
@@ -1909,9 +2046,5 @@
         });
     </script>
 
-    <!-- Footer Disclaimer -->
-    <footer class="footer-disclaimer">
-        Data belongs to Ankama Games (c) https://www.ankama.com/fr/games and is being retrieved via DofusDB.fr
-    </footer>
 </body>
 </html>
