@@ -535,6 +535,28 @@
             50% { opacity: 1; }
         }
 
+        /* ===== GEAR PULSE ANIMATION ===== */
+        @keyframes gearPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        /* ===== SIDEBAR BACKDROP ===== */
+        .sidebar-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-backdrop.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         /* ===== FOOTER DISCLAIMER ===== */
         .footer-disclaimer {
             background: #f8f9fa;
@@ -556,27 +578,80 @@
         }
 
         /* ===== ACCESSIBILITY TOOLBAR ===== */
-        .accessibility-toolbar {
+        .toolbar-toggle-btn {
             position: fixed;
-            bottom: 50px; /* Adjusted to 50px */
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            padding: 12px 18px;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
             background: linear-gradient(135deg, #7ec654 0%, #6eb240 100%);
             border: 2px solid #5a8a2f;
-            border-radius: 50px;
-            flex-wrap: wrap;
+            color: white;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            z-index: 999;
-            box-shadow: 0 8px 24px rgba(126, 198, 84, 0.3);
-            transition: all 0.3s ease; /* Restored transition effect */
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(126, 198, 84, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .accessibility-toolbar.visible {
-            bottom: 50px;
+        .toolbar-toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(126, 198, 84, 0.5);
+        }
+
+        .toolbar-toggle-btn.pulse-hint {
+            animation: gearPulse 1.5s ease-in-out 5;
+        }
+
+        body.dark-theme .toolbar-toggle-btn {
+            background: linear-gradient(135deg, #5a8a2f 0%, #4a6b1f 100%);
+            border-color: #7ec654;
+        }
+
+        .accessibility-toolbar {
+            position: fixed;
+            bottom: 85px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: stretch;
+            padding: 12px;
+            background: linear-gradient(135deg, #7ec654 0%, #6eb240 100%);
+            border: 2px solid #5a8a2f;
+            border-radius: 16px;
+            z-index: 999;
+            box-shadow: 0 8px 24px rgba(126, 198, 84, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 400px;
+            opacity: 1;
+            transform: translateY(0);
+            overflow: hidden;
+        }
+
+        .accessibility-toolbar.toolbar-collapsed {
+            max-height: 0;
+            opacity: 0;
+            padding: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        .toolbar-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toolbar-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
         }
 
         body.dark-theme .accessibility-toolbar {
@@ -711,15 +786,26 @@
 
         @media (max-width: 768px) {
             .sidebar {
-                width: 280px;
+                width: 100%;
+                max-width: 85vw;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .sidebar.hidden {
+                transform: translateX(-100%);
             }
 
             .main-content {
                 margin-left: 0;
+                padding-bottom: 140px;
+            }
+
+            .toggle-btn {
+                z-index: 1002;
             }
 
             .toggle-btn.sidebar-open {
-                left: 300px;
+                left: calc(85vw + 20px);
             }
 
             .content-wrapper {
@@ -729,11 +815,16 @@
             .content-column {
                 border-right: none;
                 border-bottom: 2px solid #e9ecef;
-                max-height: 50vh;
+                max-height: none;
+                padding: 20px 15px;
             }
 
             .content-column:last-child {
                 border-bottom: none;
+            }
+
+            .content {
+                font-size: 1.2em;
             }
 
             .title {
@@ -741,7 +832,56 @@
             }
 
             .header {
-                padding: 30px 20px;
+                padding: 20px 15px;
+            }
+
+            .toolbar-btn, .theme-toggle-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+                min-width: 35px;
+            }
+
+            .font-size-display {
+                font-size: 11px;
+                min-width: 35px;
+            }
+
+            .line-height-slider {
+                width: 80px;
+            }
+
+            .toolbar-toggle-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .accessibility-toolbar {
+                bottom: 75px;
+                right: 15px;
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content {
+                font-size: 1.3em;
+            }
+
+            .title {
+                font-size: 1.5em;
+            }
+
+            .content-column {
+                padding: 15px 10px;
+            }
+
+            .line-height-slider {
+                display: none;
+            }
+
+            .toolbar-row {
+                flex-wrap: wrap;
             }
         }
 
@@ -819,18 +959,34 @@
             </ul>
         </div>
 
+        <!-- Sidebar Backdrop -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
         <div class="main-content" id="mainContent">
-            <!-- Accessibility Toolbar (Fixed at bottom) -->
-            <div class="accessibility-toolbar" id="accessibilityToolbar">
-                <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle dark/light theme">
-                    🌙
-                </button>
+            <!-- Toolbar Toggle Button -->
+            <button class="toolbar-toggle-btn" id="toolbarToggleBtn" title="Toggle accessibility toolbar">
+                ⚙️
+            </button>
 
-                <button class="toolbar-btn" id="decreaseFontBtn" title="Decrease font size">−</button>
-                <span class="font-size-display" id="fontSizeDisplay">100%</span>
-                <button class="toolbar-btn" id="increaseFontBtn" title="Increase font size">+</button>
+            <!-- Accessibility Toolbar -->
+            <div class="accessibility-toolbar toolbar-collapsed" id="accessibilityToolbar">
+                <div class="toolbar-controls">
+                    <div class="toolbar-row">
+                        <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle dark/light theme">
+                            🌙
+                        </button>
+                    </div>
+                    
+                    <div class="toolbar-row">
+                        <button class="toolbar-btn" id="decreaseFontBtn" title="Decrease font size">−</button>
+                        <span class="font-size-display" id="fontSizeDisplay">100%</span>
+                        <button class="toolbar-btn" id="increaseFontBtn" title="Increase font size">+</button>
+                    </div>
 
-                <input type="range" id="lineHeightSlider" class="line-height-slider" min="1.6" max="2.4" step="0.1" value="1.8" title="Adjust line spacing">
+                    <div class="toolbar-row">
+                        <input type="range" id="lineHeightSlider" class="line-height-slider" min="1.6" max="2.4" step="0.1" value="1.8" title="Adjust line spacing">
+                    </div>
+                </div>
             </div>
 
             <!-- Documents scroll container -->
@@ -896,7 +1052,11 @@
             currentDisplayedDocId: null,  // Track which document is currently shown
             fontSizePercent: 100,
             lineHeightValue: 1.8,
-            searchTimeout: null  // For debouncing search
+            searchTimeout: null,  // For debouncing search
+            toolbarCollapsed: true,  // Toolbar state
+            swipeStartX: 0,          // Swipe gesture tracking
+            swipeStartY: 0,
+            swipeStartTime: 0
         };
 
         // ===== INDEXEDDB CACHE MANAGEMENT =====
@@ -1554,6 +1714,93 @@
             renderIndexOnly();
         }
 
+        // ===== TOOLBAR TOGGLE =====
+        function toggleToolbar() {
+            const toolbar = document.getElementById('accessibilityToolbar');
+            const toggleBtn = document.getElementById('toolbarToggleBtn');
+            
+            if (!toolbar || !toggleBtn) return;
+            
+            appState.toolbarCollapsed = !appState.toolbarCollapsed;
+            
+            if (appState.toolbarCollapsed) {
+                toolbar.classList.add('toolbar-collapsed');
+            } else {
+                toolbar.classList.remove('toolbar-collapsed');
+            }
+        }
+
+        // ===== SWIPE GESTURE DETECTION =====
+        function setupSwipeGestures() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (!sidebar || !mainContent) return;
+            
+            // Sidebar swipe to close
+            sidebar.addEventListener('touchstart', (e) => {
+                appState.swipeStartX = e.touches[0].clientX;
+                appState.swipeStartY = e.touches[0].clientY;
+                appState.swipeStartTime = Date.now();
+            }, { passive: true });
+            
+            sidebar.addEventListener('touchmove', (e) => {
+                if (!appState.sidebarVisible) return;
+                
+                const touchX = e.touches[0].clientX;
+                const touchY = e.touches[0].clientY;
+                const deltaX = touchX - appState.swipeStartX;
+                const deltaY = Math.abs(touchY - appState.swipeStartY);
+                
+                // Only handle horizontal swipes
+                if (Math.abs(deltaX) > deltaY && deltaX < -30) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            sidebar.addEventListener('touchend', (e) => {
+                if (!appState.sidebarVisible) return;
+                
+                const touchX = e.changedTouches[0].clientX;
+                const touchY = e.changedTouches[0].clientY;
+                const deltaX = touchX - appState.swipeStartX;
+                const deltaY = Math.abs(touchY - appState.swipeStartY);
+                const deltaTime = Date.now() - appState.swipeStartTime;
+                const velocity = Math.abs(deltaX) / deltaTime;
+                
+                // Swipe left to close (distance > 50px OR velocity > 0.3px/ms)
+                if (Math.abs(deltaX) > Math.abs(deltaY) && 
+                    (deltaX < -50 || (deltaX < -20 && velocity > 0.3))) {
+                    toggleSidebar();
+                }
+            }, { passive: true });
+            
+            // Main content right-edge swipe to open
+            mainContent.addEventListener('touchstart', (e) => {
+                appState.swipeStartX = e.touches[0].clientX;
+                appState.swipeStartY = e.touches[0].clientY;
+                appState.swipeStartTime = Date.now();
+            }, { passive: true });
+            
+            mainContent.addEventListener('touchend', (e) => {
+                if (appState.sidebarVisible || window.innerWidth > 768) return;
+                
+                const touchX = e.changedTouches[0].clientX;
+                const touchY = e.changedTouches[0].clientY;
+                const deltaX = touchX - appState.swipeStartX;
+                const deltaY = Math.abs(touchY - appState.swipeStartY);
+                const deltaTime = Date.now() - appState.swipeStartTime;
+                const velocity = Math.abs(deltaX) / deltaTime;
+                
+                // Swipe right from left edge to open
+                if (appState.swipeStartX < 20 && 
+                    Math.abs(deltaX) > Math.abs(deltaY) &&
+                    (deltaX > 50 || (deltaX > 20 && velocity > 0.3))) {
+                    toggleSidebar();
+                }
+            }, { passive: true });
+        }
+
         // ===== NAVIGATION =====
         function loadAndScrollToDocument(docId) {
             // Find the document in allDocuments - convert both to string for comparison
@@ -1582,6 +1829,11 @@
                 console.error("Error creating document section:", error);
                 container.innerHTML = `<div class="error-message"><h3>Error loading document</h3><p>${error.message}</p></div>`;
                 return;
+            }
+
+            // Auto-collapse sidebar on mobile when document selected
+            if (window.innerWidth <= 768 && appState.sidebarVisible) {
+                toggleSidebar();
             }
 
             // Scroll to it and update index
@@ -1616,6 +1868,7 @@
             const sidebar = document.getElementById("sidebar");
             const mainContent = document.getElementById("mainContent");
             const toggleBtn = document.getElementById("toggleBtn");
+            const backdrop = document.getElementById("sidebarBackdrop");
 
             appState.sidebarVisible = !appState.sidebarVisible;
 
@@ -1623,10 +1876,20 @@
                 sidebar.classList.remove("hidden");
                 mainContent.classList.remove("sidebar-hidden");
                 toggleBtn.classList.add("sidebar-open");
+                
+                // Show backdrop on mobile
+                if (window.innerWidth <= 768 && backdrop) {
+                    backdrop.classList.add("visible");
+                }
             } else {
                 sidebar.classList.add("hidden");
                 mainContent.classList.add("sidebar-hidden");
                 toggleBtn.classList.remove("sidebar-open");
+                
+                // Hide backdrop
+                if (backdrop) {
+                    backdrop.classList.remove("visible");
+                }
             }
         }
 
@@ -1914,6 +2177,39 @@
             initLineHeight();
         }
 
+        // Initialize toolbar pulse hint
+        function initToolbarHint() {
+            const hasSeenHint = localStorage.getItem('hasSeenToolbarHint');
+            const toggleBtn = document.getElementById('toolbarToggleBtn');
+            
+            if (!hasSeenHint && toggleBtn) {
+                toggleBtn.classList.add('pulse-hint');
+                
+                // Remove pulse after 5 cycles (7.5 seconds)
+                setTimeout(() => {
+                    toggleBtn.classList.remove('pulse-hint');
+                    localStorage.setItem('hasSeenToolbarHint', 'true');
+                }, 7500);
+            }
+        }
+
+        // Initialize mobile toolbar state
+        function initMobileToolbar() {
+            if (window.innerWidth <= 768) {
+                appState.toolbarCollapsed = true;
+                const toolbar = document.getElementById('accessibilityToolbar');
+                if (toolbar) {
+                    toolbar.classList.add('toolbar-collapsed');
+                }
+            } else {
+                appState.toolbarCollapsed = false;
+                const toolbar = document.getElementById('accessibilityToolbar');
+                if (toolbar) {
+                    toolbar.classList.remove('toolbar-collapsed');
+                }
+            }
+        }
+
         // ===== EVENT LISTENERS =====
         document.addEventListener("DOMContentLoaded", async function () {
             console.log("DOMContentLoaded fired");
@@ -1937,6 +2233,11 @@
             // Initialize accessibility features
             initAccessibilityFeatures();
             
+            // Initialize mobile features
+            initMobileToolbar();
+            initToolbarHint();
+            setupSwipeGestures();
+            
             // Setup toolbar visibility (before documents load)
             setupToolbarVisibility();
             
@@ -1952,6 +2253,18 @@
                 // Main navigation listeners with null checks
                 const toggleBtn = document.getElementById("toggleBtn");
                 if (toggleBtn) toggleBtn.addEventListener("click", toggleSidebar);
+                
+                // Toolbar toggle button
+                const toolbarToggleBtn = document.getElementById("toolbarToggleBtn");
+                if (toolbarToggleBtn) toolbarToggleBtn.addEventListener("click", toggleToolbar);
+
+                // Sidebar backdrop click to close
+                const backdrop = document.getElementById("sidebarBackdrop");
+                if (backdrop) backdrop.addEventListener("click", () => {
+                    if (appState.sidebarVisible && window.innerWidth <= 768) {
+                        toggleSidebar();
+                    }
+                });
                 
                 const searchInput = document.getElementById("searchInput");
                 if (searchInput) {
