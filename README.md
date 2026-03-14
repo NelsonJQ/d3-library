@@ -1,6 +1,6 @@
 # Dofus Ingame Library - Bilingual HTML Explorer
 
-A standalone, memory-optimized HTML application for viewing and searching Dofus game documents in multiple languages with bilingual support.
+A standalone, memory-optimized HTML application for viewing and searching Dofus game documents in multiple languages, with bilingual and bisource comparison support.
 
 Access here :
 
@@ -10,7 +10,14 @@ https://nelsonjq.github.io/d3-library/
 ## Features
 
 ### 1. **UI Elements and Features**
-The application provides a rich and interactive user interface designed for ease of use and accessibility. Below are the key UI elements and features:
+The application provides a rich and interactive user interface designed for ease of use, comparison workflows, and accessibility. Below are the key UI elements and features:
+
+#### **Two Data Sources**
+- The application supports two document sources:
+  - **Dofus 3 / DofusDB source**
+  - **Dofus Touch source**
+- Users can switch source with the **Source Selector** in the sidebar.
+- The selected source is persisted between sessions.
 
 #### **Available Languages**
 - The application supports the following languages:
@@ -21,15 +28,27 @@ The application provides a rich and interactive user interface designed for ease
   - **German (DE)**
 - Users can switch between these languages using the **Language Selector** in the sidebar.
 
-#### **Bilingual Mode**
+#### **Bilingual and Bisource Modes**
 - **Single-Language Mode**: Displays content in one selected language.
 - **Bilingual Mode**: Displays content side-by-side in two languages, with synchronized scrolling for easy comparison.
   - Users can select a **primary language** and a **secondary language** (excluding the primary language).
   - Titles and subtitles are displayed within each language column.
+- **Bisource Comparison Mode**: Compare equivalent documents across the two sources.
+  - The app resolves best cross-source matches by normalized titles.
+  - Source context is displayed in each document header.
+  - Quick compare actions are available directly from document cards.
+
+#### **Dual-Index View and Filters**
+- **Dual-Index View**: Displays two synchronized index columns (one per source).
+- **Cross-source Selection**: Open a document from either side and jump to its counterpart.
+- **Dual-Index Filters**: Filter lists to show all docs, only matched docs, or unmatched docs to quickly inspect coverage differences.
 
 #### **Search and Navigation**
 - **Real-Time Search**: Search across all documents with results displayed instantly.
 - **Search Highlighting**: Matches are highlighted in yellow within the document content.
+- **Diff Highlighting**:
+  - **Paragraph-level diff** highlights unmatched blocks between compared documents.
+  - **Character-level diff** highlights precise text changes inside matched paragraphs.
 - **Keyboard Shortcuts**:
   - `Ctrl+F` (or `Cmd+F`): Focus on the search bar.
   - `Escape`: Clear the search input.
@@ -40,7 +59,7 @@ The application provides a rich and interactive user interface designed for ease
 - Images are lazy-loaded and only fetched when hovered over, reducing initial load time and memory usage.
 
 #### **Accessibility Features**
-- **Dark/Light Theme Toggle**: Switch between light and dark themes.
+- **Theme Toggle (Light/Dark/Retro)**: Switch between three visual themes, including a new retro-inspired style.
 - **Font Size Adjustment**: Increase or decrease font size (80% to 150%).
 - **Line Height Adjustment**: Adjust line spacing for better readability.
 - **Toolbar Visibility**: The accessibility toolbar appears on scroll or mouse movement and hides after a few seconds of inactivity.
@@ -59,6 +78,9 @@ The application provides a rich and interactive user interface designed for ease
   - On the first load, documents are fetched from the API and cached in IndexedDB.
   - On subsequent loads, the application retrieves documents from the cache, ensuring faster load times and reduced API calls.
   - The cache persists until manually cleared or updated.
+- **Source-aware caching**:
+  - Dofus 3 data is cached in IndexedDB.
+  - Dofus Touch language payloads are managed with runtime cache maps for fast source/language switching.
 - **Cache Expiry**:
   - The application checks for new documents daily. If new documents are detected, the cache is updated automatically.
 
@@ -75,8 +97,9 @@ The application provides a rich and interactive user interface designed for ease
 
 ### 3. **Data Source and Copyright Disclaimer**
 
-#### **Data Source**
-- The application retrieves data from the **DofusDB API** (`https://api.beta.dofusdb.fr`), which provides access to Dofus game documents.
+#### **Data Sources**
+- **Dofus 3 / DofusDB API** (`https://api.beta.dofusdb.fr`) for Dofus 3 documents.
+- **Dofus Touch bilingual JSON payloads** from the local `data/touch/` dataset (`fr`, `en`, `es`, `pt`, `de`).
 
 #### **Copyright Disclaimer**
 - All data and content displayed in this application are the property of **Ankama Games**.

@@ -23,6 +23,8 @@
             --text-secondary: #3c9764;
             --border-color: #e9ecef;
             --accent-color: #c3d85b;
+            --panel-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --sidebar-current-width: 320px;
         }
 
         body.dark-theme {
@@ -32,6 +34,17 @@
             --text-secondary: #a0a0a0;
             --border-color: #404040;
             --accent-color: #7a8fff;
+            --panel-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+        }
+
+        body.retro-theme {
+            --bg-primary: #f4ebd7;
+            --bg-secondary: #e8d8bb;
+            --text-primary: #2d1c0f;
+            --text-secondary: #6b5238;
+            --border-color: #8c724d;
+            --accent-color: #ba6f28;
+            --panel-shadow: 0 12px 30px rgba(78, 52, 30, 0.26);
         }
 
         .layout {
@@ -43,7 +56,7 @@
 
         /* ===== SIDEBAR ===== */
         .sidebar {
-            width: 320px;
+            width: var(--sidebar-current-width);
             background: #2c3e50;
             color: white;
             overflow-y: auto;
@@ -54,10 +67,25 @@
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             top: 0;
             left: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.retro-theme .sidebar {
+            background: linear-gradient(180deg, #4f3420 0%, #3e2819 100%);
+            color: #f4e3c0;
+            box-shadow: 3px 0 18px rgba(42, 24, 12, 0.45);
+            border-right: 2px solid #7f613d;
+        }
+
+        body.sidebar-resizing .sidebar,
+        body.sidebar-resizing .main-content,
+        body.sidebar-resizing .toggle-btn {
+            transition: none !important;
         }
 
         .sidebar.hidden {
-            transform: translateX(-320px);
+            transform: translateX(calc(-1 * var(--sidebar-current-width)));
         }
 
         .sidebar-header {
@@ -67,6 +95,53 @@
             position: sticky;
             top: 0;
             z-index: 1001;
+            flex: 0 0 auto;
+        }
+
+        body.retro-theme .sidebar-header {
+            background: linear-gradient(180deg, #6a482f 0%, #5a3d27 100%);
+            border-bottom: 1px solid #a58459;
+            box-shadow: inset 0 -1px 0 rgba(255, 219, 168, 0.2);
+        }
+
+        .sidebar-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .sidebar-heading-text {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .sidebar-header-toggle-btn {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #4a5f7a;
+            border-radius: 6px;
+            background: #4a5f7a;
+            color: #ecf0f1;
+            cursor: pointer;
+            line-height: 1;
+            font-size: 14px;
+            flex: 0 0 auto;
+            transition: background 0.2s ease;
+        }
+
+        body.retro-theme .sidebar-header-toggle-btn {
+            border-color: #b08b5e;
+            background: #7d5a3a;
+            color: #f9e8c4;
+        }
+
+        .sidebar-header-toggle-btn:hover {
+            background: #556b7e;
+        }
+
+        body.retro-theme .sidebar-header-toggle-btn:hover {
+            background: #916944;
         }
 
         .sidebar-title {
@@ -79,6 +154,22 @@
             font-size: 0.9em;
             opacity: 0.8;
             margin-bottom: 15px;
+        }
+
+        .sidebar.header-collapsed .source-toggle,
+        .sidebar.header-collapsed .language-selector,
+        .sidebar.header-collapsed .view-mode-toggle,
+        .sidebar.header-collapsed .search-container {
+            display: none !important;
+        }
+
+        .sidebar.header-collapsed .sidebar-header {
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+
+        .sidebar.header-collapsed .sidebar-subtitle {
+            margin-bottom: 0;
         }
 
         .language-selector {
@@ -99,13 +190,39 @@
             transition: all 0.3s ease;
         }
 
+        body.retro-theme .lang-btn,
+        body.retro-theme .view-mode-btn,
+        body.retro-theme .source-btn,
+        body.retro-theme .compare-toggle-btn {
+            background: #7b5a3b;
+            border-color: #9f7a50;
+            color: #f9e7c2;
+        }
+
         .lang-btn.active {
             background: #3498db;
             border-color: #3498db;
         }
 
+        body.retro-theme .lang-btn.active,
+        body.retro-theme .view-mode-btn.active,
+        body.retro-theme .source-btn.active,
+        body.retro-theme .compare-toggle-btn.active {
+            background: #ba6f28;
+            border-color: #d09555;
+            color: #fff6e6;
+            box-shadow: 0 2px 10px rgba(129, 70, 20, 0.35);
+        }
+
         .lang-btn:hover {
             background: #556b7e;
+        }
+
+        body.retro-theme .lang-btn:hover,
+        body.retro-theme .view-mode-btn:hover,
+        body.retro-theme .source-btn:hover,
+        body.retro-theme .compare-toggle-btn:hover {
+            background: #8f6843;
         }
 
         .search-container {
@@ -125,13 +242,29 @@
             transition: all 0.3s ease;
         }
 
+        body.retro-theme .search-input {
+            background: #8a6642;
+            color: #faebca;
+            border: 1px solid #ab8356;
+            box-shadow: inset 0 1px 3px rgba(46, 28, 15, 0.35);
+        }
+
         .search-input::placeholder {
             color: #bdc3c7;
+        }
+
+        body.retro-theme .search-input::placeholder {
+            color: #dfc7a2;
         }
 
         .search-input:focus {
             background: #556b7e;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        body.retro-theme .search-input:focus {
+            background: #9a744d;
+            box-shadow: 0 0 0 3px rgba(186, 111, 40, 0.28);
         }
 
         .search-icon {
@@ -171,9 +304,19 @@
             padding: 0;
         }
 
+        .sidebar > .index-list {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
         .index-item {
             border-bottom: 1px solid #4a5f7a;
             transition: all 0.3s ease;
+        }
+
+        body.retro-theme .index-item {
+            border-bottom-color: #7f613e;
         }
 
         .index-item.hidden {
@@ -182,6 +325,10 @@
 
         .index-item.highlighted {
             background: #f39c12;
+        }
+
+        body.retro-theme .index-item.highlighted {
+            background: #ad6a2d;
         }
 
         .index-item a {
@@ -197,10 +344,19 @@
             background: #34495e;
         }
 
+        body.retro-theme .index-item a:hover {
+            background: #5f4128;
+        }
+
         .index-item.active a {
             background: #3498db;
             padding-left: 24px;
             border-left: 4px solid #2980b9;
+        }
+
+        body.retro-theme .index-item.active a {
+            background: #ba6f28;
+            border-left-color: #de9a57;
         }
 
         .index-title {
@@ -232,18 +388,28 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
+        body.retro-theme .toggle-btn {
+            background: linear-gradient(135deg, #b87834 0%, #a36220 100%);
+            border: 1px solid #8e5424;
+            box-shadow: 0 6px 14px rgba(64, 37, 16, 0.35);
+        }
+
         .toggle-btn:hover {
             background: #2980b9;
         }
 
+        body.retro-theme .toggle-btn:hover {
+            background: #8c531f;
+        }
+
         .toggle-btn.sidebar-open {
-            left: 340px;
+            left: calc(var(--sidebar-current-width) + 20px);
         }
 
         /* ===== MAIN CONTENT ===== */
         .main-content {
             flex: 1;
-            margin-left: 320px;
+            margin-left: var(--sidebar-current-width);
             transition: margin-left 0.3s ease;
             padding: 20px;
             display: flex;
@@ -254,6 +420,10 @@
             scrollbar-width: thin;
             scrollbar-color: #999 transparent;
             padding-bottom: 60px; /* Increased padding to prevent footer overlap */
+        }
+
+        body.retro-theme .main-content {
+            scrollbar-color: #a07142 transparent;
         }
 
         .main-content.sidebar-hidden {
@@ -306,6 +476,15 @@
             background: #666;
         }
 
+        body.retro-theme .main-content::-webkit-scrollbar-thumb {
+            background: #9a6d3f;
+            border-radius: 10px;
+        }
+
+        body.retro-theme .main-content::-webkit-scrollbar-thumb:hover {
+            background: #80562d;
+        }
+
         body.dark-theme .main-content {
             scrollbar-color: #666 transparent;
         }
@@ -321,7 +500,7 @@
         .document-section {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--panel-shadow);
             overflow: hidden;
             margin-bottom: 40px;
             transition: all 0.3s ease;
@@ -333,6 +512,13 @@
             color: var(--text-primary);
         }
 
+        body.retro-theme .document-section {
+            background: linear-gradient(180deg, #f8eed8 0%, #f1e2c5 100%);
+            color: var(--text-primary);
+            border: 2px solid #9a774f;
+            box-shadow: 0 12px 26px rgba(71, 44, 22, 0.28), inset 0 1px 0 rgba(255, 247, 230, 0.7);
+        }
+
         .document-section.search-hidden {
             display: none;
         }
@@ -340,6 +526,11 @@
         .document-section.search-highlighted {
             border: 3px solid #f39c12;
             box-shadow: 0 15px 40px rgba(243, 156, 18, 0.3);
+        }
+
+        body.retro-theme .document-section.search-highlighted {
+            border-color: #c37b2f;
+            box-shadow: 0 14px 34px rgba(133, 77, 28, 0.36);
         }
 
         .document-anchor {
@@ -352,6 +543,13 @@
             color: white;
             padding: 25px 40px;
             text-align: center;
+            position: relative;
+        }
+
+        body.retro-theme .header {
+            background: linear-gradient(135deg, #866445 0%, #714d33 100%);
+            border-bottom: 2px solid #9f7b53;
+            box-shadow: inset 0 -1px 0 rgba(255, 229, 184, 0.24);
         }
 
         body.dark-theme .header {
@@ -383,6 +581,250 @@
             opacity: 0.8;
         }
 
+        .doc-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .doc-meta-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 0.84em;
+            line-height: 1.25;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.17);
+            color: #f8f6f2;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .doc-context-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.84em;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.16);
+            color: #f4eee5;
+        }
+
+        .doc-compare-action {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .doc-compare-action button {
+            transition: background 0.2s ease, transform 0.2s ease, opacity 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .doc-compare-btn {
+            width: 34px;
+            height: 34px;
+            border: 2px solid rgba(255, 255, 255, 0.45);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .doc-compare-btn:hover {
+            background: rgba(255, 255, 255, 0.32);
+            transform: translateY(-1px);
+        }
+
+        .doc-compare-btn.active {
+            background: #f39c12;
+            border-color: #f39c12;
+        }
+
+        .doc-compare-btn.notify-match {
+            animation: compareNotifyPulse 1.25s ease-in-out 3;
+            box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.55);
+        }
+
+        @keyframes compareNotifyPulse {
+            0% { transform: translateY(0) scale(1); box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.55); }
+            18% { transform: translateY(-1px) scale(1.08); box-shadow: 0 0 0 8px rgba(243, 156, 18, 0.12); }
+            36% { transform: translateY(0) scale(1); box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.0); }
+            54% { transform: translateY(-1px) scale(1.06); box-shadow: 0 0 0 6px rgba(243, 156, 18, 0.16); }
+            100% { transform: translateY(0) scale(1); box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.0); }
+        }
+
+        .doc-char-diff-btn {
+            width: 34px;
+            height: 34px;
+            border: 2px solid rgba(255, 255, 255, 0.45);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 15px;
+            line-height: 1;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .doc-char-diff-btn:hover {
+            background: rgba(255, 255, 255, 0.32);
+            transform: translateY(-1px);
+        }
+
+        .doc-char-diff-btn.inactive {
+            background: rgba(44, 62, 80, 0.45);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .doc-paragraph-diff-btn {
+            width: 34px;
+            height: 34px;
+            border: 2px solid rgba(255, 255, 255, 0.45);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .doc-paragraph-diff-btn:hover {
+            background: rgba(255, 255, 255, 0.32);
+            transform: translateY(-1px);
+        }
+
+        .doc-paragraph-diff-btn.inactive {
+            background: rgba(44, 62, 80, 0.45);
+            border-color: rgba(255, 255, 255, 0.35);
+            opacity: 0.55;
+            filter: saturate(0.55);
+        }
+
+        .doc-char-diff-btn:not(.inactive):not(.active),
+        .doc-paragraph-diff-btn:not(.inactive):not(.active),
+        .doc-compare-btn:not(.active) {
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .doc-char-diff-btn.active,
+        .doc-paragraph-diff-btn.active,
+        .doc-compare-btn.active {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(155, 35, 24, 0.35);
+        }
+
+        .source-chip {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            background: rgba(52, 73, 94, 0.12);
+            color: #2c3e50;
+            border-radius: 999px;
+            padding: 4px 10px;
+            margin-bottom: 10px;
+        }
+
+        body:not(.dark-theme):not(.retro-theme) .doc-meta-chip,
+        body:not(.dark-theme):not(.retro-theme) .doc-context-badge {
+            background: rgba(255, 250, 240, 0.28);
+            border-color: rgba(255, 255, 255, 0.58);
+            color: #183020;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 2px rgba(24, 48, 32, 0.18);
+        }
+
+        body.dark-theme .doc-meta-chip,
+        body.dark-theme .doc-context-badge {
+            background: rgba(34, 41, 61, 0.72);
+            border-color: rgba(112, 129, 180, 0.78);
+            color: #e7ecff;
+            box-shadow: inset 0 1px 0 rgba(173, 188, 230, 0.24), 0 1px 2px rgba(0, 0, 0, 0.36);
+        }
+
+        body.dark-theme .source-chip {
+            background: rgba(46, 59, 96, 0.82);
+            color: #e4ecff;
+            border: 1px solid rgba(121, 142, 201, 0.8);
+            box-shadow: inset 0 1px 0 rgba(173, 190, 232, 0.2);
+        }
+
+        body.dark-theme .doc-char-diff-btn:not(.inactive):not(.active),
+        body.dark-theme .doc-paragraph-diff-btn:not(.inactive):not(.active),
+        body.dark-theme .doc-compare-btn:not(.active) {
+            background: rgba(54, 65, 99, 0.75);
+            border-color: rgba(130, 149, 205, 0.75);
+            color: #edf2ff;
+        }
+
+        body.dark-theme .doc-char-diff-btn.inactive,
+        body.dark-theme .doc-paragraph-diff-btn.inactive {
+            background: rgba(33, 39, 57, 0.75);
+            border-color: rgba(89, 101, 136, 0.55);
+            color: #9ca7c7;
+            opacity: 0.5;
+        }
+
+        body:not(.dark-theme):not(.retro-theme) .doc-char-diff-btn:not(.inactive):not(.active),
+        body:not(.dark-theme):not(.retro-theme) .doc-paragraph-diff-btn:not(.inactive):not(.active),
+        body:not(.dark-theme):not(.retro-theme) .doc-compare-btn:not(.active) {
+            background: rgba(255, 247, 234, 0.92);
+            border-color: rgba(182, 132, 78, 0.62);
+            color: #5f3d1e;
+        }
+
+        body:not(.dark-theme):not(.retro-theme) .doc-char-diff-btn.inactive,
+        body:not(.dark-theme):not(.retro-theme) .doc-paragraph-diff-btn.inactive {
+            background: rgba(199, 176, 146, 0.7);
+            border-color: rgba(141, 106, 70, 0.5);
+            color: #73502b;
+            opacity: 0.5;
+        }
+
+        body.retro-theme .source-chip {
+            background: rgba(159, 120, 73, 0.2);
+            color: #5e3e22;
+            border: 1px solid rgba(147, 104, 58, 0.45);
+        }
+
+        .diff-unmatched {
+            background: rgba(243, 156, 18, 0.18);
+            border-left: 3px solid #f39c12;
+            padding-left: 8px;
+            border-radius: 4px;
+        }
+
+        body.dark-theme .diff-unmatched {
+            background: rgba(243, 156, 18, 0.22);
+        }
+
+        .diff-char-fragment {
+            background: rgba(231, 76, 60, 0.22);
+            border-radius: 2px;
+            padding: 0 1px;
+        }
+
+        body.dark-theme .diff-char-fragment {
+            background: rgba(231, 76, 60, 0.3);
+        }
+
         .content-wrapper {
             display: flex;
             min-height: 400px;
@@ -391,8 +833,14 @@
         .content-column {
             flex: 1;
             padding: 30px;
-            overflow-y: visible;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-width: 0;
             border-right: 2px solid #e9ecef;
+        }
+
+        body.retro-theme .content-column {
+            border-right-color: #c9b18d;
         }
 
         body.dark-theme .content-column {
@@ -436,6 +884,10 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
+        body.retro-theme .content img {
+            box-shadow: 0 6px 14px rgba(71, 44, 22, 0.24);
+        }
+
         .page-break {
             border: none;
             border-top: 2px dashed #ccc;
@@ -455,6 +907,12 @@
             background: var(--bg-secondary);
             color: var(--text-secondary);
             border-top-color: var(--border-color);
+        }
+
+        body.retro-theme .metadata {
+            background: #ecdabf;
+            border-top-color: #b6956a;
+            color: #6c4f31;
         }
 
         .metadata-item {
@@ -571,6 +1029,12 @@
             width: 100%;
         }
 
+        body.retro-theme .footer-disclaimer {
+            background: #ead9be;
+            border-top-color: #b28e62;
+            color: #5d432a;
+        }
+
         body.dark-theme .footer-disclaimer {
             background: var(--bg-secondary);
             border-top-color: var(--border-color);
@@ -598,9 +1062,19 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        body.retro-theme .toolbar-toggle-btn {
+            background: linear-gradient(135deg, #b97834 0%, #a0611f 100%);
+            border-color: #87501f;
+            box-shadow: 0 6px 16px rgba(85, 48, 18, 0.4);
+        }
+
         .toolbar-toggle-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 16px rgba(126, 198, 84, 0.5);
+        }
+
+        body.retro-theme .toolbar-toggle-btn:hover {
+            box-shadow: 0 8px 22px rgba(85, 48, 18, 0.5);
         }
 
         .toolbar-toggle-btn.pulse-hint {
@@ -631,6 +1105,12 @@
             opacity: 1;
             transform: translateY(0);
             overflow: hidden;
+        }
+
+        body.retro-theme .accessibility-toolbar {
+            background: linear-gradient(135deg, #79532f 0%, #684426 100%);
+            border-color: #9a744a;
+            box-shadow: 0 10px 24px rgba(58, 33, 16, 0.38);
         }
 
         .accessibility-toolbar.toolbar-collapsed {
@@ -674,10 +1154,23 @@
             color: white;
         }
 
+        body.retro-theme .toolbar-btn,
+        body.retro-theme .theme-toggle-btn {
+            background: rgba(255, 246, 223, 0.16);
+            border-color: rgba(255, 228, 183, 0.45);
+            color: #ffe7bf;
+        }
+
         .toolbar-btn:hover {
             background: rgba(255, 255, 255, 0.35);
             border-color: rgba(255, 255, 255, 0.6);
             transform: translateY(-2px);
+        }
+
+        body.retro-theme .toolbar-btn:hover,
+        body.retro-theme .theme-toggle-btn:hover {
+            background: rgba(255, 242, 213, 0.28);
+            border-color: rgba(255, 228, 183, 0.62);
         }
 
         .toolbar-btn.active {
@@ -719,6 +1212,10 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
 
+        body.retro-theme .line-height-slider::-webkit-slider-thumb {
+            border-color: #ba6f28;
+        }
+
         .line-height-slider::-moz-range-thumb {
             width: 16px;
             height: 16px;
@@ -727,6 +1224,10 @@
             cursor: pointer;
             border: 3px solid #7ec654;
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        body.retro-theme .line-height-slider::-moz-range-thumb {
+            border-color: #ba6f28;
         }
 
         .theme-toggle-btn {
@@ -741,6 +1242,24 @@
             text-align: center;
             font-weight: 600;
             color: white;
+        }
+
+        .theme-toggle-btn.attention-hint {
+            animation: themeToggleHint 1.45s ease-in-out 6;
+            transform-origin: center;
+        }
+
+        @keyframes themeToggleHint {
+            0% { transform: rotate(0deg) scale(1); filter: brightness(1); }
+            10% { transform: rotate(-7deg) scale(1.06); filter: brightness(1.12); }
+            22% { transform: rotate(7deg) scale(1.08); filter: brightness(1.16); }
+            34% { transform: rotate(-5deg) scale(1.06); filter: brightness(1.08); }
+            46% { transform: rotate(4deg) scale(1.04); filter: brightness(1.12); }
+            58% { transform: rotate(0deg) scale(1); filter: brightness(1); }
+            70% { transform: rotate(0deg) scale(1); filter: brightness(1.16); }
+            78% { transform: rotate(0deg) scale(1); filter: brightness(0.82); }
+            86% { transform: rotate(0deg) scale(1); filter: brightness(1.14); }
+            100% { transform: rotate(0deg) scale(1); filter: brightness(1); }
         }
 
         .theme-toggle-btn:hover {
@@ -804,6 +1323,472 @@
             background: #556b7e;
         }
 
+        .compare-toggle-btn {
+            width: 42px;
+            height: 32px;
+            border-radius: 6px;
+            border: 2px solid #4a5f7a;
+            background: #4a5f7a;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+            transition: all 0.3s ease;
+            flex: 0 0 42px;
+        }
+
+        .compare-toggle-btn:hover {
+            background: #556b7e;
+        }
+
+        .compare-toggle-btn.active {
+            background: #f39c12;
+            border-color: #f39c12;
+        }
+
+        .dual-index-view {
+            display: none;
+            flex: 1 1 auto;
+            min-height: 0;
+            border-top: 1px solid #4a5f7a;
+            background: #2c3e50;
+        }
+
+        .dual-index-view.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dual-index-lists {
+            display: flex;
+            flex: 1 1 auto;
+            min-height: 0;
+        }
+
+        .dual-index-column {
+            flex: 1;
+            min-width: 0;
+            min-height: 0;
+            border-right: 1px solid #4a5f7a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dual-index-column:last-child {
+            border-right: none;
+        }
+
+        .dual-index-label {
+            padding: 10px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #ecf0f1;
+            background: #34495e;
+            border-bottom: 1px solid #4a5f7a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .dual-index-label-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .dual-index-count {
+            opacity: 0.85;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .dual-filter-btn {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #4a5f7a;
+            border-radius: 6px;
+            background: #4a5f7a;
+            color: #ecf0f1;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            flex: 0 0 auto;
+            transition: background 0.2s ease;
+        }
+
+        .dual-filter-btn:hover {
+            background: #556b7e;
+        }
+
+        .dual-filter-btn.active {
+            background: #f39c12;
+            border-color: #f39c12;
+        }
+
+        .dual-index-list {
+            overflow-y: auto;
+            flex: 1 1 auto;
+            min-height: 0;
+            padding-bottom: 10px;
+        }
+
+        .dual-index-status {
+            text-align: center;
+            padding: 20px 12px;
+            color: #bdc3c7;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .sidebar-resizer {
+            position: absolute;
+            top: 0;
+            right: -6px;
+            width: 16px;
+            height: 100%;
+            cursor: col-resize;
+            background: transparent;
+            z-index: 1003;
+            touch-action: none;
+        }
+
+        .sidebar-resizer::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 7px;
+            width: 2px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.12);
+            transition: background 0.2s ease;
+        }
+
+        .sidebar-resizer:hover::after {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ===== RETRO OVERHAUL LAYER ===== */
+        body.retro-theme {
+            color: #2d1c0f;
+            background:
+                radial-gradient(circle at 20% 18%, rgba(255, 236, 196, 0.45) 0%, rgba(255, 236, 196, 0) 32%),
+                radial-gradient(circle at 82% 12%, rgba(170, 127, 76, 0.14) 0%, rgba(170, 127, 76, 0) 28%),
+                linear-gradient(135deg, #e4d2b1 0%, #c8aa80 100%);
+        }
+
+        body.retro-theme .main-content {
+            background:
+                linear-gradient(180deg, rgba(255, 247, 228, 0.55) 0%, rgba(255, 247, 228, 0.22) 18%, rgba(255, 247, 228, 0) 100%);
+        }
+
+        body.retro-theme .sidebar-title {
+            color: #ffeccc;
+            text-shadow: 0 1px 0 rgba(58, 35, 18, 0.55);
+        }
+
+        body.retro-theme .sidebar-subtitle,
+        body.retro-theme .search-results {
+            color: #efd3aa;
+        }
+
+        body.retro-theme .sidebar {
+            background: linear-gradient(180deg, #7b5637 0%, #5f3f27 100%);
+            border-right-color: #9f7a51;
+            box-shadow: 3px 0 16px rgba(63, 37, 19, 0.34);
+        }
+
+        body.retro-theme .sidebar-header {
+            background: linear-gradient(180deg, #8f6642 0%, #785236 100%);
+            border-bottom-color: #b89164;
+        }
+
+        body.retro-theme .source-toggle,
+        body.retro-theme .language-selector,
+        body.retro-theme .view-mode-toggle {
+            gap: 6px;
+        }
+
+        body.retro-theme .lang-btn,
+        body.retro-theme .source-btn,
+        body.retro-theme .view-mode-btn {
+            border-width: 1px;
+            border-radius: 7px;
+            box-shadow: inset 0 1px 0 rgba(255, 248, 227, 0.9), 0 1px 2px rgba(67, 41, 20, 0.22);
+            font-weight: 600;
+            background: #ead9bb;
+            border-color: #c6a479;
+            color: #3a2513;
+            text-shadow: 0 1px 0 rgba(255, 248, 231, 0.6);
+        }
+
+        body.retro-theme .compare-toggle-btn,
+        body.retro-theme .dual-filter-btn,
+        body.retro-theme .sidebar-header-toggle-btn {
+            border-width: 1px;
+            border-radius: 7px;
+            background: #ead9bb;
+            border-color: #c6a479;
+            color: #3a2513;
+            box-shadow: inset 0 1px 0 rgba(255, 248, 227, 0.9), 0 1px 2px rgba(67, 41, 20, 0.22);
+        }
+
+        body.retro-theme .lang-btn.active,
+        body.retro-theme .source-btn.active,
+        body.retro-theme .view-mode-btn.active,
+        body.retro-theme .compare-toggle-btn.active,
+        body.retro-theme .dual-filter-btn.active {
+            background: linear-gradient(180deg, #ea8b1e 0%, #ce6806 100%);
+            border-color: #a34d00;
+            color: #fff;
+            text-shadow: none;
+            box-shadow: 0 2px 8px rgba(129, 70, 20, 0.35), inset 0 1px 0 rgba(255, 209, 145, 0.45);
+        }
+
+        body.retro-theme .lang-btn:hover,
+        body.retro-theme .source-btn:hover,
+        body.retro-theme .view-mode-btn:hover,
+        body.retro-theme .compare-toggle-btn:hover,
+        body.retro-theme .dual-filter-btn:hover,
+        body.retro-theme .sidebar-header-toggle-btn:hover {
+            background: #f1e3ca;
+        }
+
+        body.retro-theme .search-container {
+            margin-top: 2px;
+        }
+
+        body.retro-theme .search-icon {
+            color: #9d7449;
+        }
+
+        body.retro-theme .search-input {
+            background: #f0e3cc;
+            border-color: #c8a97d;
+            color: #3b2512;
+            box-shadow: inset 0 1px 2px rgba(78, 52, 30, 0.18);
+        }
+
+        body.retro-theme .search-input::placeholder {
+            color: #9f7a50;
+        }
+
+        body.retro-theme .search-input:focus {
+            background: #f5ead5;
+            box-shadow: 0 0 0 3px rgba(197, 122, 47, 0.22);
+        }
+
+        body.retro-theme .clear-search {
+            background: #e74c3c;
+            border: 1px solid #c0392b;
+            color: #fff5e6;
+        }
+
+        body.retro-theme .clear-search:hover {
+            background: #c0392b;
+        }
+
+        body.retro-theme .index-item a {
+            color: #f7e4bf;
+            border-left: 0;
+            font-weight: 600;
+        }
+
+        body.retro-theme .index-item a:hover {
+            background: #724a2c;
+        }
+
+        body.retro-theme .index-item.active a {
+            background: linear-gradient(180deg, #e98a1f 0%, #cf6b08 100%);
+            border-left: 3px solid #f0b56f;
+            box-shadow: none;
+            color: #fff6ea;
+        }
+
+        body.retro-theme .index-title {
+            font-size: 1.02em;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+        }
+
+        body.retro-theme .index-id {
+            color: #d3b489;
+        }
+
+        body.retro-theme .index-item.active a {
+            box-shadow: inset 0 1px 0 rgba(255, 233, 190, 0.35);
+        }
+
+        body.retro-theme .dual-index-view {
+            background: linear-gradient(180deg, #4c3220 0%, #402918 100%);
+            border-top-color: #80623f;
+        }
+
+        body.retro-theme .dual-index-column {
+            border-right-color: #7a5a39;
+        }
+
+        body.retro-theme .dual-index-label {
+            background: linear-gradient(180deg, #6f4b31 0%, #5e3f2a 100%);
+            border-bottom-color: #8e6c44;
+            color: #f8e4bf;
+        }
+
+        body.retro-theme .dual-filter-btn {
+            border-color: #ab8354;
+            background: #7f5c39;
+            color: #f6e3bf;
+            box-shadow: inset 0 1px 0 rgba(255, 232, 190, 0.24);
+        }
+
+        body.retro-theme .dual-filter-btn:hover {
+            background: #96704a;
+        }
+
+        body.retro-theme .dual-filter-btn.active {
+            background: #c57a2f;
+            border-color: #df9a58;
+        }
+
+        body.retro-theme .dual-index-status {
+            color: #e0c39a;
+        }
+
+        body.retro-theme .document-section {
+            border-radius: 14px;
+        }
+
+        body.retro-theme .header {
+            padding: 24px 34px;
+        }
+
+        body.retro-theme .title {
+            color: #1f1308;
+            text-shadow: none;
+        }
+
+        body.retro-theme .subtitle,
+        body.retro-theme .author {
+            color: #f1dfbf;
+        }
+
+        body.retro-theme .doc-meta-chip,
+        body.retro-theme .doc-context-badge {
+            background: #ead9bb;
+            border-color: #c6a479;
+            color: #3a2513;
+            text-shadow: 0 1px 0 rgba(255, 248, 231, 0.55);
+            box-shadow: inset 0 1px 0 rgba(255, 248, 227, 0.9), 0 1px 2px rgba(67, 41, 20, 0.22);
+        }
+
+        body.retro-theme .content-wrapper {
+            background: linear-gradient(180deg, #f4e9d2 0%, #f0e0c2 100%);
+        }
+
+        body.retro-theme .content-column {
+            background: transparent;
+        }
+
+        body.retro-theme .content {
+            color: #322010;
+            font-size: 1.08em;
+            line-height: 1.9;
+        }
+
+        body.retro-theme .content p {
+            text-shadow: 0 0 0 transparent;
+        }
+
+        body.retro-theme .doc-compare-btn,
+        body.retro-theme .doc-char-diff-btn,
+        body.retro-theme .doc-paragraph-diff-btn {
+            border-color: rgba(255, 221, 175, 0.5);
+            background: rgba(173, 122, 67, 0.28);
+        }
+
+        body.retro-theme .doc-char-diff-btn.inactive,
+        body.retro-theme .doc-paragraph-diff-btn.inactive {
+            background: rgba(99, 63, 35, 0.58);
+            border-color: rgba(180, 136, 86, 0.52);
+            color: #f0d9b1;
+            opacity: 0.5;
+            filter: saturate(0.55);
+        }
+
+        body.retro-theme .doc-compare-btn.active {
+            background: linear-gradient(180deg, #ea8b1e 0%, #ce6806 100%);
+            border-color: #a34d00;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(129, 70, 20, 0.35), inset 0 1px 0 rgba(255, 209, 145, 0.45);
+        }
+
+        body.retro-theme .doc-paragraph-diff-btn:not(.inactive) {
+            background: linear-gradient(180deg, #ea8b1e 0%, #ce6806 100%);
+            border-color: #a34d00;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(129, 70, 20, 0.35), inset 0 1px 0 rgba(255, 209, 145, 0.45);
+        }
+
+        body.retro-theme .doc-char-diff-btn:not(.inactive) {
+            background: linear-gradient(180deg, #ea8b1e 0%, #ce6806 100%);
+            border-color: #a34d00;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(129, 70, 20, 0.35), inset 0 1px 0 rgba(255, 209, 145, 0.45);
+        }
+
+        body.retro-theme .metadata {
+            box-shadow: inset 0 1px 0 rgba(255, 245, 220, 0.6);
+        }
+
+        body.retro-theme .metadata-item {
+            color: #6c4e30;
+        }
+
+        body.retro-theme .theme-toggle-btn {
+            min-width: 46px;
+            border-radius: 10px;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            background: #ead9bb;
+            border-color: #c6a479;
+            color: #3a2513;
+            text-shadow: 0 1px 0 rgba(255, 248, 231, 0.6);
+            box-shadow: inset 0 1px 0 rgba(255, 248, 227, 0.9), 0 1px 2px rgba(67, 41, 20, 0.22);
+        }
+
+        body.retro-theme .toolbar-toggle-btn {
+            border-width: 1px;
+        }
+
+        body.retro-theme .accessibility-toolbar {
+            border-width: 1px;
+            border-radius: 14px;
+        }
+
+        body.retro-theme .line-height-slider {
+            background: rgba(255, 236, 200, 0.25);
+        }
+
+        body.retro-theme .loading-container p {
+            color: #7e5a35;
+        }
+
+        body.retro-theme .error-message {
+            background: #f3ddc8;
+            color: #5f2f19;
+            border-color: #be8658;
+        }
+
+        body.retro-theme .sidebar-resizer::after {
+            background: rgba(255, 227, 181, 0.18);
+        }
+
+        body.retro-theme .sidebar-resizer:hover::after {
+            background: rgba(255, 227, 181, 0.42);
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .content-column {
@@ -833,6 +1818,28 @@
 
             .toggle-btn.sidebar-open {
                 left: calc(85vw + 20px);
+            }
+
+            .dual-index-view {
+                min-height: 0;
+            }
+
+            .dual-index-lists {
+                flex-direction: column;
+            }
+
+            .dual-index-column {
+                border-right: none;
+                border-bottom: 1px solid #4a5f7a;
+                min-height: 0;
+            }
+
+            .dual-index-column:last-child {
+                border-bottom: none;
+            }
+
+            .sidebar-resizer {
+                display: none;
             }
 
             .content-wrapper {
@@ -942,15 +1949,21 @@
 </head>
 <body>
     <div class="layout">
-        <button class="toggle-btn" id="toggleBtn" title="Toggle sidebar">☰</button>
+        <button class="toggle-btn sidebar-open" id="toggleBtn" title="Toggle sidebar">☰</button>
 
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-title">📚 Document Collection</div>
-                <div class="sidebar-subtitle" id="docCount">Loading...</div>
+                <div class="sidebar-header-top">
+                    <div class="sidebar-heading-text">
+                        <div class="sidebar-title">📚 Document Collection</div>
+                        <div class="sidebar-subtitle" id="docCount">Loading...</div>
+                    </div>
+                    <button class="sidebar-header-toggle-btn" id="sidebarHeaderToggleBtn" title="Collapse sidebar header" aria-label="Collapse sidebar header" aria-pressed="false">▴</button>
+                </div>
 
                 <div class="source-toggle" id="sourceToggle">
                     <button class="source-btn active" data-source="dofus3" title="DOFUS 3 source">DOFUS3</button>
+                    <button class="compare-toggle-btn" id="dualIndexToggleBtn" title="Compare both indexes side by side" aria-label="Compare both indexes side by side">🔀</button>
                     <button class="source-btn" data-source="dtouch" title="Dofus Touch source">DTouch</button>
                 </div>
 
@@ -989,6 +2002,33 @@
                     <p style="margin-top: 10px;">Loading documents...</p>
                 </li>
             </ul>
+
+            <div class="dual-index-view" id="dualIndexView">
+                <div class="dual-index-lists">
+                    <div class="dual-index-column">
+                        <div class="dual-index-label">
+                            <span class="dual-index-label-text">
+                                <span>DOFUS3</span>
+                                <span class="dual-index-count" id="dualCountDofus3">(0)</span>
+                            </span>
+                            <button class="dual-filter-btn" data-action="cycle-dual-filter" title="Filter compare list" aria-label="Cycle dual-index filter mode">🔎</button>
+                        </div>
+                        <ul class="index-list dual-index-list" id="dualIndexListDofus3"></ul>
+                    </div>
+                    <div class="dual-index-column">
+                        <div class="dual-index-label">
+                            <span class="dual-index-label-text">
+                                <span>DTouch</span>
+                                <span class="dual-index-count" id="dualCountDtouch">(0)</span>
+                            </span>
+                            <button class="dual-filter-btn" data-action="cycle-dual-filter" title="Filter compare list" aria-label="Cycle dual-index filter mode">🔎</button>
+                        </div>
+                        <ul class="index-list dual-index-list" id="dualIndexListDtouch"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-resizer" id="sidebarResizer" aria-hidden="true"></div>
         </div>
 
         <!-- Sidebar Backdrop -->
@@ -1004,8 +2044,8 @@
             <div class="accessibility-toolbar toolbar-collapsed" id="accessibilityToolbar">
                 <div class="toolbar-controls">
                     <div class="toolbar-row">
-                        <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle dark/light theme">
-                            🌙
+                        <button class="theme-toggle-btn" id="themeToggleBtn" title="Theme: Retro. Click for Light" aria-label="Theme: Retro. Click for Light">
+                            🥚
                         </button>
                     </div>
                     
@@ -1089,7 +2129,33 @@
             toolbarCollapsed: true,  // Toolbar state
             swipeStartX: 0,          // Swipe gesture tracking
             swipeStartY: 0,
-            swipeStartTime: 0
+            swipeStartTime: 0,
+            dualIndexMode: false,
+            dualIndexSyncLocked: false,
+            dualIndexDocs: {
+                dofus3: [],
+                dtouch: []
+            },
+            dualIndexLoadErrors: {
+                dofus3: "",
+                dtouch: ""
+            },
+            dualIndexFilterMode: "all",
+            dualIndexSelectedSource: null,
+            dualIndexSelectedDocId: null,
+            crossSourceMatchDoc: null,
+            crossSourceMatchSource: null,
+            crossSourceCompareActive: false,
+            paragraphLevelDiffEnabled: true,
+            charGranularDiffEnabled: true,
+            sidebarWidth: Number(localStorage.getItem("sidebarWidth")) || config.ui.sidebarWidth,
+            compareSidebarWidth: Number(localStorage.getItem("compareSidebarWidth")) || 680,
+            sidebarMinWidth: 280,
+            sidebarMaxWidth: 760,
+            isResizingSidebar: false,
+            activeResizePointerId: null,
+            sidebarHeaderCollapsed: localStorage.getItem("sidebarHeaderCollapsed") === "true",
+            compareHintShownKeys: new Set()
         };
 
         const SOURCE_STORAGE_KEY = "appDataSource";
@@ -1249,9 +2315,886 @@
         }
 
         function updateSourceToggleButtons() {
-            document.querySelectorAll(".source-btn").forEach(btn => {
+            document.querySelectorAll("#sourceToggle .source-btn").forEach(btn => {
                 btn.classList.toggle("active", btn.getAttribute("data-source") === appState.currentDataSource);
             });
+        }
+
+        function getSearchFilteredDocs(docs, lang) {
+            const searchTerm = (appState.currentSearchTerm || "").trim().toLowerCase();
+            if (searchTerm.length < 3) {
+                return docs;
+            }
+
+            return docs.filter(doc => {
+                const title = getTitle(doc, lang).toLowerCase();
+                const subtitle = getSubtitle(doc, lang).toLowerCase();
+                const author = getAuthor(doc, lang).toLowerCase();
+                const content = getContent(doc, lang).toLowerCase();
+
+                return title.includes(searchTerm) || subtitle.includes(searchTerm) ||
+                    author.includes(searchTerm) || content.includes(searchTerm);
+            });
+        }
+
+        function normalizeTitleForCrossSourceMatching(title) {
+            return String(title || "")
+                .normalize("NFKD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .replace(/[\p{P}\p{S}]+/gu, " ")
+                .replace(/(\d)\s+([ao])\b/g, "$1$2")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        function getDualCompareKey(doc) {
+            const docId = String(doc.id || "").trim();
+            const normalizedTitle = normalizeTitleForCrossSourceMatching(
+                getTitle(doc, appState.currentLanguage)
+            );
+            return `${docId}::${normalizedTitle}`;
+        }
+
+        function getDualNormalizedTitle(doc) {
+            return normalizeTitleForCrossSourceMatching(getTitle(doc, appState.currentLanguage));
+        }
+
+        function updateDualIndexCounts(filteredDofus3Docs, filteredDtouchDocs, totalDofus3Docs, totalDtouchDocs) {
+            const dofus3Count = document.getElementById("dualCountDofus3");
+            const dtouchCount = document.getElementById("dualCountDtouch");
+            if (dofus3Count) {
+                dofus3Count.textContent = `(${filteredDofus3Docs.length}/${totalDofus3Docs.length})`;
+            }
+            if (dtouchCount) {
+                dtouchCount.textContent = `(${filteredDtouchDocs.length}/${totalDtouchDocs.length})`;
+            }
+        }
+
+        function getDualFilteredDocSets(dofus3Docs, dtouchDocs) {
+            const mode = appState.dualIndexFilterMode;
+            if (mode === "all") {
+                return { dofus3Docs, dtouchDocs };
+            }
+
+            const dofus3Keys = new Set(dofus3Docs.map(getDualCompareKey));
+            const dtouchKeys = new Set(dtouchDocs.map(getDualCompareKey));
+            const dofus3Titles = new Set(dofus3Docs.map(getDualNormalizedTitle));
+            const dtouchTitles = new Set(dtouchDocs.map(getDualNormalizedTitle));
+
+            const isDocMatchedInDtouch = (doc) => {
+                const compareKey = getDualCompareKey(doc);
+                const normalizedTitle = getDualNormalizedTitle(doc);
+                return dtouchKeys.has(compareKey) || dtouchTitles.has(normalizedTitle);
+            };
+
+            const isDocMatchedInDofus3 = (doc) => {
+                const compareKey = getDualCompareKey(doc);
+                const normalizedTitle = getDualNormalizedTitle(doc);
+                return dofus3Keys.has(compareKey) || dofus3Titles.has(normalizedTitle);
+            };
+
+            if (mode === "unique") {
+                return {
+                    dofus3Docs: dofus3Docs.filter(doc => !isDocMatchedInDtouch(doc)),
+                    dtouchDocs: dtouchDocs.filter(doc => !isDocMatchedInDofus3(doc))
+                };
+            }
+
+            return {
+                dofus3Docs: dofus3Docs.filter(doc => isDocMatchedInDtouch(doc)),
+                dtouchDocs: dtouchDocs.filter(doc => isDocMatchedInDofus3(doc))
+            };
+        }
+
+        function getDualFilterModeMeta() {
+            if (appState.dualIndexFilterMode === "unique") {
+                return {
+                    icon: "🆕",
+                    label: "Unique only",
+                    title: "Showing only unique documents in each index"
+                };
+            }
+
+            if (appState.dualIndexFilterMode === "common") {
+                return {
+                    icon: "🤝",
+                    label: "Common only",
+                    title: "Showing only common documents in both indexes"
+                };
+            }
+
+            return {
+                icon: "🔎",
+                label: "All",
+                title: "Showing all documents"
+            };
+        }
+
+        function updateDualFilterButtons() {
+            const modeMeta = getDualFilterModeMeta();
+            const isFiltered = appState.dualIndexFilterMode !== "all";
+            document.querySelectorAll(".dual-filter-btn").forEach(btn => {
+                btn.textContent = modeMeta.icon;
+                btn.title = `${modeMeta.title}. Click to cycle mode (${modeMeta.label}).`;
+                btn.setAttribute("aria-label", `Dual-index filter mode: ${modeMeta.label}. Click to cycle mode.`);
+                btn.classList.toggle("active", isFiltered);
+            });
+        }
+
+        function cycleDualIndexFilterMode() {
+            const modes = ["all", "unique", "common"];
+            const currentIndex = modes.indexOf(appState.dualIndexFilterMode);
+            appState.dualIndexFilterMode = modes[(currentIndex + 1) % modes.length];
+            renderDualIndex();
+        }
+
+        function renderDualIndexColumn(listElement, docs, source) {
+            if (!listElement) {
+                return;
+            }
+
+            listElement.innerHTML = "";
+            const sourceError = appState.dualIndexLoadErrors[source] || "";
+            if (sourceError) {
+                listElement.innerHTML = `<li class="dual-index-status">${escapeHtml(sourceError)}</li>`;
+                return;
+            }
+
+            if (docs.length === 0) {
+                listElement.innerHTML = '<li style="text-align: center; padding: 20px; color: #bdc3c7;">No documents found</li>';
+                return;
+            }
+
+            docs.forEach((doc, idx) => {
+                const title = getTitle(doc, appState.currentLanguage);
+                const docId = doc.id || idx;
+                const li = document.createElement("li");
+                li.className = "index-item";
+                li.setAttribute("data-doc-id", docId);
+                li.setAttribute("data-source", source);
+
+                const isActiveInDual = appState.dualIndexSelectedSource === source &&
+                    String(appState.dualIndexSelectedDocId) === String(docId);
+                li.classList.toggle("active", isActiveInDual);
+
+                const link = document.createElement("a");
+                link.href = "#";
+                link.innerHTML = `
+                    <div class="index-title" style="white-space: normal; display: inline;">${escapeHtml(title)}</div>
+                    <span class="index-id" style="font-style: italic; color: inherit;">[ID: ${docId}]</span>
+                `;
+                link.addEventListener("click", async (e) => {
+                    e.preventDefault();
+                    await selectDocumentFromDualIndex(source, docId);
+                });
+
+                li.appendChild(link);
+                listElement.appendChild(li);
+            });
+        }
+
+        function setupDualIndexScrollSync() {
+            const leftList = document.getElementById("dualIndexListDofus3");
+            const rightList = document.getElementById("dualIndexListDtouch");
+
+            if (!leftList || !rightList) {
+                return;
+            }
+
+            leftList.onscroll = null;
+            rightList.onscroll = null;
+
+            function getNearestItemByScroll(listElement) {
+                const items = listElement.querySelectorAll(".index-item[data-doc-id]");
+                if (items.length === 0) {
+                    return null;
+                }
+
+                const currentTop = listElement.scrollTop;
+                let nearestItem = items[0];
+                let nearestDistance = Math.abs(items[0].offsetTop - currentTop);
+
+                items.forEach(item => {
+                    const distance = Math.abs(item.offsetTop - currentTop);
+                    if (distance < nearestDistance) {
+                        nearestDistance = distance;
+                        nearestItem = item;
+                    }
+                });
+
+                return nearestItem;
+            }
+
+            function findTargetItemByDocId(targetList, sourceDocId) {
+                const escapedDocId = String(sourceDocId).replace(/"/g, '\\"');
+                const exactMatch = targetList.querySelector(`.index-item[data-doc-id="${escapedDocId}"]`);
+                if (exactMatch) {
+                    return exactMatch;
+                }
+
+                const sourceIdNumber = Number(sourceDocId);
+                const items = targetList.querySelectorAll(".index-item[data-doc-id]");
+                if (!Number.isFinite(sourceIdNumber) || items.length === 0) {
+                    return items[0] || null;
+                }
+
+                let bestItem = null;
+                let bestDistance = Number.POSITIVE_INFINITY;
+
+                items.forEach(item => {
+                    const targetIdNumber = Number(item.getAttribute("data-doc-id"));
+                    if (!Number.isFinite(targetIdNumber)) {
+                        return;
+                    }
+
+                    const distance = Math.abs(targetIdNumber - sourceIdNumber);
+                    if (distance < bestDistance) {
+                        bestDistance = distance;
+                        bestItem = item;
+                    }
+                });
+
+                return bestItem || items[0] || null;
+            }
+
+            function syncScroll(source, target) {
+                if (appState.dualIndexSyncLocked || !appState.dualIndexMode) {
+                    return;
+                }
+
+                const sourceAnchor = getNearestItemByScroll(source);
+                if (!sourceAnchor) {
+                    return;
+                }
+
+                const sourceDocId = sourceAnchor.getAttribute("data-doc-id");
+                const targetAnchor = findTargetItemByDocId(target, sourceDocId);
+                if (!targetAnchor) {
+                    return;
+                }
+
+                const sourceOffsetInView = source.scrollTop - sourceAnchor.offsetTop;
+                const desiredTargetTop = targetAnchor.offsetTop + sourceOffsetInView;
+
+                appState.dualIndexSyncLocked = true;
+                const maxTargetScroll = Math.max(0, target.scrollHeight - target.clientHeight);
+                target.scrollTop = Math.max(0, Math.min(maxTargetScroll, desiredTargetTop));
+
+                setTimeout(() => {
+                    appState.dualIndexSyncLocked = false;
+                }, 20);
+            }
+
+            leftList.onscroll = () => syncScroll(leftList, rightList);
+            rightList.onscroll = () => syncScroll(rightList, leftList);
+        }
+
+        async function getDocumentsForSource(source) {
+            if (source === DofusSources.dofus3) {
+                if (!dataSourceRuntimeCache.dofus3Docs || dataSourceRuntimeCache.dofus3Docs.length === 0) {
+                    if (appState.currentDataSource === DofusSources.dofus3) {
+                        await loadDofus3Documents({ preserveCurrentDocument: false });
+                    } else {
+                        await fetchDocuments();
+                    }
+                }
+                return dataSourceRuntimeCache.dofus3Docs || [];
+            }
+
+            const touchLanguage = DTOUCH_LANGUAGES.includes(appState.currentLanguage)
+                ? appState.currentLanguage
+                : "fr";
+            return await buildTouchDocumentsForLanguages([touchLanguage]);
+        }
+
+        async function ensureDualIndexDataLoaded() {
+            const [dofus3Result, dtouchResult] = await Promise.allSettled([
+                getDocumentsForSource(DofusSources.dofus3),
+                getDocumentsForSource(DofusSources.dtouch)
+            ]);
+
+            if (dofus3Result.status === "fulfilled") {
+                appState.dualIndexDocs.dofus3 = dofus3Result.value;
+                appState.dualIndexLoadErrors.dofus3 = "";
+            } else {
+                appState.dualIndexDocs.dofus3 = [];
+                appState.dualIndexLoadErrors.dofus3 = "DOFUS3 index unavailable right now.";
+            }
+
+            if (dtouchResult.status === "fulfilled") {
+                appState.dualIndexDocs.dtouch = dtouchResult.value;
+                appState.dualIndexLoadErrors.dtouch = "";
+            } else {
+                appState.dualIndexDocs.dtouch = [];
+                appState.dualIndexLoadErrors.dtouch = "DTouch index unavailable right now. If you are offline using file://, GitHub fallback was also attempted.";
+            }
+        }
+
+        function renderDualIndex() {
+            const dualIndexView = document.getElementById("dualIndexView");
+            if (!dualIndexView || !appState.dualIndexMode) {
+                return;
+            }
+
+            const dofus3Docs = getSearchFilteredDocs(appState.dualIndexDocs.dofus3, appState.currentLanguage);
+            const dtouchDocs = getSearchFilteredDocs(appState.dualIndexDocs.dtouch, appState.currentLanguage);
+            const dualFilteredSets = getDualFilteredDocSets(dofus3Docs, dtouchDocs);
+
+            updateDualIndexCounts(
+                dualFilteredSets.dofus3Docs,
+                dualFilteredSets.dtouchDocs,
+                dofus3Docs,
+                dtouchDocs
+            );
+
+            renderDualIndexColumn(document.getElementById("dualIndexListDofus3"), dualFilteredSets.dofus3Docs, DofusSources.dofus3);
+            renderDualIndexColumn(document.getElementById("dualIndexListDtouch"), dualFilteredSets.dtouchDocs, DofusSources.dtouch);
+            updateDualFilterButtons();
+            setupDualIndexScrollSync();
+        }
+
+        function updateDualIndexModeUI() {
+            const dualToggleBtn = document.getElementById("dualIndexToggleBtn");
+            const dualIndexView = document.getElementById("dualIndexView");
+            const indexList = document.getElementById("indexList");
+            const sidebar = document.getElementById("sidebar");
+            const mainContent = document.getElementById("mainContent");
+            const toggleBtn = document.getElementById("toggleBtn");
+
+            if (dualToggleBtn) {
+                dualToggleBtn.classList.toggle("active", appState.dualIndexMode);
+                dualToggleBtn.setAttribute("aria-pressed", appState.dualIndexMode ? "true" : "false");
+            }
+
+            if (dualIndexView) {
+                dualIndexView.classList.toggle("active", appState.dualIndexMode);
+            }
+
+            if (indexList) {
+                indexList.style.display = appState.dualIndexMode ? "none" : "block";
+            }
+
+            if (sidebar) {
+                sidebar.classList.toggle("compare-open", appState.dualIndexMode);
+            }
+
+            if (mainContent) {
+                mainContent.classList.toggle("compare-open", appState.dualIndexMode && window.innerWidth > 768);
+            }
+
+            if (toggleBtn) {
+                toggleBtn.classList.toggle("compare-open", appState.dualIndexMode);
+            }
+
+            applySidebarWidth();
+        }
+
+        async function setDualIndexMode(enabled) {
+            if (enabled) {
+                if (window.innerWidth > 768) {
+                    const doubledWidth = appState.sidebarWidth * 2;
+                    const maxAllowed = Math.min(appState.sidebarMaxWidth, window.innerWidth - 120);
+                    appState.compareSidebarWidth = Math.max(appState.sidebarMinWidth, Math.min(maxAllowed, doubledWidth));
+                }
+            }
+
+            appState.dualIndexMode = enabled;
+            updateDualIndexModeUI();
+
+            if (!enabled) {
+                appState.dualIndexSelectedSource = null;
+                appState.dualIndexSelectedDocId = null;
+                appState.dualIndexFilterMode = "all";
+                return;
+            }
+
+            await ensureDualIndexDataLoaded();
+            renderDualIndex();
+        }
+
+        async function toggleDualIndexMode() {
+            await setDualIndexMode(!appState.dualIndexMode);
+        }
+
+        async function refreshDualIndexIfNeeded() {
+            if (!appState.dualIndexMode) {
+                return;
+            }
+
+            await ensureDualIndexDataLoaded();
+            renderDualIndex();
+        }
+
+        function getSourceDisplayName(source) {
+            return source === DofusSources.dtouch ? "DTouch" : "DOFUS3";
+        }
+
+        function findBestCrossSourceMatch(currentDoc, otherSourceDocs) {
+            const currentCompareKey = getDualCompareKey(currentDoc);
+            const currentTitleKey = getDualNormalizedTitle(currentDoc);
+            const currentDocId = Number(currentDoc.id);
+
+            const strictMatch = otherSourceDocs.find(doc => getDualCompareKey(doc) === currentCompareKey);
+            if (strictMatch) {
+                return strictMatch;
+            }
+
+            const titleMatches = otherSourceDocs.filter(doc => getDualNormalizedTitle(doc) === currentTitleKey);
+            if (titleMatches.length === 0) {
+                return null;
+            }
+
+            if (!Number.isFinite(currentDocId)) {
+                return titleMatches[0];
+            }
+
+            let bestMatch = titleMatches[0];
+            let bestDistance = Math.abs(Number(bestMatch.id) - currentDocId);
+
+            titleMatches.slice(1).forEach(candidate => {
+                const candidateDistance = Math.abs(Number(candidate.id) - currentDocId);
+                if (candidateDistance < bestDistance) {
+                    bestDistance = candidateDistance;
+                    bestMatch = candidate;
+                }
+            });
+
+            return bestMatch;
+        }
+
+        async function resolveCrossSourceMatch(currentDoc) {
+            if (appState.bilingualMode || !currentDoc) {
+                appState.crossSourceMatchDoc = null;
+                appState.crossSourceMatchSource = null;
+                appState.crossSourceCompareActive = false;
+                return;
+            }
+
+            const otherSource = appState.currentDataSource === DofusSources.dofus3
+                ? DofusSources.dtouch
+                : DofusSources.dofus3;
+
+            try {
+                const otherSourceDocs = await getDocumentsForSource(otherSource);
+                const matchDoc = findBestCrossSourceMatch(currentDoc, otherSourceDocs);
+
+                appState.crossSourceMatchDoc = matchDoc || null;
+                appState.crossSourceMatchSource = matchDoc ? otherSource : null;
+                if (!matchDoc) {
+                    appState.crossSourceCompareActive = false;
+                }
+            } catch (error) {
+                console.warn("Unable to resolve cross-source match", error);
+                appState.crossSourceMatchDoc = null;
+                appState.crossSourceMatchSource = null;
+                appState.crossSourceCompareActive = false;
+            }
+        }
+
+        async function toggleCrossSourceCompare() {
+            if (appState.bilingualMode || !appState.crossSourceMatchDoc) {
+                return;
+            }
+
+            appState.crossSourceCompareActive = !appState.crossSourceCompareActive;
+            if (appState.currentDisplayedDocId) {
+                await loadAndScrollToDocument(appState.currentDisplayedDocId);
+            }
+        }
+
+        async function toggleCharGranularDiff() {
+            if (!appState.crossSourceCompareActive) {
+                return;
+            }
+
+            // If paragraph diff is off, enable it implicitly and activate char diff in one click.
+            if (!appState.paragraphLevelDiffEnabled) {
+                appState.paragraphLevelDiffEnabled = true;
+                appState.charGranularDiffEnabled = true;
+            } else {
+                appState.charGranularDiffEnabled = !appState.charGranularDiffEnabled;
+            }
+
+            if (appState.currentDisplayedDocId) {
+                await loadAndScrollToDocument(appState.currentDisplayedDocId);
+            }
+        }
+
+        async function toggleParagraphLevelDiff() {
+            if (!appState.crossSourceCompareActive) {
+                return;
+            }
+
+            appState.paragraphLevelDiffEnabled = !appState.paragraphLevelDiffEnabled;
+            if (!appState.paragraphLevelDiffEnabled) {
+                appState.charGranularDiffEnabled = false;
+            }
+
+            if (appState.currentDisplayedDocId) {
+                await loadAndScrollToDocument(appState.currentDisplayedDocId);
+            }
+        }
+
+        function normalizeDiffParagraphText(text) {
+            return (text || "")
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .replace(/[^\p{L}\p{N}\s]/gu, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        function getContentParagraphs(columnElement) {
+            if (!columnElement) {
+                return [];
+            }
+
+            return Array.from(columnElement.querySelectorAll(".content p"));
+        }
+
+        function buildSignatureCountMap(paragraphs) {
+            const signatureMap = new Map();
+            paragraphs.forEach(paragraph => {
+                const signature = normalizeDiffParagraphText(paragraph.textContent);
+                if (!signature) {
+                    return;
+                }
+
+                signatureMap.set(signature, (signatureMap.get(signature) || 0) + 1);
+            });
+
+            return signatureMap;
+        }
+
+        function highlightUnmatchedParagraphs(paragraphs, oppositeSignatureCounts) {
+            paragraphs.forEach(paragraph => paragraph.classList.remove("diff-unmatched"));
+
+            const workingCounts = new Map(oppositeSignatureCounts);
+            paragraphs.forEach(paragraph => {
+                const signature = normalizeDiffParagraphText(paragraph.textContent);
+                if (!signature) {
+                    return;
+                }
+
+                const availableMatches = workingCounts.get(signature) || 0;
+                if (availableMatches > 0) {
+                    workingCounts.set(signature, availableMatches - 1);
+                    return;
+                }
+
+                paragraph.classList.add("diff-unmatched");
+            });
+        }
+
+        function highlightCrossSourceDiffs(columnLeft, columnRight) {
+            const leftParagraphs = getContentParagraphs(columnLeft);
+            const rightParagraphs = getContentParagraphs(columnRight);
+
+            if (leftParagraphs.length === 0 && rightParagraphs.length === 0) {
+                return;
+            }
+
+            if (!appState.paragraphLevelDiffEnabled) {
+                return;
+            }
+
+            const leftSignatures = buildSignatureCountMap(leftParagraphs);
+            const rightSignatures = buildSignatureCountMap(rightParagraphs);
+
+            highlightUnmatchedParagraphs(leftParagraphs, rightSignatures);
+            highlightUnmatchedParagraphs(rightParagraphs, leftSignatures);
+
+            if (appState.paragraphLevelDiffEnabled && appState.charGranularDiffEnabled) {
+                highlightCharLevelDiffs(leftParagraphs, rightParagraphs);
+            }
+        }
+
+        function getParagraphNormalizedSimilarityText(paragraph) {
+            return normalizeDiffParagraphText(paragraph.textContent);
+        }
+
+        function getCharArray(text) {
+            return Array.from(text || "");
+        }
+
+        function buildLcsMasks(leftText, rightText) {
+            const leftChars = getCharArray(leftText);
+            const rightChars = getCharArray(rightText);
+            const leftComparable = leftChars.map(ch => ch.toLowerCase());
+            const rightComparable = rightChars.map(ch => ch.toLowerCase());
+
+            const rows = leftComparable.length + 1;
+            const cols = rightComparable.length + 1;
+            const dp = Array.from({ length: rows }, () => new Array(cols).fill(0));
+
+            for (let i = 1; i < rows; i++) {
+                for (let j = 1; j < cols; j++) {
+                    if (leftComparable[i - 1] === rightComparable[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
+                    } else {
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    }
+                }
+            }
+
+            const leftMask = new Array(leftChars.length).fill(false);
+            const rightMask = new Array(rightChars.length).fill(false);
+
+            let i = leftComparable.length;
+            let j = rightComparable.length;
+            while (i > 0 && j > 0) {
+                if (leftComparable[i - 1] === rightComparable[j - 1]) {
+                    leftMask[i - 1] = true;
+                    rightMask[j - 1] = true;
+                    i--;
+                    j--;
+                    continue;
+                }
+
+                if (dp[i - 1][j] >= dp[i][j - 1]) {
+                    i--;
+                } else {
+                    j--;
+                }
+            }
+
+            return { leftChars, rightChars, leftMask, rightMask };
+        }
+
+        function renderCharsWithDiffMask(chars, mask) {
+            let html = "";
+            let segment = "";
+            let segmentIsCommon = mask[0] || false;
+
+            function flushSegment() {
+                if (!segment) {
+                    return;
+                }
+
+                const escaped = escapeHtml(segment);
+                if (segmentIsCommon) {
+                    html += escaped;
+                } else {
+                    html += `<span class="diff-char-fragment">${escaped}</span>`;
+                }
+
+                segment = "";
+            }
+
+            chars.forEach((char, index) => {
+                const isCommon = mask[index] || false;
+                if (segment && isCommon !== segmentIsCommon) {
+                    flushSegment();
+                    segmentIsCommon = isCommon;
+                }
+
+                if (!segment) {
+                    segmentIsCommon = isCommon;
+                }
+
+                segment += char;
+            });
+
+            flushSegment();
+            return html;
+        }
+
+        function paragraphContainsComplexMarkup(paragraph) {
+            return !!paragraph.querySelector("img, a, iframe, video, audio, table");
+        }
+
+        function applyCharDiffToParagraphPair(leftParagraph, rightParagraph) {
+            if (!leftParagraph || !rightParagraph) {
+                return;
+            }
+
+            if (paragraphContainsComplexMarkup(leftParagraph) || paragraphContainsComplexMarkup(rightParagraph)) {
+                return;
+            }
+
+            const leftText = leftParagraph.textContent || "";
+            const rightText = rightParagraph.textContent || "";
+            if (!leftText.trim() || !rightText.trim()) {
+                return;
+            }
+
+            const { leftChars, rightChars, leftMask, rightMask } = buildLcsMasks(leftText, rightText);
+            leftParagraph.innerHTML = renderCharsWithDiffMask(leftChars, leftMask);
+            rightParagraph.innerHTML = renderCharsWithDiffMask(rightChars, rightMask);
+        }
+
+        function findBestParagraphMatchIndex(sourceParagraph, candidateParagraphs, usedIndexes) {
+            const sourceText = getParagraphNormalizedSimilarityText(sourceParagraph);
+            if (!sourceText) {
+                return -1;
+            }
+
+            let bestIndex = -1;
+            let bestScore = 0;
+
+            candidateParagraphs.forEach((candidate, index) => {
+                if (usedIndexes.has(index)) {
+                    return;
+                }
+
+                const candidateText = getParagraphNormalizedSimilarityText(candidate);
+                if (!candidateText) {
+                    return;
+                }
+
+                const sourceWords = new Set(sourceText.split(" "));
+                const candidateWords = new Set(candidateText.split(" "));
+                let commonWords = 0;
+                sourceWords.forEach(word => {
+                    if (candidateWords.has(word)) {
+                        commonWords++;
+                    }
+                });
+
+                const maxWords = Math.max(sourceWords.size, candidateWords.size, 1);
+                const score = commonWords / maxWords;
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestIndex = index;
+                }
+            });
+
+            return bestScore >= 0.25 ? bestIndex : -1;
+        }
+
+        function highlightCharLevelDiffs(leftParagraphs, rightParagraphs) {
+            const leftUnmatched = leftParagraphs.filter(p => p.classList.contains("diff-unmatched"));
+            const rightUnmatched = rightParagraphs.filter(p => p.classList.contains("diff-unmatched"));
+
+            if (leftUnmatched.length === 0 || rightUnmatched.length === 0) {
+                return;
+            }
+
+            const usedRightIndexes = new Set();
+            leftUnmatched.forEach(leftParagraph => {
+                const bestRightIndex = findBestParagraphMatchIndex(leftParagraph, rightUnmatched, usedRightIndexes);
+                if (bestRightIndex < 0) {
+                    return;
+                }
+
+                usedRightIndexes.add(bestRightIndex);
+                applyCharDiffToParagraphPair(leftParagraph, rightUnmatched[bestRightIndex]);
+            });
+        }
+
+        async function selectDocumentFromDualIndex(source, docId) {
+            appState.dualIndexSelectedSource = source;
+            appState.dualIndexSelectedDocId = String(docId);
+            await setDataSource(source, {
+                forceRefresh: false,
+                preserveCurrentDocument: false
+            });
+            loadAndScrollToDocument(docId);
+            renderDualIndex();
+        }
+
+        function getCurrentSidebarWidth() {
+            return appState.dualIndexMode ? appState.compareSidebarWidth : appState.sidebarWidth;
+        }
+
+        function isNearSidebarRightEdge(clientX) {
+            const sidebar = document.getElementById("sidebar");
+            if (!sidebar || window.innerWidth <= 768 || !appState.sidebarVisible) {
+                return false;
+            }
+
+            const rect = sidebar.getBoundingClientRect();
+            const edgeTolerance = 18;
+            return clientX >= (rect.right - edgeTolerance) && clientX <= (rect.right + edgeTolerance);
+        }
+
+        function applySidebarWidth() {
+            if (window.innerWidth <= 768) {
+                return;
+            }
+
+            const maxAllowed = Math.min(appState.sidebarMaxWidth, window.innerWidth - 120);
+            const normalizedWidth = Math.max(appState.sidebarMinWidth, Math.min(maxAllowed, getCurrentSidebarWidth()));
+            document.body.style.setProperty("--sidebar-current-width", `${normalizedWidth}px`);
+        }
+
+        function startSidebarResize(event) {
+            if (window.innerWidth <= 768) {
+                return;
+            }
+
+            if (event.button !== undefined && event.button !== 0) {
+                return;
+            }
+
+            if (!isNearSidebarRightEdge(event.clientX)) {
+                return;
+            }
+
+            appState.isResizingSidebar = true;
+            if (event.pointerId !== undefined) {
+                appState.activeResizePointerId = event.pointerId;
+            }
+            document.body.style.cursor = "col-resize";
+            document.body.style.userSelect = "none";
+            document.body.classList.add("sidebar-resizing");
+            event.preventDefault();
+        }
+
+        function onSidebarResize(event) {
+            if (!appState.isResizingSidebar || window.innerWidth <= 768) {
+                return;
+            }
+
+            if (event.pointerId !== undefined && appState.activeResizePointerId !== null && event.pointerId !== appState.activeResizePointerId) {
+                return;
+            }
+
+            const maxAllowed = Math.min(appState.sidebarMaxWidth, window.innerWidth - 120);
+            const newWidth = Math.max(appState.sidebarMinWidth, Math.min(maxAllowed, event.clientX));
+
+            if (appState.dualIndexMode) {
+                appState.compareSidebarWidth = newWidth;
+                localStorage.setItem("compareSidebarWidth", String(newWidth));
+            } else {
+                appState.sidebarWidth = newWidth;
+                localStorage.setItem("sidebarWidth", String(newWidth));
+            }
+
+            applySidebarWidth();
+        }
+
+        function stopSidebarResize() {
+            if (!appState.isResizingSidebar) {
+                return;
+            }
+
+            appState.isResizingSidebar = false;
+            appState.activeResizePointerId = null;
+            document.body.style.cursor = "";
+            document.body.style.userSelect = "";
+            document.body.classList.remove("sidebar-resizing");
+        }
+
+        function updateSidebarHeaderCollapseUI() {
+            const sidebar = document.getElementById("sidebar");
+            const toggleBtn = document.getElementById("sidebarHeaderToggleBtn");
+            if (!sidebar || !toggleBtn) {
+                return;
+            }
+
+            sidebar.classList.toggle("header-collapsed", appState.sidebarHeaderCollapsed);
+            toggleBtn.textContent = appState.sidebarHeaderCollapsed ? "▾" : "▴";
+            toggleBtn.setAttribute("aria-pressed", appState.sidebarHeaderCollapsed ? "true" : "false");
+            toggleBtn.title = appState.sidebarHeaderCollapsed ? "Expand sidebar header" : "Collapse sidebar header";
+        }
+
+        function toggleSidebarHeaderCollapse() {
+            appState.sidebarHeaderCollapsed = !appState.sidebarHeaderCollapsed;
+            localStorage.setItem("sidebarHeaderCollapsed", String(appState.sidebarHeaderCollapsed));
+            updateSidebarHeaderCollapseUI();
         }
 
         function normalizeTouchDocument(rawDoc, language, fallbackId) {
@@ -1297,13 +3240,27 @@
             }
 
             const loadPromise = (async () => {
-                // DTouch normalization is based on fr.json schema: titleId/authorId/subTitleId/contentId.
-                const response = await fetch(`data/touch/${language}.json`);
-                if (!response.ok) {
-                    throw new Error(`Unable to load data/touch/${language}.json (${response.status})`);
+                const localUrl = `data/touch/${language}.json`;
+                const githubUrl = `https://nelsonjq.github.io/d3-library/data/touch/${language}.json`;
+
+                async function fetchJson(url) {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`Unable to load ${url} (${response.status})`);
+                    }
+                    return response.json();
                 }
 
-                const payload = await response.json();
+                let payload;
+                try {
+                    // Try local source first.
+                    payload = await fetchJson(localUrl);
+                } catch (localError) {
+                    // Fallback for file:// CORS and other local-load failures.
+                    console.warn(`Local DTouch load failed for ${language}, trying GitHub fallback`, localError);
+                    payload = await fetchJson(githubUrl);
+                }
+
                 const normalized = normalizeTouchLanguagePayload(language, payload);
                 dataSourceRuntimeCache.touchByLanguage.set(language, normalized);
                 return normalized;
@@ -1654,6 +3611,11 @@
 
         // ===== RENDER INDEX ONLY =====
         function renderIndexOnly() {
+            if (appState.dualIndexMode) {
+                renderDualIndex();
+                return;
+            }
+
             const indexList = document.getElementById("indexList");
             indexList.innerHTML = "";
 
@@ -1705,6 +3667,11 @@
         }
 
         function renderIndex() {
+            if (appState.dualIndexMode) {
+                renderDualIndex();
+                return;
+            }
+
             const indexList = document.getElementById("indexList");
             indexList.innerHTML = "";
 
@@ -1758,6 +3725,11 @@
 
         // ===== RENDER INDEX LIST =====
         function renderIndex() {
+            if (appState.dualIndexMode) {
+                renderDualIndex();
+                return;
+            }
+
             const indexList = document.getElementById("indexList");
             indexList.innerHTML = "";
 
@@ -1797,33 +3769,105 @@
             let content1 = getContent(doc, appState.currentLanguage);
             content1 = processImageUrls(content1);
 
-            if (!appState.bilingualMode) {
-                // Single language mode
-                section.innerHTML = `
-                    <div class="document-anchor" id="anchor-${doc.id}"></div>
-                    <div class="header">
-                        <div class="title-section">
-                            <h1 class="title">${escapeHtml(title1)}</h1>
-                        </div>
-                        <div class="subtitle">${escapeHtml(subtitle1)}</div>
-                        <div class="author">By ${escapeHtml(author1)}</div>
+            const hasCrossSourceMatch = !appState.bilingualMode &&
+                String(doc.id) === String(appState.currentDisplayedDocId) &&
+                !!appState.crossSourceMatchDoc;
+            const isCrossSourceCompareActive = hasCrossSourceMatch && appState.crossSourceCompareActive;
+            const shouldNotifyCompare = hasCrossSourceMatch && !isCrossSourceCompareActive &&
+                shouldNotifyCrossSourceMatch(doc.id, appState.crossSourceMatchSource);
+            const paragraphDiffButtonHtml = isCrossSourceCompareActive
+                ? `<button class="doc-paragraph-diff-btn ${appState.paragraphLevelDiffEnabled ? "" : "inactive"}" onclick="toggleParagraphLevelDiff()" title="${appState.paragraphLevelDiffEnabled ? "Disable" : "Enable"} paragraph-level diff" aria-label="${appState.paragraphLevelDiffEnabled ? "Disable" : "Enable"} paragraph-level diff">¶</button>`
+                : "";
+            const charDiffButtonHtml = isCrossSourceCompareActive
+                ? `<button class="doc-char-diff-btn ${appState.charGranularDiffEnabled && appState.paragraphLevelDiffEnabled ? "" : "inactive"}" onclick="toggleCharGranularDiff()" title="${appState.paragraphLevelDiffEnabled ? (appState.charGranularDiffEnabled ? "Disable" : "Enable") : "Enable"} character-level diff" aria-label="${appState.paragraphLevelDiffEnabled ? (appState.charGranularDiffEnabled ? "Disable" : "Enable") : "Enable"} character-level diff">🧬</button>`
+                : "";
+            const compareButtonHtml = hasCrossSourceMatch
+                ? `
+                    <div class="doc-compare-action">
+                        ${charDiffButtonHtml}
+                        ${paragraphDiffButtonHtml}
+                        <button class="doc-compare-btn ${isCrossSourceCompareActive ? "active" : ""} ${shouldNotifyCompare ? "notify-match" : ""}" onclick="toggleCrossSourceCompare()" title="Compare with ${escapeHtml(getSourceDisplayName(appState.crossSourceMatchSource))}" aria-label="Compare with ${escapeHtml(getSourceDisplayName(appState.crossSourceMatchSource))}">🔁</button>
                     </div>
-                    <div class="content-wrapper">
-                        <div class="content-column single" id="content1-${doc.id}" data-doc-id="${doc.id}">
-                            <div class="content">${content1}</div>
-                        </div>
-                    </div>
-                    <div class="metadata">
-                        <div class="metadata-item"><strong>Document ID:</strong> ${doc.id}</div>
-                        <div class="metadata-item"><strong>Class:</strong> ${doc.className || "N/A"}</div>
-                        <div class="metadata-item"><strong>Created:</strong> ${doc.createdAt || "N/A"}</div>
-                        <div class="metadata-item"><strong>Updated:</strong> ${doc.updatedAt || "N/A"}</div>
-                    </div>
-                `;
+                `
+                : "";
 
-                // Setup hover-based image loading
-                const contentColumn = section.querySelector(".content-column");
-                setupImageHoverLoading(contentColumn);
+            if (!appState.bilingualMode) {
+                if (isCrossSourceCompareActive) {
+                    const matchDoc = appState.crossSourceMatchDoc;
+                    const matchSource = appState.crossSourceMatchSource;
+                    const title2 = getTitle(matchDoc, appState.currentLanguage);
+                    const subtitle2 = getSubtitle(matchDoc, appState.currentLanguage);
+                    const author2 = cleanHtmlTags(getAuthor(matchDoc, appState.currentLanguage));
+                    let content2 = getContent(matchDoc, appState.currentLanguage);
+                    content2 = processImageUrls(content2);
+
+                    section.innerHTML = `
+                        <div class="document-anchor" id="anchor-${doc.id}"></div>
+                        <div class="header">
+                            ${compareButtonHtml}
+                            <div class="doc-context-badge">${escapeHtml(getSourceDisplayName(appState.currentDataSource))} vs ${escapeHtml(getSourceDisplayName(matchSource))} (${escapeHtml(appState.currentLanguage.toUpperCase())})</div>
+                        </div>
+                        <div class="content-wrapper">
+                            <div class="content-column" id="content1-${doc.id}" data-doc-id="${doc.id}">
+                                <div class="source-chip">${escapeHtml(getSourceDisplayName(appState.currentDataSource))}</div>
+                                <div class="title-section">
+                                    <h2 class="title" style="font-size: 1.8em; margin-bottom: 15px;">${escapeHtml(title1)}</h2>
+                                    ${buildDocMetaRow(subtitle1, author1)}
+                                </div>
+                                <div class="content">${content1}</div>
+                            </div>
+                            <div class="content-column" id="content2-${doc.id}" data-doc-id="${matchDoc.id}" style="border-right: none;">
+                                <div class="source-chip">${escapeHtml(getSourceDisplayName(matchSource))}</div>
+                                <div class="title-section">
+                                    <h2 class="title" style="font-size: 1.8em; margin-bottom: 15px;">${escapeHtml(title2)}</h2>
+                                    ${buildDocMetaRow(subtitle2, author2)}
+                                </div>
+                                <div class="content">${content2}</div>
+                            </div>
+                        </div>
+                        <div class="metadata">
+                            <div class="metadata-item"><strong>${escapeHtml(getSourceDisplayName(appState.currentDataSource))} ID:</strong> ${doc.id}</div>
+                            <div class="metadata-item"><strong>${escapeHtml(getSourceDisplayName(matchSource))} ID:</strong> ${matchDoc.id}</div>
+                            <div class="metadata-item"><strong>Class:</strong> ${doc.className || "N/A"}</div>
+                            <div class="metadata-item"><strong>Created:</strong> ${doc.createdAt || "N/A"}</div>
+                            <div class="metadata-item"><strong>Updated:</strong> ${doc.updatedAt || "N/A"}</div>
+                        </div>
+                    `;
+
+                    const columns = section.querySelectorAll(".content-column");
+                    columns.forEach(col => setupImageHoverLoading(col));
+                    highlightCrossSourceDiffs(
+                        section.querySelector(`#content1-${doc.id}`),
+                        section.querySelector(`#content2-${doc.id}`)
+                    );
+                } else {
+                    // Single language mode
+                    section.innerHTML = `
+                        <div class="document-anchor" id="anchor-${doc.id}"></div>
+                        <div class="header">
+                            ${compareButtonHtml}
+                            <div class="title-section">
+                                <h1 class="title">${escapeHtml(title1)}</h1>
+                            </div>
+                            ${buildDocMetaRow(subtitle1, author1)}
+                        </div>
+                        <div class="content-wrapper">
+                            <div class="content-column single" id="content1-${doc.id}" data-doc-id="${doc.id}">
+                                <div class="content">${content1}</div>
+                            </div>
+                        </div>
+                        <div class="metadata">
+                            <div class="metadata-item"><strong>Document ID:</strong> ${doc.id}</div>
+                            <div class="metadata-item"><strong>Class:</strong> ${doc.className || "N/A"}</div>
+                            <div class="metadata-item"><strong>Created:</strong> ${doc.createdAt || "N/A"}</div>
+                            <div class="metadata-item"><strong>Updated:</strong> ${doc.updatedAt || "N/A"}</div>
+                        </div>
+                    `;
+
+                    // Setup hover-based image loading
+                    const contentColumn = section.querySelector(".content-column");
+                    setupImageHoverLoading(contentColumn);
+                }
             } else {
                 // Bilingual mode - titles in columns
                 const title2 = getTitle(doc, appState.secondLanguage);
@@ -1835,20 +3879,21 @@
                 section.innerHTML = `
                     <div class="document-anchor" id="anchor-${doc.id}"></div>
                     <div class="header">
-                        <div class="author">By ${escapeHtml(author1)} / ${escapeHtml(author2)}</div>
+                        ${compareButtonHtml}
+                        <div class="doc-context-badge">${escapeHtml(appState.currentLanguage.toUpperCase())} • ${escapeHtml(appState.secondLanguage.toUpperCase())}</div>
                     </div>
                     <div class="content-wrapper">
                         <div class="content-column" id="content1-${doc.id}" data-doc-id="${doc.id}">
                             <div class="title-section">
                                 <h2 class="title" style="font-size: 1.8em; margin-bottom: 15px;">${escapeHtml(title1)}</h2>
-                                <div class="subtitle">${escapeHtml(subtitle1)}</div>
+                                ${buildDocMetaRow(subtitle1, author1)}
                             </div>
                             <div class="content">${content1}</div>
                         </div>
                         <div class="content-column" id="content2-${doc.id}" data-doc-id="${doc.id}" style="border-right: none;">
                             <div class="title-section">
                                 <h2 class="title" style="font-size: 1.8em; margin-bottom: 15px;">${escapeHtml(title2)}</h2>
-                                <div class="subtitle">${escapeHtml(subtitle2)}</div>
+                                ${buildDocMetaRow(subtitle2, author2)}
                             </div>
                             <div class="content">${content2}</div>
                         </div>
@@ -1898,6 +3943,34 @@
             return div.innerHTML;
         }
 
+        function buildDocMetaRow(subtitle, author) {
+            const chips = [];
+            if (subtitle && subtitle.trim()) {
+                chips.push(`<div class="doc-meta-chip">${escapeHtml(subtitle)}</div>`);
+            }
+            if (author && author.trim()) {
+                chips.push(`<div class="doc-meta-chip">${escapeHtml(author)}</div>`);
+            }
+            if (chips.length === 0) {
+                return '';
+            }
+            return `<div class="doc-meta-row">${chips.join('')}</div>`;
+        }
+
+        function shouldNotifyCrossSourceMatch(docId, matchSource) {
+            if (appState.bilingualMode) {
+                return false;
+            }
+
+            const key = `${appState.currentDataSource}|${matchSource}|${appState.currentLanguage}|${docId}`;
+            if (appState.compareHintShownKeys.has(key)) {
+                return false;
+            }
+
+            appState.compareHintShownKeys.add(key);
+            return true;
+        }
+
         // ===== SEARCH FUNCTIONALITY =====
         function performSearch() {
             const searchInput = document.getElementById("searchInput");
@@ -1916,6 +3989,9 @@
                 // Don't clear the input - just don't search yet
                 clearBtn.style.display = "none";
                 document.getElementById("searchResults").textContent = "";
+                if (appState.dualIndexMode) {
+                    renderDualIndex();
+                }
                 return;
             }
 
@@ -1944,6 +4020,11 @@
         }
 
         function renderSearchIndex() {
+            if (appState.dualIndexMode) {
+                renderDualIndex();
+                return;
+            }
+
             const indexList = document.getElementById("indexList");
             indexList.innerHTML = "";
 
@@ -2092,7 +4173,7 @@
         }
 
         // ===== NAVIGATION =====
-        function loadAndScrollToDocument(docId) {
+        async function loadAndScrollToDocument(docId) {
             // Find the document in allDocuments - convert both to string for comparison
             const doc = appState.allDocuments.find(d => String(d.id) === String(docId));
             if (!doc) {
@@ -2102,6 +4183,8 @@
 
             // Track the currently displayed document
             appState.currentDisplayedDocId = docId;
+
+            await resolveCrossSourceMatch(doc);
 
             // Clear main content and render just this document
             const container = document.getElementById("documentsContainer");
@@ -2146,11 +4229,24 @@
 
         function updateActiveIndex(docId) {
             document.querySelectorAll(".index-item").forEach(item => item.classList.remove("active"));
-            const activeItem = document.querySelector(`[data-doc-id="${docId}"]`);
-            if (activeItem) {
-                activeItem.classList.add("active");
-                activeItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+            let activeItem;
+            if (appState.dualIndexMode) {
+                const activeSource = appState.dualIndexSelectedSource || appState.currentDataSource;
+                activeItem = document.querySelector(`.dual-index-list .index-item[data-source="${activeSource}"][data-doc-id="${docId}"]`);
+                if (!activeItem) {
+                    activeItem = document.querySelector(`.dual-index-list .index-item[data-doc-id="${docId}"]`);
+                }
+            } else {
+                activeItem = document.querySelector(`#indexList .index-item[data-doc-id="${docId}"]`);
             }
+
+            if (!activeItem) {
+                return;
+            }
+
+            activeItem.classList.add("active");
+            activeItem.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }
 
         // ===== SIDEBAR TOGGLE =====
@@ -2216,26 +4312,31 @@
 
             if (appState.currentDataSource === DofusSources.dtouch) {
                 await refreshTouchDocuments({ showLoading: false, preserveCurrentDocument: true });
+                await refreshDualIndexIfNeeded();
                 return;
             }
 
-            // If a document is currently displayed, reload it with new language
-            if (appState.currentDisplayedDocId) {
-                loadAndScrollToDocument(appState.currentDisplayedDocId);
+            // Rebuild index titles for the selected language before reloading the document view.
+            if (appState.currentSearchTerm && appState.currentSearchTerm.length >= 3) {
+                performSearch();
             } else {
-                // Otherwise, just update the index
                 renderIndexOnly();
             }
 
-            // Only re-search if there's an active search term
-            if (appState.currentSearchTerm && appState.currentSearchTerm.length >= 3) {
-                performSearch();
+            if (appState.currentDisplayedDocId) {
+                await loadAndScrollToDocument(appState.currentDisplayedDocId);
             }
+
+            await refreshDualIndexIfNeeded();
         }
 
         // ===== VIEW MODE TOGGLE =====
         async function setViewMode(mode) {
             appState.bilingualMode = (mode === "bilingual");
+
+            if (appState.bilingualMode) {
+                appState.crossSourceCompareActive = false;
+            }
 
             document.querySelectorAll(".view-mode-btn").forEach(btn => {
                 btn.classList.remove("active");
@@ -2267,8 +4368,15 @@
             // If a document is currently displayed, reload it in the new view mode
             if (appState.currentDisplayedDocId) {
                 loadAndScrollToDocument(appState.currentDisplayedDocId);
+                return;
             }
-            // Otherwise don't show anything (user hasn't selected a document yet)
+
+            // Ensure index always refreshes for DOFUS3 when switching view mode.
+            if (appState.currentSearchTerm && appState.currentSearchTerm.length >= 3) {
+                performSearch();
+            } else {
+                renderIndexOnly();
+            }
         }
 
         // ===== SET SECOND LANGUAGE =====
@@ -2401,34 +4509,96 @@
 
         // ===== ACCESSIBILITY FEATURES =====
         // Theme Management
-        function initTheme() {
-            const savedTheme = localStorage.getItem('appTheme') || 'light';
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-theme');
-                const btn = document.getElementById('themeToggleBtn');
-                if (btn) btn.textContent = '☀️';
+        const THEME_ORDER = ['light', 'dark', 'retro'];
+        const THEME_CLASSES = {
+            light: null,
+            dark: 'dark-theme',
+            retro: 'retro-theme'
+        };
+        const THEME_BUTTON_LABELS = {
+            light: '☀️',
+            dark: '🌙',
+            retro: '🥚'
+        };
+
+        function normalizeTheme(theme) {
+            return THEME_ORDER.includes(theme) ? theme : 'retro';
+        }
+
+        function getCurrentTheme() {
+            if (document.body.classList.contains('retro-theme')) return 'retro';
+            if (document.body.classList.contains('dark-theme')) return 'dark';
+            return 'light';
+        }
+
+        function updateThemeButton(theme) {
+            const btn = document.getElementById('themeToggleBtn');
+            if (!btn) return;
+
+            const currentIndex = THEME_ORDER.indexOf(theme);
+            const nextTheme = THEME_ORDER[(currentIndex + 1) % THEME_ORDER.length];
+            const displayNames = { light: 'Light', dark: 'Dark', retro: 'Retro' };
+
+            btn.textContent = THEME_BUTTON_LABELS[theme];
+            btn.title = `Theme: ${displayNames[theme]}. Click for ${displayNames[nextTheme]}`;
+            btn.setAttribute('aria-label', `Theme: ${displayNames[theme]}. Click for ${displayNames[nextTheme]}`);
+        }
+
+        function applyTheme(theme, shouldPersist = true) {
+            const normalizedTheme = normalizeTheme(theme);
+            document.body.classList.remove('dark-theme', 'retro-theme');
+
+            const className = THEME_CLASSES[normalizedTheme];
+            if (className) {
+                document.body.classList.add(className);
             }
-            updateGradientBackground();
+
+            if (shouldPersist) {
+                localStorage.setItem('appTheme', normalizedTheme);
+            }
+
+            updateThemeButton(normalizedTheme);
+            updateGradientBackground(normalizedTheme);
+        }
+
+        function initTheme() {
+            const savedTheme = normalizeTheme(localStorage.getItem('appTheme') || 'retro');
+            applyTheme(savedTheme, true);
+        }
+
+        function initThemeToggleHint() {
+            const seenHint = localStorage.getItem('hasSeenThemeToggleHint') === 'true';
+            const btn = document.getElementById('themeToggleBtn');
+            if (!btn || seenHint) {
+                return;
+            }
+
+            btn.classList.add('attention-hint');
+            setTimeout(() => {
+                btn.classList.remove('attention-hint');
+                localStorage.setItem('hasSeenThemeToggleHint', 'true');
+            }, 9000);
         }
 
         function toggleTheme() {
-            document.body.classList.toggle('dark-theme');
-            const isDark = document.body.classList.contains('dark-theme');
-            localStorage.setItem('appTheme', isDark ? 'dark' : 'light');
-            
-            const btn = document.getElementById('themeToggleBtn');
-            if (btn) btn.textContent = isDark ? '☀️' : '🌙';
-            
-            updateGradientBackground();
+            const currentTheme = getCurrentTheme();
+            const currentIndex = THEME_ORDER.indexOf(currentTheme);
+            const nextTheme = THEME_ORDER[(currentIndex + 1) % THEME_ORDER.length];
+            applyTheme(nextTheme, true);
         }
 
-        function updateGradientBackground() {
-            // Optional: Update body background for dark mode
-            if (document.body.classList.contains('dark-theme')) {
+        function updateGradientBackground(theme = getCurrentTheme()) {
+            if (theme === 'dark') {
                 document.body.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)';
-            } else {
-                document.body.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+                return;
             }
+
+            if (theme === 'retro') {
+                document.body.style.background = 'linear-gradient(135deg, #e6d3b4 0%, #c7a97f 100%)';
+                return;
+            }
+
+            document.body.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
         }
 
         // Font Size Management
@@ -2559,6 +4729,7 @@
             
             // Initialize accessibility features
             initAccessibilityFeatures();
+            initThemeToggleHint();
             
             // Initialize mobile features
             initMobileToolbar();
@@ -2567,6 +4738,9 @@
             
             // Setup toolbar visibility (before documents load)
             setupToolbarVisibility();
+            applySidebarWidth();
+            updateSidebarHeaderCollapseUI();
+            updateDualFilterButtons();
             
             // Initialize current source and load only needed data
             try {
@@ -2608,12 +4782,49 @@
                 document.querySelectorAll(".source-btn").forEach(btn => {
                     btn.addEventListener("click", async (e) => {
                         const source = e.currentTarget.getAttribute("data-source");
+                        if (appState.dualIndexMode) {
+                            await setDualIndexMode(false);
+                        }
                         await setDataSource(source, {
                             forceRefresh: false,
                             preserveCurrentDocument: true
                         });
                     });
                 });
+
+                const dualIndexToggleBtn = document.getElementById("dualIndexToggleBtn");
+                if (dualIndexToggleBtn) {
+                    dualIndexToggleBtn.addEventListener("click", async () => {
+                        await toggleDualIndexMode();
+                    });
+                }
+
+                const sidebarHeaderToggleBtn = document.getElementById("sidebarHeaderToggleBtn");
+                if (sidebarHeaderToggleBtn) {
+                    sidebarHeaderToggleBtn.addEventListener("click", toggleSidebarHeaderCollapse);
+                }
+
+                document.querySelectorAll(".dual-filter-btn").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        cycleDualIndexFilterMode();
+                    });
+                });
+
+                const sidebarResizer = document.getElementById("sidebarResizer");
+                if (sidebarResizer) {
+                    sidebarResizer.addEventListener("mousedown", startSidebarResize);
+                    sidebarResizer.addEventListener("pointerdown", startSidebarResize);
+                }
+                const sidebar = document.getElementById("sidebar");
+                if (sidebar) {
+                    sidebar.addEventListener("mousedown", startSidebarResize);
+                    sidebar.addEventListener("pointerdown", startSidebarResize);
+                }
+                document.addEventListener("mousemove", onSidebarResize);
+                document.addEventListener("mouseup", stopSidebarResize);
+                document.addEventListener("pointermove", onSidebarResize);
+                document.addEventListener("pointerup", stopSidebarResize);
+                document.addEventListener("pointercancel", stopSidebarResize);
 
                 // Accessibility feature listeners with null checks
                 const themeToggleBtn = document.getElementById("themeToggleBtn");
@@ -2664,7 +4875,18 @@
                     document.getElementById("searchInput").focus();
                 }
                 if (e.key === "Escape") {
+                    if (appState.dualIndexMode) {
+                        setDualIndexMode(false);
+                        return;
+                    }
                     clearSearch();
+                }
+            });
+
+            window.addEventListener("resize", () => {
+                applySidebarWidth();
+                if (appState.dualIndexMode) {
+                    updateDualIndexModeUI();
                 }
             });
         });
