@@ -777,6 +777,33 @@
             background: #556b7e;
         }
 
+        .source-toggle {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .source-btn {
+            flex: 1;
+            padding: 6px 8px;
+            background: #4a5f7a;
+            color: white;
+            border: 2px solid #4a5f7a;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s ease;
+        }
+
+        .source-btn.active {
+            background: #27ae60;
+            border-color: #27ae60;
+        }
+
+        .source-btn:hover {
+            background: #556b7e;
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .content-column {
@@ -922,6 +949,11 @@
                 <div class="sidebar-title">📚 Document Collection</div>
                 <div class="sidebar-subtitle" id="docCount">Loading...</div>
 
+                <div class="source-toggle" id="sourceToggle">
+                    <button class="source-btn active" data-source="dofus3" title="DOFUS 3 source">DOFUS3</button>
+                    <button class="source-btn" data-source="dtouch" title="Dofus Touch source">DTouch</button>
+                </div>
+
                 <div class="language-selector">
                     <button class="lang-btn active" data-lang="es" title="Español">ES</button>
                     <button class="lang-btn" data-lang="en" title="English">EN</button>
@@ -1039,6 +1071,7 @@
         let appState = {
             sidebarVisible: true,
             currentLanguage: config.ui.defaultLanguage,
+            currentDataSource: (localStorage.getItem("appDataSource") === "dtouch") ? "dtouch" : "dofus3",
             bilingualMode: false,
             secondLanguage: "fr",
             currentSearchTerm: "",
@@ -1057,6 +1090,18 @@
             swipeStartX: 0,          // Swipe gesture tracking
             swipeStartY: 0,
             swipeStartTime: 0
+        };
+
+        const SOURCE_STORAGE_KEY = "appDataSource";
+        const DofusSources = {
+            dofus3: "dofus3",
+            dtouch: "dtouch"
+        };
+        const DTOUCH_LANGUAGES = ["fr", "en", "es", "pt", "de"];
+        const dataSourceRuntimeCache = {
+            dofus3Docs: null,
+            touchByLanguage: new Map(),
+            touchInFlight: new Map()
         };
 
         // ===== INDEXEDDB CACHE MANAGEMENT =====
@@ -1193,7 +1238,238 @@
             return text.replace(/<[^>]+>/g, '');
         }
 
-        // ===== FETCH DOCUMENTS FROM API =====
+        function getActiveTouchLanguages() {
+            const selected = [appState.currentLanguage];
+
+            if (appState.bilingualMode && appState.secondLanguage && appState.secondLanguage !== appState.currentLanguage) {
+                selected.push(appState.secondLanguage);
+            }
+
+            return selected.filter(lang => DTOUCH_LANGUAGES.includes(lang));
+        }
+
+        function updateSourceToggleButtons() {
+            document.querySelectorAll(".source-btn").forEach(btn => {
+                btn.classList.toggle("active", btn.getAttribute("data-source") === appState.currentDataSource);
+            });
+        }
+
+        function normalizeTouchDocument(rawDoc, language, fallbackId) {
+            const docId = rawDoc.id ?? fallbackId;
+            return {
+                id: Number(docId),
+                typeId: rawDoc.typeId || null,
+                title: {
+                    [language]: rawDoc.titleId || "Title not available"
+                },
+                author: {
+                    [language]: rawDoc.authorId || "Author not available"
+                },
+                subTitle: {
+                    [language]: rawDoc.subTitleId || ""
+                },
+                content: {
+                    [language]: rawDoc.contentId || "Content not available"
+                },
+                contentCSS: rawDoc.contentCSS || null
+            };
+        }
+
+        function normalizeTouchLanguagePayload(language, payload) {
+            const normalized = {};
+
+            Object.keys(payload || {}).forEach((key) => {
+                const rawDoc = payload[key] || {};
+                const normalizedDoc = normalizeTouchDocument(rawDoc, language, key);
+                normalized[String(normalizedDoc.id)] = normalizedDoc;
+            });
+
+            return normalized;
+        }
+
+        async function fetchTouchLanguageDocuments(language) {
+            if (dataSourceRuntimeCache.touchByLanguage.has(language)) {
+                return dataSourceRuntimeCache.touchByLanguage.get(language);
+            }
+
+            if (dataSourceRuntimeCache.touchInFlight.has(language)) {
+                return dataSourceRuntimeCache.touchInFlight.get(language);
+            }
+
+            const loadPromise = (async () => {
+                // DTouch normalization is based on fr.json schema: titleId/authorId/subTitleId/contentId.
+                const response = await fetch(`data/touch/${language}.json`);
+                if (!response.ok) {
+                    throw new Error(`Unable to load data/touch/${language}.json (${response.status})`);
+                }
+
+                const payload = await response.json();
+                const normalized = normalizeTouchLanguagePayload(language, payload);
+                dataSourceRuntimeCache.touchByLanguage.set(language, normalized);
+                return normalized;
+            })();
+
+            dataSourceRuntimeCache.touchInFlight.set(language, loadPromise);
+
+            try {
+                return await loadPromise;
+            } finally {
+                dataSourceRuntimeCache.touchInFlight.delete(language);
+            }
+        }
+
+        async function buildTouchDocumentsForLanguages(languages) {
+            const mergedById = new Map();
+
+            for (const language of languages) {
+                const docsById = await fetchTouchLanguageDocuments(language);
+
+                Object.keys(docsById).forEach((docKey) => {
+                    const doc = docsById[docKey];
+                    const docId = String(doc.id);
+
+                    if (!mergedById.has(docId)) {
+                        mergedById.set(docId, {
+                            id: doc.id,
+                            typeId: doc.typeId || null,
+                            title: {},
+                            author: {},
+                            subTitle: {},
+                            content: {},
+                            contentCSS: doc.contentCSS || null
+                        });
+                    }
+
+                    const merged = mergedById.get(docId);
+                    Object.assign(merged.title, doc.title || {});
+                    Object.assign(merged.author, doc.author || {});
+                    Object.assign(merged.subTitle, doc.subTitle || {});
+                    Object.assign(merged.content, doc.content || {});
+
+                    if (!merged.contentCSS && doc.contentCSS) {
+                        merged.contentCSS = doc.contentCSS;
+                    }
+                });
+            }
+
+            return Array.from(mergedById.values()).sort((a, b) => Number(a.id) - Number(b.id));
+        }
+
+        async function refreshTouchDocuments(options = {}) {
+            const {
+                showLoading = false,
+                preserveCurrentDocument = true
+            } = options;
+
+            const previousDocId = appState.currentDisplayedDocId;
+            const container = document.getElementById("documentsContainer");
+
+            if (showLoading && container) {
+                container.innerHTML = `
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <p>Loading DTouch documents...</p>
+                    </div>
+                `;
+            }
+
+            const activeLanguages = getActiveTouchLanguages();
+            if (activeLanguages.length === 0) {
+                appState.allDocuments = [];
+                appState.displayedDocuments = [];
+                appState.currentDisplayedDocId = null;
+                updateUI();
+                renderIndexOnly();
+                return;
+            }
+
+            const touchDocs = await buildTouchDocumentsForLanguages(activeLanguages);
+            appState.allDocuments = touchDocs;
+            appState.displayedDocuments = [...touchDocs];
+            appState.documentsLoaded = true;
+            updateUI();
+
+            if (appState.currentSearchTerm && appState.currentSearchTerm.length >= 3) {
+                performSearch();
+            } else {
+                renderIndexOnly();
+            }
+
+            if (preserveCurrentDocument && previousDocId) {
+                const stillExists = appState.allDocuments.some(doc => String(doc.id) === String(previousDocId));
+                if (stillExists) {
+                    loadAndScrollToDocument(previousDocId);
+                } else {
+                    appState.currentDisplayedDocId = null;
+                }
+            }
+        }
+
+        async function loadDofus3Documents(options = {}) {
+            const { preserveCurrentDocument = true } = options;
+            const previousDocId = appState.currentDisplayedDocId;
+
+            if (dataSourceRuntimeCache.dofus3Docs && dataSourceRuntimeCache.dofus3Docs.length > 0) {
+                appState.allDocuments = dataSourceRuntimeCache.dofus3Docs;
+                appState.displayedDocuments = [...appState.allDocuments];
+                appState.documentsLoaded = true;
+                updateUI();
+
+                if (appState.currentSearchTerm && appState.currentSearchTerm.length >= 3) {
+                    performSearch();
+                } else {
+                    renderIndexOnly();
+                }
+
+                if (preserveCurrentDocument && previousDocId) {
+                    const stillExists = appState.allDocuments.some(doc => String(doc.id) === String(previousDocId));
+                    if (stillExists) {
+                        loadAndScrollToDocument(previousDocId);
+                    } else {
+                        appState.currentDisplayedDocId = null;
+                    }
+                }
+
+                return;
+            }
+
+            await fetchDocuments();
+        }
+
+        async function setDataSource(source, options = {}) {
+            const {
+                forceRefresh = false,
+                preserveCurrentDocument = true
+            } = options;
+
+            if (!Object.values(DofusSources).includes(source)) {
+                return;
+            }
+
+            if (!forceRefresh && appState.currentDataSource === source) {
+                return;
+            }
+
+            const previousDocId = appState.currentDisplayedDocId;
+            appState.currentDataSource = source;
+            localStorage.setItem(SOURCE_STORAGE_KEY, source);
+            updateSourceToggleButtons();
+
+            if (source === DofusSources.dtouch) {
+                await refreshTouchDocuments({ showLoading: true, preserveCurrentDocument });
+            } else {
+                await loadDofus3Documents({ preserveCurrentDocument });
+            }
+
+            if (preserveCurrentDocument && previousDocId) {
+                const stillExists = appState.allDocuments.some(doc => String(doc.id) === String(previousDocId));
+                if (!stillExists) {
+                    appState.currentDisplayedDocId = null;
+                }
+            }
+        }
+
+        // ===== FETCH DOCUMENTS FROM DOFUS3 API =====
         async function fetchDocuments() {
             try {
                 console.log("Starting fetchDocuments...");
@@ -1205,10 +1481,15 @@
                 
                 if (cachedDocs && cachedDocs.length > 0) {
                     console.log(`Loaded ${cachedDocs.length} documents from cache`);
-                    appState.allDocuments = cachedDocs;
-                    appState.documentsLoaded = true;
-                    updateUI();
-                    renderIndexOnly();
+                    dataSourceRuntimeCache.dofus3Docs = [...cachedDocs];
+
+                    if (appState.currentDataSource === DofusSources.dofus3) {
+                        appState.allDocuments = cachedDocs;
+                        appState.displayedDocuments = [...cachedDocs];
+                        appState.documentsLoaded = true;
+                        updateUI();
+                        renderIndexOnly();
+                    }
                     console.log("Finished loading from cache");
                     
                     // Check if cache is stale (older than today)
@@ -1340,16 +1621,24 @@
                     }
                 }
 
-                appState.allDocuments = allDocs;
-                appState.documentsLoaded = true;
+                dataSourceRuntimeCache.dofus3Docs = [...allDocs];
+
+                if (appState.currentDataSource === DofusSources.dofus3) {
+                    appState.allDocuments = allDocs;
+                    appState.displayedDocuments = [...allDocs];
+                    appState.documentsLoaded = true;
+                }
 
                 // Cache all the documents and update fetch date
-                await cacheDocuments(appState.allDocuments);
+                await cacheDocuments(allDocs);
                 localStorage.setItem('lastFetchDate', today);
 
-                console.log(`Successfully fetched all ${appState.allDocuments.length} documents`);
-                updateUI();
-                renderIndexOnly();
+                console.log(`Successfully fetched all ${allDocs.length} documents`);
+
+                if (appState.currentDataSource === DofusSources.dofus3) {
+                    updateUI();
+                    renderIndexOnly();
+                }
             } catch (error) {
                 console.error("Error fetching documents from API:", error);
                 throw error;
@@ -1359,7 +1648,8 @@
         // ===== UPDATE UI ELEMENTS =====
         function updateUI() {
             const docCount = document.getElementById("docCount");
-            docCount.textContent = `${appState.allDocuments.length} documents loaded`;
+            const sourceLabel = appState.currentDataSource === DofusSources.dtouch ? "DTouch" : "DOFUS3";
+            docCount.textContent = `${appState.allDocuments.length} documents loaded (${sourceLabel})`;
         }
 
         // ===== RENDER INDEX ONLY =====
@@ -1894,7 +2184,16 @@
         }
 
         // ===== LANGUAGE SELECTION =====
-        function setLanguage(lang) {
+        function getPreferredSecondLanguage(primaryLang) {
+            const selector = document.getElementById("secondLanguageSelector");
+            const available = selector
+                ? Array.from(selector.querySelectorAll(".lang-btn")).map(btn => btn.getAttribute("data-lang"))
+                : DTOUCH_LANGUAGES;
+
+            return available.find(lang => lang && lang !== primaryLang) || "fr";
+        }
+
+        async function setLanguage(lang) {
             appState.currentLanguage = lang;
 
             document.querySelectorAll(".language-selector:not(#secondLanguageSelector) .lang-btn").forEach(btn => {
@@ -1903,6 +2202,22 @@
                     btn.classList.add("active");
                 }
             });
+
+            if (appState.bilingualMode && appState.secondLanguage === lang) {
+                appState.secondLanguage = getPreferredSecondLanguage(lang);
+            }
+
+            const secondLangSelector = document.getElementById("secondLanguageSelector");
+            if (secondLangSelector) {
+                secondLangSelector.querySelectorAll(".lang-btn").forEach(btn => {
+                    btn.classList.toggle("active", btn.getAttribute("data-lang") === appState.secondLanguage);
+                });
+            }
+
+            if (appState.currentDataSource === DofusSources.dtouch) {
+                await refreshTouchDocuments({ showLoading: false, preserveCurrentDocument: true });
+                return;
+            }
 
             // If a document is currently displayed, reload it with new language
             if (appState.currentDisplayedDocId) {
@@ -1919,7 +2234,7 @@
         }
 
         // ===== VIEW MODE TOGGLE =====
-        function setViewMode(mode) {
+        async function setViewMode(mode) {
             appState.bilingualMode = (mode === "bilingual");
 
             document.querySelectorAll(".view-mode-btn").forEach(btn => {
@@ -1933,13 +2248,20 @@
             const secondLangSelector = document.getElementById("secondLanguageSelector");
             if (appState.bilingualMode) {
                 secondLangSelector.style.display = "block";
-                // Set first option as active
-                const firstBtn = secondLangSelector.querySelector(".lang-btn");
-                if (firstBtn) {
-                    setSecondLanguage(firstBtn.getAttribute("data-lang"));
+                if (!appState.secondLanguage || appState.secondLanguage === appState.currentLanguage) {
+                    appState.secondLanguage = getPreferredSecondLanguage(appState.currentLanguage);
                 }
+
+                secondLangSelector.querySelectorAll(".lang-btn").forEach(btn => {
+                    btn.classList.toggle("active", btn.getAttribute("data-lang") === appState.secondLanguage);
+                });
             } else {
                 secondLangSelector.style.display = "none";
+            }
+
+            if (appState.currentDataSource === DofusSources.dtouch) {
+                await refreshTouchDocuments({ showLoading: false, preserveCurrentDocument: true });
+                return;
             }
 
             // If a document is currently displayed, reload it in the new view mode
@@ -1950,7 +2272,7 @@
         }
 
         // ===== SET SECOND LANGUAGE =====
-        function setSecondLanguage(lang) {
+        async function setSecondLanguage(lang) {
             if (lang === appState.currentLanguage) {
                 // Don't allow same language as primary
                 return;
@@ -1965,6 +2287,11 @@
                     btn.classList.add("active");
                 }
             });
+
+            if (appState.currentDataSource === DofusSources.dtouch && appState.bilingualMode) {
+                await refreshTouchDocuments({ showLoading: false, preserveCurrentDocument: true });
+                return;
+            }
 
             // If a document is currently displayed, reload it with new second language
             if (appState.bilingualMode && appState.currentDisplayedDocId) {
@@ -2241,12 +2568,16 @@
             // Setup toolbar visibility (before documents load)
             setupToolbarVisibility();
             
-            // Config is now embedded, no need to load from file
+            // Initialize current source and load only needed data
             try {
-                await fetchDocuments();
-                console.log("fetchDocuments completed");
+                updateSourceToggleButtons();
+                await setDataSource(appState.currentDataSource, {
+                    forceRefresh: true,
+                    preserveCurrentDocument: false
+                });
+                console.log("Initial source data loaded");
             } catch (error) {
-                console.error("fetchDocuments error:", error);
+                console.error("Initial source loading error:", error);
             }
 
             try {
@@ -2273,6 +2604,16 @@
                 
                 const clearSearchBtn = document.getElementById("clearSearch");
                 if (clearSearchBtn) clearSearchBtn.addEventListener("click", clearSearch);
+
+                document.querySelectorAll(".source-btn").forEach(btn => {
+                    btn.addEventListener("click", async (e) => {
+                        const source = e.currentTarget.getAttribute("data-source");
+                        await setDataSource(source, {
+                            forceRefresh: false,
+                            preserveCurrentDocument: true
+                        });
+                    });
+                });
 
                 // Accessibility feature listeners with null checks
                 const themeToggleBtn = document.getElementById("themeToggleBtn");
@@ -2308,36 +2649,6 @@
                 document.querySelectorAll(".view-mode-btn").forEach(btn => {
                     btn.addEventListener("click", (e) => {
                         setViewMode(e.target.getAttribute("data-mode"));
-                    });
-                });
-
-                // Language selector buttons - update current language and re-render index
-                document.querySelectorAll('.lang-btn').forEach(button => {
-                    button.addEventListener('click', () => {
-                        const selectedLanguage = button.getAttribute('data-lang');
-                        if (!selectedLanguage) return;
-
-                        // Check if the button belongs to the main language selector
-                        const isMainLanguageButton = button.closest('.language-selector') && button.closest('#secondLanguageSelector') === null;
-
-                        if (isMainLanguageButton) {
-                            // Update appState with the new main language
-                            appState.currentLanguage = selectedLanguage;
-
-                            // Update the active button styling for main language
-                            document.querySelectorAll('.language-selector .lang-btn').forEach(btn => btn.classList.remove('active'));
-                            button.classList.add('active');
-
-                            // Re-render the index list with the new main language
-                            renderIndexOnly();
-                        } else {
-                            // Update appState with the new secondary language
-                            appState.secondLanguage = selectedLanguage;
-
-                            // Update the active button styling for secondary language
-                            document.querySelectorAll('#secondLanguageSelector .lang-btn').forEach(btn => btn.classList.remove('active'));
-                            button.classList.add('active');
-                        }
                     });
                 });
 
