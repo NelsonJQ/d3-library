@@ -66,7 +66,7 @@
             "fr": null,
             "en": null,
             "es": null,
-            "pt": null(
+            "pt": null
           }
         }
       ],
@@ -706,7 +706,7 @@
           "image_id": 49,
           "text_by_lang": {
             "fr": "<b align=\"center\">Nettoyeur de surface</b>\\n\\n####\\n\\nTout d'abord, en tant que <b>Maître d'Armes</b> vous exercerez <b>un métier d'artisanat</b>. Pas de récolte possible donc, et un <b>Permis</b> d'exercer obligatoire.\\n\\nLe <b>Maître d'armes de zone</b> fabrique des <b>bâtons</b>, des <b>bâtons à deux mains</b>, des <b>haches</b> et des <b>marteaux</b>.\\n\\nIl faudra donc se fournir des <b>métaux</b> auprès des <b>Mineurs</b> et du <b>bois</b> auprès des <b>Forestiers</b>.\\n\\nUne fois les ingrédients réunis, vous devrez vous rendre dans la <b>Forge</b> la plus proche pour effectuer vos fabrications sur une des machines disponibles.\\n",
-            "en": "<b align=\"center\">Surface Cleaner</b> \\n \\n#### \\nFirst of all, as a <b>weapons master</b> you will be practicing a <b>crafting profession</b>. You therefore won't be able to harvest and you will need to get a <b>permit</b>. \\n \\nThe <b>area-of-effect weapons master</b> makes <b>one- and two-handed staffs</b>, <b>axes</b>, and <b>hammers</b>. \\n \\nYou will need to get <b>metals</b> from <b>miners</b> and <b>wood</b> from <b>lumberja)cks</b>. \\n \\nOnce you've gathered your ingredients, you'll have to head to the nearest <b>area-of-effect weapons forge</b> to make your creations using the machines available.",
+            "en": "<b align=\"center\">Surface Cleaner</b> \\n \\n#### \\nFirst of all, as a <b>weapons master</b> you will be practicing a <b>crafting profession</b>. You therefore won't be able to harvest and you will need to get a <b>permit</b>. \\n \\nThe <b>area-of-effect weapons master</b> makes <b>one- and two-handed staffs</b>, <b>axes</b>, and <b>hammers</b>. \\n \\nYou will need to get <b>metals</b> from <b>miners</b> and <b>wood</b> from <b>lumberjacks</b>. \\n \\nOnce you've gathered your ingredients, you'll have to head to the nearest <b>area-of-effect weapons forge</b> to make your creations using the machines available.",
             "es": "<b align=\"center\">Para relacionarse con mucha gente</b>\\n\\n####\\n\\nPara empezar, como <b>maestro de armas</b>, estarás ejerciendo<b>un oficio de artesanía</b>. Es decir, no te servirá para recolectar nada, y necesitarás un <b>permiso</b> para ejercerlo.\\n\\nEl <b>maestro de armas de zona</b> fabrica <b>bastones de una mano</b>, <b>bastones de dos manos</b>, <b>hachas</b> y <b>martillos</b>.\\n\\nNecesitarás aprovisionarte de <b>metales</b> con los <b>mineros</b>, y de <b>madera</b> con los <b>leñadores</b>.\\n\\nCuando hayas reunido todos los ingredientes, tendrás que dirigirte a la <b>forja</b> más cercana para fabricar lo que desees con una de las máquinas disponibles.",
             "pt": "<b align=\"center\">Polimento Especial</b> \\n \\n#### \\nPrimeiramente, como <b>mestre de armas</b>, você praticará uma <b>profissão de fabricação</b>. Portanto, você não poderá coletar e precisará de uma <b>permissão</b>. \\n \\nO <b>mestre de armas de dano de área</b> faz <b>bastões de uma e de duas mãos</b>, <b>machados</b> e <b>martelos</b>. \\n \\nVocê precisará conseguir <b>metais</b> com <b>mineradores</b> e <b>madeira</b> com <b>lenhadores</b>. \\n \\nDepois que tiver juntado os ingredientes, você precisará ir até a <b>forja de armas de dano de área</b> mais próxima para criar as peças usando as máquinas disponíveis."
           }
