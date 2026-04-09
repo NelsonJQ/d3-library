@@ -1,1 +1,5 @@
 Dofus_ingame_library_bilingual_html_export.ipynb
+/scripts
+package*.json
+/node_modules
+wakfu_*.json

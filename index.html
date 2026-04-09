@@ -877,6 +877,38 @@
             min-height: 400px;
         }
 
+        .content-wrapper.wakfu-themed {
+            background-image: linear-gradient(rgba(255, 248, 236, 0.82), rgba(255, 248, 236, 0.82)), var(--wakfu-background-image);
+            background-position: center;
+            background-size: cover;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(172, 136, 90, 0.35);
+        }
+
+        body.dark-theme .content-wrapper.wakfu-themed {
+            background-image: linear-gradient(rgba(30, 30, 30, 0.72), rgba(30, 30, 30, 0.72)), var(--wakfu-background-image);
+            border-color: rgba(171, 171, 171, 0.35);
+        }
+
+        body.retro-theme .content-wrapper.wakfu-themed {
+            background-image: linear-gradient(rgba(244, 235, 215, 0.78), rgba(244, 235, 215, 0.78)), var(--wakfu-background-image);
+            border-color: rgba(131, 97, 58, 0.45);
+        }
+
+        .content-wrapper.wakfu-themed .content-column {
+            background: rgba(255, 255, 255, 0.76);
+            backdrop-filter: blur(1px);
+        }
+
+        body.dark-theme .content-wrapper.wakfu-themed .content-column {
+            background: rgba(24, 24, 24, 0.62);
+        }
+
+        body.retro-theme .content-wrapper.wakfu-themed .content-column {
+            background: rgba(248, 235, 207, 0.7);
+        }
+
         .content-column {
             flex: 1;
             padding: 30px;
@@ -933,6 +965,123 @@
 
         body.retro-theme .content img {
             box-shadow: 0 6px 14px rgba(71, 44, 22, 0.24);
+        }
+
+        .wakfu-page-image-wrap {
+            display: flex;
+            justify-content: center;
+            margin: 8px 0 16px;
+        }
+
+        .wakfu-page-image {
+            max-width: min(100%, 620px);
+            width: auto;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.14);
+        }
+
+        .wakfu-inline-icon-wrap {
+            display: inline-flex;
+            align-items: flex-end;
+            vertical-align: text-bottom;
+            margin: 0 0.2em;
+            line-height: 1;
+        }
+
+        .wakfu-inline-icon-wrap.align-left {
+            display: inline-flex;
+            margin-left: 0.1em;
+            margin-right: 0.25em;
+        }
+
+        .wakfu-inline-icon-wrap.align-right {
+            display: inline-flex;
+            margin-left: 0.25em;
+            margin-right: 0.1em;
+        }
+
+        .wakfu-inline-icon-wrap.align-center {
+            display: block;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .wakfu-inline-icon {
+            width: 1.15em;
+            height: 1.15em;
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
+            vertical-align: text-bottom;
+            object-fit: contain;
+        }
+
+        .wakfu-inline-icon-wrap.align-center .wakfu-inline-icon {
+            width: 1.85em;
+            height: 1.85em;
+        }
+
+        .wakfu-missing-asset-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px dashed rgba(176, 92, 7, 0.8);
+            background: rgba(255, 214, 170, 0.45);
+            color: #8d3f00;
+            font-size: 0.82em;
+            font-weight: 700;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .wakfu-missing-asset-badge::before {
+            content: "!";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(141, 63, 0, 0.16);
+            font-size: 0.75em;
+            font-weight: 800;
+        }
+
+        .wakfu-missing-asset-badge.page {
+            display: flex;
+            width: min(100%, 620px);
+            min-height: 88px;
+        }
+
+        .wakfu-missing-asset-badge.icon-center {
+            display: inline-flex;
+            margin: 6px auto;
+            justify-self: center;
+        }
+
+        .wakfu-missing-asset-badge.background {
+            display: flex;
+            margin: 10px 12px;
+            width: fit-content;
+        }
+
+        body.dark-theme .wakfu-missing-asset-badge {
+            border-color: rgba(255, 179, 117, 0.9);
+            background: rgba(87, 51, 18, 0.52);
+            color: #ffd7a6;
+        }
+
+        body.dark-theme .wakfu-missing-asset-badge::before {
+            background: rgba(255, 193, 132, 0.18);
+        }
+
+        body.retro-theme .wakfu-missing-asset-badge {
+            border-color: rgba(137, 84, 33, 0.8);
+            background: rgba(247, 230, 201, 0.72);
+            color: #6e3c0f;
         }
 
         .page-break {
@@ -2176,6 +2325,13 @@
             syncScrollEnabled: true,
             documentsLoaded: false,
             loadedImagesCache: new Set(),
+            wakfuMissingAssets: {
+                kindBackground: new Set(),
+                pageImage: new Set(),
+                textIcon: new Set()
+            },
+            wakfuAssetReportLoaded: false,
+            wakfuImageObserver: null,
             currentDisplayedDocId: null,  // Track which document is currently shown
             fontSizePercent: 100,
             lineHeightValue: 1.8,
@@ -2223,10 +2379,14 @@
         const WAKFU_LANGUAGES = ["fr", "en", "es", "pt"];
         const WAKFU_DEFAULT_INVERTED_DOC_ID = 281;
         const WAKFU_PAGE_SEPARATOR = "\n\n<hr class=\"page-break\">\n\n";
+        const WAKFU_ICON_TOKEN_REGEX = /\[#icon\s+(\d+)(?::([^\]]+))?\]/gi;
+        const WAKFU_ASSET_BASE_PATH = "data/wakfu/assets";
+        const WAKFU_ASSET_REPORT_PATH = "data/wakfu/wakfu_asset_conversion_report.json";
         const dataSourceRuntimeCache = {
             dofus3Docs: null,
             wakfuDocs: null,
             wakfuInFlight: null,
+            wakfuAssetReportInFlight: null,
             touchByLanguage: new Map(),
             touchInFlight: new Map()
         };
@@ -2299,35 +2459,202 @@
         }
 
         // ===== IMAGE HOVER LOADING =====
-        function setupImageHoverLoading(container) {
+        function normalizeWakfuAssetType(assetType) {
+            const normalized = String(assetType || "").trim().toLowerCase();
+            if (normalized === "kindbackground" || normalized === "background" || normalized === "backgrounds") {
+                return "kindBackground";
+            }
+            if (normalized === "pageimage" || normalized === "page" || normalized === "pages") {
+                return "pageImage";
+            }
+            if (normalized === "texticon" || normalized === "icon" || normalized === "icons") {
+                return "textIcon";
+            }
+            return "";
+        }
+
+        function registerWakfuMissingAsset(assetType, assetId) {
+            const normalizedType = normalizeWakfuAssetType(assetType);
+            const numericId = Number(assetId);
+            if (!normalizedType || !Number.isFinite(numericId) || numericId <= 0) {
+                return;
+            }
+
+            const typeSet = appState.wakfuMissingAssets[normalizedType];
+            if (typeSet instanceof Set) {
+                typeSet.add(numericId);
+            }
+        }
+
+        function isWakfuMissingAsset(assetType, assetId) {
+            const normalizedType = normalizeWakfuAssetType(assetType);
+            const numericId = Number(assetId);
+            if (!normalizedType || !Number.isFinite(numericId) || numericId <= 0) {
+                return false;
+            }
+
+            const typeSet = appState.wakfuMissingAssets[normalizedType];
+            return typeSet instanceof Set ? typeSet.has(numericId) : false;
+        }
+
+        function parseWakfuAssetMetaFromPath(dataSrc) {
+            if (typeof dataSrc !== "string" || dataSrc.length === 0) {
+                return null;
+            }
+
+            const normalizedPath = dataSrc.replace(/\\/g, "/").toLowerCase();
+            const match = normalizedPath.match(/\/(backgrounds|pages|icons)\/(\d+)\.png(?:[?#].*)?$/);
+            if (!match) {
+                return null;
+            }
+
+            const folder = match[1];
+            const numericId = Number(match[2]);
+            if (!Number.isFinite(numericId) || numericId <= 0) {
+                return null;
+            }
+
+            if (folder === "backgrounds") {
+                return { type: "kindBackground", id: numericId };
+            }
+            if (folder === "pages") {
+                return { type: "pageImage", id: numericId };
+            }
+            if (folder === "icons") {
+                return { type: "textIcon", id: numericId };
+            }
+
+            return null;
+        }
+
+        function getWakfuAssetMeta(img, dataSrc) {
+            const dataType = img.getAttribute("data-wakfu-asset-type");
+            const dataId = Number(img.getAttribute("data-wakfu-asset-id"));
+            const normalizedType = normalizeWakfuAssetType(dataType);
+            if (normalizedType && Number.isFinite(dataId) && dataId > 0) {
+                return { type: normalizedType, id: dataId };
+            }
+            return parseWakfuAssetMetaFromPath(dataSrc);
+        }
+
+        function createWakfuMissingBadge(assetType, assetId, options = {}) {
+            const badge = document.createElement("span");
+            badge.className = "wakfu-missing-asset-badge";
+
+            const normalizedType = normalizeWakfuAssetType(assetType);
+            const numericId = Number(assetId);
+            const safeId = Number.isFinite(numericId) && numericId > 0 ? numericId : "?";
+
+            if (normalizedType === "pageImage") {
+                badge.classList.add("page");
+                badge.textContent = `Missing page image #${safeId}`;
+            } else if (normalizedType === "kindBackground") {
+                badge.classList.add("background");
+                badge.textContent = `Missing background #${safeId}`;
+            } else {
+                badge.textContent = `Missing icon #${safeId}`;
+                if (options.centeredIcon) {
+                    badge.classList.add("icon-center");
+                }
+            }
+
+            badge.title = badge.textContent;
+            badge.setAttribute("aria-label", badge.textContent);
+            return badge;
+        }
+
+        function replaceImageWithWakfuBadge(img, dataSrc, reason) {
+            const meta = getWakfuAssetMeta(img, dataSrc);
+            if (!meta) {
+                return false;
+            }
+
+            registerWakfuMissingAsset(meta.type, meta.id);
+
+            const centeredIcon = img.closest(".wakfu-inline-icon-wrap")?.classList.contains("align-center") || false;
+            const badge = createWakfuMissingBadge(meta.type, meta.id, { centeredIcon });
+            if (reason) {
+                badge.setAttribute("data-reason", reason);
+            }
+
+            img.replaceWith(badge);
+            return true;
+        }
+
+        function loadImageIntoElement(img, dataSrc) {
+            if (!img || !dataSrc) {
+                return;
+            }
+
+            if (appState.loadedImagesCache.has(dataSrc)) {
+                img.src = dataSrc;
+                img.removeAttribute("data-src");
+                return;
+            }
+
+            const meta = getWakfuAssetMeta(img, dataSrc);
+            if (meta && isWakfuMissingAsset(meta.type, meta.id)) {
+                replaceImageWithWakfuBadge(img, dataSrc, "known-missing");
+                return;
+            }
+
+            const preload = new Image();
+            preload.onload = () => {
+                img.src = dataSrc;
+                img.removeAttribute("data-src");
+                appState.loadedImagesCache.add(dataSrc);
+            };
+            preload.onerror = () => {
+                const replaced = replaceImageWithWakfuBadge(img, dataSrc, "load-error");
+                if (!replaced) {
+                    console.error("Failed to load image:", dataSrc);
+                }
+            };
+            preload.src = dataSrc;
+        }
+
+        function ensureWakfuImageObserver() {
+            if (appState.wakfuImageObserver) {
+                return appState.wakfuImageObserver;
+            }
+
+            appState.wakfuImageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    }
+
+                    const img = entry.target;
+                    const dataSrc = img.getAttribute("data-src");
+                    appState.wakfuImageObserver.unobserve(img);
+                    loadImageIntoElement(img, dataSrc);
+                });
+            }, {
+                root: null,
+                rootMargin: "200px",
+                threshold: 0.01
+            });
+
+            return appState.wakfuImageObserver;
+        }
+
+        function setupImageHoverLoading(container, options = {}) {
             if (!container) return;
 
+            const { deferUntilVisible = false } = options;
+
             const lazyImages = container.querySelectorAll("img[data-src]");
+            const observer = deferUntilVisible ? ensureWakfuImageObserver() : null;
 
             lazyImages.forEach((img) => {
                 const dataSrc = img.getAttribute("data-src");
 
                 if (dataSrc) {
-                    // Check if already loaded in session cache
-                    if (appState.loadedImagesCache.has(dataSrc)) {
-                        img.src = dataSrc;
-                        img.removeAttribute("data-src");
-                        console.log("Loading from session cache:", dataSrc);
-                        return;
+                    if (observer) {
+                        observer.observe(img);
+                    } else {
+                        loadImageIntoElement(img, dataSrc);
                     }
-
-                    // Preload image only if not cached
-                    const preload = new Image();
-                    preload.onload = () => {
-                        img.src = dataSrc;
-                        img.removeAttribute("data-src");
-                        appState.loadedImagesCache.add(dataSrc);
-                        console.log("Loaded and cached:", dataSrc);
-                    };
-                    preload.onerror = () => {
-                        console.error("Failed to load image:", dataSrc);
-                    };
-                    preload.src = dataSrc;
                 }
             });
         }
@@ -2341,6 +2668,17 @@
             let processed = htmlContent.replace(imagePattern, (match, format, id) => {
                 const extension = format.toLowerCase() === 'jpg' ? 'jpg' : format.toLowerCase();
                 return `${config.features.imageBaseUrl}${id}.${extension}`;
+            });
+
+            // Convert Wakfu page image placeholders to lazy-load image blocks
+            processed = processed.replace(/##wakfu_page_image,(\d+)##/gi, (match, imageId) => {
+                const pageImageId = Number(imageId);
+                if (!Number.isFinite(pageImageId) || pageImageId <= 0) {
+                    return "";
+                }
+
+                const imagePath = getWakfuPageImageAssetPath(pageImageId);
+                return `<div class="wakfu-page-image-wrap"><img class="wakfu-page-image" data-src="${imagePath}" data-wakfu-asset-type="pageImage" data-wakfu-asset-id="${pageImageId}" alt="Wakfu page image ${pageImageId}"></div>`;
             });
 
             // Convert img tags to lazy load - replace src with data-src
@@ -2363,6 +2701,93 @@
         // ===== CLEAN HTML TAGS =====
         function cleanHtmlTags(text) {
             return text.replace(/<[^>]+>/g, '');
+        }
+
+        function getWakfuKindBackgroundAssetPath(kindId) {
+            const numericId = Number(kindId);
+            if (!Number.isFinite(numericId) || numericId <= 0) {
+                return "";
+            }
+            return `${WAKFU_ASSET_BASE_PATH}/backgrounds/${numericId}.png`;
+        }
+
+        function getWakfuPageImageAssetPath(imageId) {
+            const numericId = Number(imageId);
+            if (!Number.isFinite(numericId) || numericId <= 0) {
+                return "";
+            }
+            return `${WAKFU_ASSET_BASE_PATH}/pages/${numericId}.png`;
+        }
+
+        function getWakfuIconAssetPath(iconId) {
+            const numericId = Number(iconId);
+            if (!Number.isFinite(numericId) || numericId <= 0) {
+                return "";
+            }
+            return `${WAKFU_ASSET_BASE_PATH}/icons/${numericId}.png`;
+        }
+
+        function sanitizeWakfuIconAlign(value) {
+            const normalized = String(value || "left").trim().toLowerCase();
+            if (normalized === "left" || normalized === "right" || normalized === "center") {
+                return normalized;
+            }
+            return "left";
+        }
+
+        function replaceWakfuIconTokens(htmlText) {
+            if (typeof htmlText !== "string" || htmlText.length === 0) {
+                return htmlText;
+            }
+
+            return htmlText.replace(WAKFU_ICON_TOKEN_REGEX, (match, iconId, align) => {
+                const numericIconId = Number(iconId);
+                if (!Number.isFinite(numericIconId) || numericIconId <= 0) {
+                    return "";
+                }
+
+                const iconPath = getWakfuIconAssetPath(numericIconId);
+                const iconAlign = sanitizeWakfuIconAlign(align);
+                return `<span class="wakfu-inline-icon-wrap align-${iconAlign}"><img class="wakfu-inline-icon" data-src="${iconPath}" data-wakfu-asset-type="textIcon" data-wakfu-asset-id="${numericIconId}" alt="Wakfu icon ${numericIconId}"></span>`;
+            });
+        }
+
+        function applyWakfuBackgroundFallback(contentWrapper, kindId, backgroundPath) {
+            if (!contentWrapper || !backgroundPath) {
+                return;
+            }
+
+            const numericKindId = Number(kindId);
+            if (!Number.isFinite(numericKindId) || numericKindId <= 0) {
+                return;
+            }
+
+            function attachBackgroundBadge(reason) {
+                if (contentWrapper.querySelector('.wakfu-missing-asset-badge.background')) {
+                    return;
+                }
+                const badge = createWakfuMissingBadge("kindBackground", numericKindId);
+                if (reason) {
+                    badge.setAttribute("data-reason", reason);
+                }
+                contentWrapper.prepend(badge);
+                contentWrapper.style.setProperty("--wakfu-background-image", "none");
+            }
+
+            if (isWakfuMissingAsset("kindBackground", numericKindId)) {
+                attachBackgroundBadge("known-missing");
+                return;
+            }
+
+            const preload = new Image();
+            preload.onload = () => {
+                appState.loadedImagesCache.add(backgroundPath);
+            };
+            preload.onerror = () => {
+                registerWakfuMissingAsset("kindBackground", numericKindId);
+                attachBackgroundBadge("load-error");
+            };
+            preload.src = backgroundPath;
         }
 
         function getActiveTouchLanguages() {
@@ -3616,12 +4041,31 @@
             const contentByLang = {};
             WAKFU_LANGUAGES.forEach(language => {
                 const pageChunks = sortedPages
-                    .map(page => page && page.text_by_lang ? page.text_by_lang[language] : null)
-                    .filter(text => typeof text === "string" && text.trim().length > 0);
+                    .map(page => {
+                        const pageText = page && page.text_by_lang ? page.text_by_lang[language] : null;
+                        const formattedText = typeof pageText === "string" && pageText.trim().length > 0
+                            ? replaceWakfuIconTokens(formatWakfuPageText(pageText))
+                            : "";
+                        const pageImageId = Number(page && page.image_id);
+                        const hasImage = Number.isFinite(pageImageId) && pageImageId > 0;
+
+                        if (!formattedText && !hasImage) {
+                            return "";
+                        }
+
+                        const parts = [];
+                        if (hasImage) {
+                            parts.push(`##wakfu_page_image,${pageImageId}##`);
+                        }
+                        if (formattedText) {
+                            parts.push(formattedText);
+                        }
+
+                        return parts.join("<br>");
+                    })
+                    .filter(text => text.length > 0);
 
                 contentByLang[language] = pageChunks
-                    .map(formatWakfuPageText)
-                    .filter(text => text.length > 0)
                     .join(WAKFU_PAGE_SEPARATOR);
             });
 
@@ -3699,6 +4143,50 @@
             appState.displayedDocuments = [...wakfuDocs];
             appState.documentsLoaded = true;
             updateUI();
+
+            if (!appState.wakfuAssetReportLoaded) {
+                if (dataSourceRuntimeCache.wakfuAssetReportInFlight) {
+                    await dataSourceRuntimeCache.wakfuAssetReportInFlight;
+                } else {
+                    dataSourceRuntimeCache.wakfuAssetReportInFlight = (async () => {
+                        const githubReportUrl = "https://nelsonjq.github.io/d3-library/data/wakfu/wakfu_asset_conversion_report.json";
+
+                        async function fetchReport(url) {
+                            const response = await fetch(url);
+                            if (!response.ok) {
+                                throw new Error(`Unable to load ${url} (${response.status})`);
+                            }
+                            return response.json();
+                        }
+
+                        let report = null;
+                        try {
+                            report = await fetchReport(WAKFU_ASSET_REPORT_PATH);
+                        } catch (localError) {
+                            console.warn("Local Wakfu asset report load failed, trying GitHub fallback", localError);
+                            try {
+                                report = await fetchReport(githubReportUrl);
+                            } catch (fallbackError) {
+                                console.warn("Wakfu asset report fallback also failed", fallbackError);
+                            }
+                        }
+
+                        if (report && Array.isArray(report.missing)) {
+                            report.missing.forEach(entry => {
+                                registerWakfuMissingAsset(entry?.type, entry?.id);
+                            });
+                        }
+
+                        appState.wakfuAssetReportLoaded = true;
+                    })();
+
+                    try {
+                        await dataSourceRuntimeCache.wakfuAssetReportInFlight;
+                    } finally {
+                        dataSourceRuntimeCache.wakfuAssetReportInFlight = null;
+                    }
+                }
+            }
 
             if (appState.currentSearchTerm && appState.currentSearchTerm.length >= 3) {
                 performSearch();
@@ -4135,6 +4623,13 @@
             let content1 = getContent(doc, appState.currentLanguage);
             content1 = processImageUrls(content1);
 
+            const isWakfuDocument = appState.currentDataSource === DofusSources.wakfu;
+            const wakfuBackgroundPath = isWakfuDocument ? getWakfuKindBackgroundAssetPath(doc.typeId) : "";
+            const contentWrapperClass = `content-wrapper${wakfuBackgroundPath ? " wakfu-themed" : ""}`;
+            const contentWrapperStyle = wakfuBackgroundPath
+                ? ` style="--wakfu-background-image: url('${wakfuBackgroundPath}')"`
+                : "";
+
             const hasInvertedText = appState.currentDataSource === DofusSources.wakfu && (
                 true
             );
@@ -4187,7 +4682,7 @@
                             ${headerActionsHtml}
                             <div class="doc-context-badge">${escapeHtml(getSourceDisplayName(appState.currentDataSource))} vs ${escapeHtml(getSourceDisplayName(matchSource))} (${escapeHtml(appState.currentLanguage.toUpperCase())})</div>
                         </div>
-                        <div class="content-wrapper">
+                        <div class="${contentWrapperClass}"${contentWrapperStyle}>
                             <div class="content-column" id="content1-${doc.id}" data-doc-id="${doc.id}">
                                 <div class="source-chip">${escapeHtml(getSourceDisplayName(appState.currentDataSource))}</div>
                                 <div class="title-section">
@@ -4216,7 +4711,10 @@
                     `;
 
                     const columns = section.querySelectorAll(".content-column");
-                    columns.forEach(col => setupImageHoverLoading(col));
+                    columns.forEach(col => setupImageHoverLoading(col, { deferUntilVisible: isWakfuDocument }));
+                    if (isWakfuDocument) {
+                        applyWakfuBackgroundFallback(section.querySelector(`.${contentWrapperClass.split(" ").join(".")}`), doc.typeId, wakfuBackgroundPath);
+                    }
                     highlightCrossSourceDiffs(
                         section.querySelector(`#content1-${doc.id}`),
                         section.querySelector(`#content2-${doc.id}`)
@@ -4232,7 +4730,7 @@
                             </div>
                             ${buildDocMetaRow(subtitle1, author1)}
                         </div>
-                        <div class="content-wrapper">
+                        <div class="${contentWrapperClass}"${contentWrapperStyle}>
                             <div class="content-column single" id="content1-${doc.id}" data-doc-id="${doc.id}">
                                 <div class="content">${content1}</div>
                             </div>
@@ -4248,7 +4746,10 @@
 
                     // Setup hover-based image loading
                     const contentColumn = section.querySelector(".content-column");
-                    setupImageHoverLoading(contentColumn);
+                    setupImageHoverLoading(contentColumn, { deferUntilVisible: isWakfuDocument });
+                    if (isWakfuDocument) {
+                        applyWakfuBackgroundFallback(section.querySelector(`.${contentWrapperClass.split(" ").join(".")}`), doc.typeId, wakfuBackgroundPath);
+                    }
                 }
             } else {
                 // Bilingual mode - titles in columns
@@ -4265,7 +4766,7 @@
                         ${headerActionsHtml}
                         <div class="doc-context-badge">${escapeHtml(appState.currentLanguage.toUpperCase())} • ${escapeHtml(appState.secondLanguage.toUpperCase())}</div>
                     </div>
-                    <div class="content-wrapper">
+                    <div class="${contentWrapperClass}"${contentWrapperStyle}>
                         <div class="content-column" id="content1-${doc.id}" data-doc-id="${doc.id}">
                             <div class="title-section">
                                 <h2 class="title" style="font-size: 1.8em; margin-bottom: 15px;">${escapeHtml(title1)}</h2>
@@ -4296,7 +4797,10 @@
                 }, 100);
 
                 const columns = section.querySelectorAll(".content-column");
-                columns.forEach(col => setupImageHoverLoading(col));
+                columns.forEach(col => setupImageHoverLoading(col, { deferUntilVisible: isWakfuDocument }));
+                if (isWakfuDocument) {
+                    applyWakfuBackgroundFallback(section.querySelector(`.${contentWrapperClass.split(" ").join(".")}`), doc.typeId, wakfuBackgroundPath);
+                }
             }
 
             return section;

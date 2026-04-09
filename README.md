@@ -7,6 +7,79 @@ Access here :
 https://nelsonjq.github.io/d3-library/
 ---
 
+## Wakfu Assets Pipeline
+
+The Wakfu viewer supports source-based backgrounds, page images, and inline text icons from local Wakfu TGA files converted to PNG.
+
+### 1. Install tooling
+
+```bash
+npm install
+```
+
+If PowerShell blocks npm scripts on Windows, use `npm.cmd`.
+
+### 2. Build referenced asset manifest
+
+```bash
+npm run wakfu:extract-assets
+```
+
+This generates:
+- `data/wakfu/wakfu_asset_manifest.json`
+
+The manifest contains referenced IDs for:
+- `kind` backgrounds
+- `books.pages.image_id` page images
+- `[#icon N:*]` inline icons found in `text_by_lang` (`fr`, `en`, `es`, `pt`)
+
+### 3. Convert TGA to PNG
+
+```bash
+npm run wakfu:convert-assets
+```
+
+Default source root: `D:/Wakfu-src`
+
+Override source root:
+
+```bash
+npm run wakfu:convert-assets -- --source-root "D:/Wakfu-src"
+```
+
+Outputs:
+- `data/wakfu/assets/backgrounds/{kind}.png`
+- `data/wakfu/assets/pages/{image_id}.png`
+- `data/wakfu/assets/icons/{icon_id}.png`
+- `data/wakfu/wakfu_asset_conversion_report.json`
+
+### 4. One-command build
+
+```bash
+npm run wakfu:build-assets
+```
+
+This runs extract + convert + integrity check.
+
+### 5. Verify manifest/output integrity
+
+```bash
+npm run wakfu:check-integrity
+```
+
+The checker compares referenced IDs in the manifest against generated PNG files under:
+- `data/wakfu/assets/backgrounds`
+- `data/wakfu/assets/pages`
+- `data/wakfu/assets/icons`
+
+It also reports orphan files (PNG files not referenced by the manifest).
+The command exits with a non-zero code when mismatches are found.
+
+Missing source files are reported in the conversion report and do not stop conversion of other assets.
+
+In the HTML viewer, unresolved Wakfu assets now render visible fallback badges (with unresolved IDs) instead of silently failing.
+Wakfu image loading is deferred until Wakfu documents are actually displayed.
+
 ## Features
 
 ### 1. **UI Elements and Features**
