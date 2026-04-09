@@ -1,0 +1,1300 @@
+{
+  "generatedAt": "2026-04-09T21:43:35.352Z",
+  "sourceRoot": "D:\\Wakfu-src",
+  "manifestFile": "data/wakfu/wakfu_asset_manifest.json",
+  "outputRoot": "data/wakfu/assets",
+  "totals": {
+    "requested": 213,
+    "converted": 211,
+    "missing": 2,
+    "failed": 0,
+    "byType": {
+      "kindBackground": 12,
+      "pageImage": 112,
+      "textIcon": 89
+    }
+  },
+  "converted": [
+    {
+      "type": "kindBackground",
+      "id": 1,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\1.tga",
+      "output": "data/wakfu/assets/backgrounds/1.png"
+    },
+    {
+      "type": "kindBackground",
+      "id": 2,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\2.tga",
+      "output": "data/wakfu/assets/backgrounds/2.png"
+    },
+    {
+      "type": "kindBackground",
+      "id": 3,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\3.tga",
+      "output": "data/wakfu/assets/backgrounds/3.png"
+    },
+    {
+      "type": "kindBackground",
+      "id": 5,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\5.tga",
+      "output": "data/wakfu/assets/backgrounds/5.png"
+    },
+    {
+      "type": "kindBackground",
+      "id": 6,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\6.tga",
+      "output": "data/wakfu/assets/backgrounds/6.png"
+    },
+    {
+      "type": "kindBackground",
+      "id": 7,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\7.tga",
+      "output": "data/wakfu/assets/backgrounds/7.png"
+    },
+    {
+      "type": "kindBackground",
+      "id": 8,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\8.tga",
+      "output": "data/wakfu/assets/backgrounds/8.png"
+    },
+    {
+      "type": "kindBackground",
+      "id": 9,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\9.tga",
+      "output": "data/wakfu/assets/backgrounds/9.png"
+    },
+    {
+      "type": "kindBackground",
+      "id": 10,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\10.tga",
+      "output": "data/wakfu/assets/backgrounds/10.png"
+    },
+    {
+      "type": "kindBackground",
+      "id": 11,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\11.tga",
+      "output": "data/wakfu/assets/backgrounds/11.png"
+    },
+    {
+      "type": "kindBackground",
+      "id": 12,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\12.tga",
+      "output": "data/wakfu/assets/backgrounds/12.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 4,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\4.tga",
+      "output": "data/wakfu/assets/pages/4.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 6,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\6.tga",
+      "output": "data/wakfu/assets/pages/6.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 8,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\8.tga",
+      "output": "data/wakfu/assets/pages/8.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 34,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\34.tga",
+      "output": "data/wakfu/assets/pages/34.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 35,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\35.tga",
+      "output": "data/wakfu/assets/pages/35.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 36,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\36.tga",
+      "output": "data/wakfu/assets/pages/36.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 37,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\37.tga",
+      "output": "data/wakfu/assets/pages/37.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 38,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\38.tga",
+      "output": "data/wakfu/assets/pages/38.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 39,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\39.tga",
+      "output": "data/wakfu/assets/pages/39.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 40,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\40.tga",
+      "output": "data/wakfu/assets/pages/40.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 41,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\41.tga",
+      "output": "data/wakfu/assets/pages/41.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 42,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\42.tga",
+      "output": "data/wakfu/assets/pages/42.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 43,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\43.tga",
+      "output": "data/wakfu/assets/pages/43.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 44,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\44.tga",
+      "output": "data/wakfu/assets/pages/44.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 45,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\45.tga",
+      "output": "data/wakfu/assets/pages/45.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 46,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\46.tga",
+      "output": "data/wakfu/assets/pages/46.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 47,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\47.tga",
+      "output": "data/wakfu/assets/pages/47.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 48,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\48.tga",
+      "output": "data/wakfu/assets/pages/48.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 49,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\49.tga",
+      "output": "data/wakfu/assets/pages/49.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 50,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\50.tga",
+      "output": "data/wakfu/assets/pages/50.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 51,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\51.tga",
+      "output": "data/wakfu/assets/pages/51.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 52,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\52.tga",
+      "output": "data/wakfu/assets/pages/52.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 53,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\53.tga",
+      "output": "data/wakfu/assets/pages/53.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 54,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\54.tga",
+      "output": "data/wakfu/assets/pages/54.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 55,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\55.tga",
+      "output": "data/wakfu/assets/pages/55.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 56,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\56.tga",
+      "output": "data/wakfu/assets/pages/56.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 57,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\57.tga",
+      "output": "data/wakfu/assets/pages/57.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 58,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\58.tga",
+      "output": "data/wakfu/assets/pages/58.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 59,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\59.tga",
+      "output": "data/wakfu/assets/pages/59.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 60,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\60.tga",
+      "output": "data/wakfu/assets/pages/60.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 61,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\61.tga",
+      "output": "data/wakfu/assets/pages/61.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 62,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\62.tga",
+      "output": "data/wakfu/assets/pages/62.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 63,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\63.tga",
+      "output": "data/wakfu/assets/pages/63.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 64,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\64.tga",
+      "output": "data/wakfu/assets/pages/64.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 65,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\65.tga",
+      "output": "data/wakfu/assets/pages/65.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 66,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\66.tga",
+      "output": "data/wakfu/assets/pages/66.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 67,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\67.tga",
+      "output": "data/wakfu/assets/pages/67.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 68,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\68.tga",
+      "output": "data/wakfu/assets/pages/68.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 69,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\69.tga",
+      "output": "data/wakfu/assets/pages/69.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 70,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\70.tga",
+      "output": "data/wakfu/assets/pages/70.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 71,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\71.tga",
+      "output": "data/wakfu/assets/pages/71.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 72,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\72.tga",
+      "output": "data/wakfu/assets/pages/72.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 74,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\74.tga",
+      "output": "data/wakfu/assets/pages/74.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 75,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\75.tga",
+      "output": "data/wakfu/assets/pages/75.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 76,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\76.tga",
+      "output": "data/wakfu/assets/pages/76.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 77,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\77.tga",
+      "output": "data/wakfu/assets/pages/77.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 78,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\78.tga",
+      "output": "data/wakfu/assets/pages/78.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 79,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\79.tga",
+      "output": "data/wakfu/assets/pages/79.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 80,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\80.tga",
+      "output": "data/wakfu/assets/pages/80.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 81,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\81.tga",
+      "output": "data/wakfu/assets/pages/81.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 82,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\82.tga",
+      "output": "data/wakfu/assets/pages/82.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 83,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\83.tga",
+      "output": "data/wakfu/assets/pages/83.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 84,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\84.tga",
+      "output": "data/wakfu/assets/pages/84.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 85,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\85.tga",
+      "output": "data/wakfu/assets/pages/85.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 86,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\86.tga",
+      "output": "data/wakfu/assets/pages/86.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 87,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\87.tga",
+      "output": "data/wakfu/assets/pages/87.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 88,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\88.tga",
+      "output": "data/wakfu/assets/pages/88.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 89,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\89.tga",
+      "output": "data/wakfu/assets/pages/89.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 90,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\90.tga",
+      "output": "data/wakfu/assets/pages/90.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 91,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\91.tga",
+      "output": "data/wakfu/assets/pages/91.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 92,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\92.tga",
+      "output": "data/wakfu/assets/pages/92.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 93,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\93.tga",
+      "output": "data/wakfu/assets/pages/93.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 94,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\94.tga",
+      "output": "data/wakfu/assets/pages/94.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 95,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\95.tga",
+      "output": "data/wakfu/assets/pages/95.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 96,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\96.tga",
+      "output": "data/wakfu/assets/pages/96.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 97,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\97.tga",
+      "output": "data/wakfu/assets/pages/97.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 98,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\98.tga",
+      "output": "data/wakfu/assets/pages/98.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 99,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\99.tga",
+      "output": "data/wakfu/assets/pages/99.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 102,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\102.tga",
+      "output": "data/wakfu/assets/pages/102.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 103,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\103.tga",
+      "output": "data/wakfu/assets/pages/103.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 104,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\104.tga",
+      "output": "data/wakfu/assets/pages/104.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 109,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\109.tga",
+      "output": "data/wakfu/assets/pages/109.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 116,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\116.tga",
+      "output": "data/wakfu/assets/pages/116.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 117,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\117.tga",
+      "output": "data/wakfu/assets/pages/117.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 122,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\122.tga",
+      "output": "data/wakfu/assets/pages/122.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 123,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\123.tga",
+      "output": "data/wakfu/assets/pages/123.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 124,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\124.tga",
+      "output": "data/wakfu/assets/pages/124.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 125,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\125.tga",
+      "output": "data/wakfu/assets/pages/125.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 126,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\126.tga",
+      "output": "data/wakfu/assets/pages/126.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 127,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\127.tga",
+      "output": "data/wakfu/assets/pages/127.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 128,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\128.tga",
+      "output": "data/wakfu/assets/pages/128.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 129,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\129.tga",
+      "output": "data/wakfu/assets/pages/129.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 130,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\130.tga",
+      "output": "data/wakfu/assets/pages/130.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 132,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\132.tga",
+      "output": "data/wakfu/assets/pages/132.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 133,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\133.tga",
+      "output": "data/wakfu/assets/pages/133.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 134,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\134.tga",
+      "output": "data/wakfu/assets/pages/134.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 135,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\135.tga",
+      "output": "data/wakfu/assets/pages/135.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 136,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\136.tga",
+      "output": "data/wakfu/assets/pages/136.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 137,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\137.tga",
+      "output": "data/wakfu/assets/pages/137.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 138,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\138.tga",
+      "output": "data/wakfu/assets/pages/138.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 139,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\139.tga",
+      "output": "data/wakfu/assets/pages/139.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 140,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\140.tga",
+      "output": "data/wakfu/assets/pages/140.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 141,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\141.tga",
+      "output": "data/wakfu/assets/pages/141.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 142,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\142.tga",
+      "output": "data/wakfu/assets/pages/142.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 143,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\143.tga",
+      "output": "data/wakfu/assets/pages/143.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 144,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\144.tga",
+      "output": "data/wakfu/assets/pages/144.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 145,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\145.tga",
+      "output": "data/wakfu/assets/pages/145.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 146,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\146.tga",
+      "output": "data/wakfu/assets/pages/146.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 147,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\147.tga",
+      "output": "data/wakfu/assets/pages/147.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 148,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\148.tga",
+      "output": "data/wakfu/assets/pages/148.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 149,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\149.tga",
+      "output": "data/wakfu/assets/pages/149.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 150,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\150.tga",
+      "output": "data/wakfu/assets/pages/150.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 151,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\151.tga",
+      "output": "data/wakfu/assets/pages/151.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 152,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\152.tga",
+      "output": "data/wakfu/assets/pages/152.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 153,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\153.tga",
+      "output": "data/wakfu/assets/pages/153.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 154,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\154.tga",
+      "output": "data/wakfu/assets/pages/154.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 155,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\155.tga",
+      "output": "data/wakfu/assets/pages/155.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 156,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\156.tga",
+      "output": "data/wakfu/assets/pages/156.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 157,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\157.tga",
+      "output": "data/wakfu/assets/pages/157.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 158,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\158.tga",
+      "output": "data/wakfu/assets/pages/158.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 159,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\159.tga",
+      "output": "data/wakfu/assets/pages/159.png"
+    },
+    {
+      "type": "pageImage",
+      "id": 160,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\160.tga",
+      "output": "data/wakfu/assets/pages/160.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 13,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\13.tga",
+      "output": "data/wakfu/assets/icons/13.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 14,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\14.tga",
+      "output": "data/wakfu/assets/icons/14.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 15,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\15.tga",
+      "output": "data/wakfu/assets/icons/15.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 16,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\16.tga",
+      "output": "data/wakfu/assets/icons/16.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 17,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\17.tga",
+      "output": "data/wakfu/assets/icons/17.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 18,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\18.tga",
+      "output": "data/wakfu/assets/icons/18.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 19,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\19.tga",
+      "output": "data/wakfu/assets/icons/19.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 20,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\20.tga",
+      "output": "data/wakfu/assets/icons/20.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 21,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\21.tga",
+      "output": "data/wakfu/assets/icons/21.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 22,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\22.tga",
+      "output": "data/wakfu/assets/icons/22.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 23,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\23.tga",
+      "output": "data/wakfu/assets/icons/23.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 24,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\24.tga",
+      "output": "data/wakfu/assets/icons/24.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 25,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\25.tga",
+      "output": "data/wakfu/assets/icons/25.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 26,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\26.tga",
+      "output": "data/wakfu/assets/icons/26.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 27,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\27.tga",
+      "output": "data/wakfu/assets/icons/27.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 28,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\28.tga",
+      "output": "data/wakfu/assets/icons/28.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 29,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\29.tga",
+      "output": "data/wakfu/assets/icons/29.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 30,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\30.tga",
+      "output": "data/wakfu/assets/icons/30.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 31,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\31.tga",
+      "output": "data/wakfu/assets/icons/31.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 32,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\32.tga",
+      "output": "data/wakfu/assets/icons/32.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 33,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\33.tga",
+      "output": "data/wakfu/assets/icons/33.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 34,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\34.tga",
+      "output": "data/wakfu/assets/icons/34.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 35,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\35.tga",
+      "output": "data/wakfu/assets/icons/35.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 36,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\36.tga",
+      "output": "data/wakfu/assets/icons/36.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 37,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\37.tga",
+      "output": "data/wakfu/assets/icons/37.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 38,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\38.tga",
+      "output": "data/wakfu/assets/icons/38.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 40,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\40.tga",
+      "output": "data/wakfu/assets/icons/40.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 49,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\49.tga",
+      "output": "data/wakfu/assets/icons/49.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 50,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\50.tga",
+      "output": "data/wakfu/assets/icons/50.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 73,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\73.tga",
+      "output": "data/wakfu/assets/icons/73.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 75,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\75.tga",
+      "output": "data/wakfu/assets/icons/75.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 77,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\77.tga",
+      "output": "data/wakfu/assets/icons/77.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 87,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\87.tga",
+      "output": "data/wakfu/assets/icons/87.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 88,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\88.tga",
+      "output": "data/wakfu/assets/icons/88.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 89,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\89.tga",
+      "output": "data/wakfu/assets/icons/89.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 90,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\90.tga",
+      "output": "data/wakfu/assets/icons/90.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 91,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\91.tga",
+      "output": "data/wakfu/assets/icons/91.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 92,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\92.tga",
+      "output": "data/wakfu/assets/icons/92.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 93,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\93.tga",
+      "output": "data/wakfu/assets/icons/93.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 94,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\94.tga",
+      "output": "data/wakfu/assets/icons/94.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 95,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\95.tga",
+      "output": "data/wakfu/assets/icons/95.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 97,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\97.tga",
+      "output": "data/wakfu/assets/icons/97.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 99,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\99.tga",
+      "output": "data/wakfu/assets/icons/99.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 100,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\100.tga",
+      "output": "data/wakfu/assets/icons/100.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 101,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\101.tga",
+      "output": "data/wakfu/assets/icons/101.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 102,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\102.tga",
+      "output": "data/wakfu/assets/icons/102.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 104,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\104.tga",
+      "output": "data/wakfu/assets/icons/104.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 107,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\107.tga",
+      "output": "data/wakfu/assets/icons/107.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 108,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\108.tga",
+      "output": "data/wakfu/assets/icons/108.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 112,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\112.tga",
+      "output": "data/wakfu/assets/icons/112.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 114,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\114.tga",
+      "output": "data/wakfu/assets/icons/114.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 121,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\121.tga",
+      "output": "data/wakfu/assets/icons/121.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 122,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\122.tga",
+      "output": "data/wakfu/assets/icons/122.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 123,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\123.tga",
+      "output": "data/wakfu/assets/icons/123.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 124,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\124.tga",
+      "output": "data/wakfu/assets/icons/124.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 125,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\125.tga",
+      "output": "data/wakfu/assets/icons/125.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 126,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\126.tga",
+      "output": "data/wakfu/assets/icons/126.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 127,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\127.tga",
+      "output": "data/wakfu/assets/icons/127.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 128,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\128.tga",
+      "output": "data/wakfu/assets/icons/128.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 129,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\129.tga",
+      "output": "data/wakfu/assets/icons/129.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 130,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\130.tga",
+      "output": "data/wakfu/assets/icons/130.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 131,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\131.tga",
+      "output": "data/wakfu/assets/icons/131.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 132,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\132.tga",
+      "output": "data/wakfu/assets/icons/132.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 133,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\133.tga",
+      "output": "data/wakfu/assets/icons/133.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 134,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\134.tga",
+      "output": "data/wakfu/assets/icons/134.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 135,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\135.tga",
+      "output": "data/wakfu/assets/icons/135.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 136,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\136.tga",
+      "output": "data/wakfu/assets/icons/136.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 139,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\139.tga",
+      "output": "data/wakfu/assets/icons/139.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 140,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\140.tga",
+      "output": "data/wakfu/assets/icons/140.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 141,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\141.tga",
+      "output": "data/wakfu/assets/icons/141.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 142,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\142.tga",
+      "output": "data/wakfu/assets/icons/142.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 143,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\143.tga",
+      "output": "data/wakfu/assets/icons/143.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 144,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\144.tga",
+      "output": "data/wakfu/assets/icons/144.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 145,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\145.tga",
+      "output": "data/wakfu/assets/icons/145.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 146,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\146.tga",
+      "output": "data/wakfu/assets/icons/146.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 159,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\159.tga",
+      "output": "data/wakfu/assets/icons/159.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 160,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\160.tga",
+      "output": "data/wakfu/assets/icons/160.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 161,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\161.tga",
+      "output": "data/wakfu/assets/icons/161.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 162,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\162.tga",
+      "output": "data/wakfu/assets/icons/162.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 163,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\163.tga",
+      "output": "data/wakfu/assets/icons/163.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 164,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\164.tga",
+      "output": "data/wakfu/assets/icons/164.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 165,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\165.tga",
+      "output": "data/wakfu/assets/icons/165.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 166,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\166.tga",
+      "output": "data/wakfu/assets/icons/166.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 167,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\167.tga",
+      "output": "data/wakfu/assets/icons/167.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 3318,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\3318.tga",
+      "output": "data/wakfu/assets/icons/3318.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 3320,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\3320.tga",
+      "output": "data/wakfu/assets/icons/3320.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 3359,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\3359.tga",
+      "output": "data/wakfu/assets/icons/3359.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 4807,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\4807.tga",
+      "output": "data/wakfu/assets/icons/4807.png"
+    }
+  ],
+  "missing": [
+    {
+      "type": "kindBackground",
+      "id": 4,
+      "source": "D:\\Wakfu-src\\gui\\icons\\backgroundDisplay\\background\\4.tga",
+      "output": "data/wakfu/assets/backgrounds/4.png"
+    },
+    {
+      "type": "textIcon",
+      "id": 85,
+      "source": "D:\\Wakfu-src\\gui\\miscellaneous\\text\\85.tga",
+      "output": "data/wakfu/assets/icons/85.png"
+    }
+  ],
+  "failed": []
+}
