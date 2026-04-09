@@ -762,6 +762,33 @@
             box-shadow: 0 2px 8px rgba(10, 82, 67, 0.35);
         }
 
+        .doc-wakfu-bg-toggle-btn {
+            min-width: 34px;
+            height: 34px;
+            padding: 0 10px;
+            border: 2px solid rgba(255, 255, 255, 0.45);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.2px;
+        }
+
+        .doc-wakfu-bg-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.32);
+            transform: translateY(-1px);
+        }
+
+        .doc-wakfu-bg-toggle-btn.active {
+            background: #0f7f59;
+            border-color: #0f7f59;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(8, 56, 40, 0.38);
+        }
+
         .doc-char-diff-btn:not(.inactive):not(.active),
         .doc-paragraph-diff-btn:not(.inactive):not(.active),
         .doc-compare-btn:not(.active) {
@@ -878,35 +905,71 @@
         }
 
         .content-wrapper.wakfu-themed {
-            background-image: linear-gradient(rgba(255, 248, 236, 0.82), rgba(255, 248, 236, 0.82)), var(--wakfu-background-image);
-            background-position: center;
-            background-size: cover;
+            position: relative;
+            isolation: isolate;
+            background: #f8ead1;
             border-radius: 10px;
             overflow: hidden;
             border: 1px solid rgba(172, 136, 90, 0.35);
         }
 
+        .content-wrapper.wakfu-themed .wakfu-background-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image: var(--wakfu-background-image);
+            background-position: center top;
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.92;
+        }
+
         body.dark-theme .content-wrapper.wakfu-themed {
-            background-image: linear-gradient(rgba(30, 30, 30, 0.72), rgba(30, 30, 30, 0.72)), var(--wakfu-background-image);
+            background: #1b1b1b;
             border-color: rgba(171, 171, 171, 0.35);
         }
 
+        body.dark-theme .content-wrapper.wakfu-themed .wakfu-background-layer {
+            opacity: 0.84;
+            filter: brightness(0.9) saturate(0.95);
+        }
+
         body.retro-theme .content-wrapper.wakfu-themed {
-            background-image: linear-gradient(rgba(244, 235, 215, 0.78), rgba(244, 235, 215, 0.78)), var(--wakfu-background-image);
+            background: #ead7b7;
             border-color: rgba(131, 97, 58, 0.45);
         }
 
+        body.retro-theme .content-wrapper.wakfu-themed .wakfu-background-layer {
+            opacity: 0.9;
+        }
+
         .content-wrapper.wakfu-themed .content-column {
-            background: rgba(255, 255, 255, 0.76);
-            backdrop-filter: blur(1px);
+            position: relative;
+            z-index: 1;
+            background: transparent;
+            backdrop-filter: none;
         }
 
         body.dark-theme .content-wrapper.wakfu-themed .content-column {
-            background: rgba(24, 24, 24, 0.62);
+            background: transparent;
         }
 
         body.retro-theme .content-wrapper.wakfu-themed .content-column {
-            background: rgba(248, 235, 207, 0.7);
+            background: transparent;
+        }
+
+        .content-wrapper.wakfu-themed .content {
+            position: relative;
+            z-index: 1;
+            color: var(--wakfu-content-text-color, var(--text-primary));
+        }
+
+        .content-wrapper.wakfu-themed .content-column {
+            padding-top: var(--wakfu-column-padding-top, 30px);
+            padding-right: var(--wakfu-column-padding-right, 30px);
+            padding-bottom: var(--wakfu-column-padding-bottom, 30px);
+            padding-left: var(--wakfu-column-padding-left, 30px);
         }
 
         .content-column {
@@ -969,8 +1032,23 @@
 
         .wakfu-page-image-wrap {
             display: flex;
-            justify-content: center;
             margin: 8px 0 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .wakfu-page-image-wrap.single-page {
+            justify-content: center;
+        }
+
+        .wakfu-page-image-wrap.dual-left {
+            justify-content: flex-start;
+            padding-left: clamp(12px, 4vw, 42px);
+        }
+
+        .wakfu-page-image-wrap.dual-right {
+            justify-content: flex-end;
+            padding-right: clamp(12px, 4vw, 42px);
         }
 
         .wakfu-page-image {
@@ -978,6 +1056,153 @@
             width: auto;
             border-radius: 8px;
             border: 1px solid rgba(0, 0, 0, 0.14);
+        }
+
+        .wakfu-page-image-wrap.dual-left .wakfu-page-image,
+        .wakfu-page-image-wrap.dual-right .wakfu-page-image {
+            max-width: min(48%, 430px);
+        }
+
+        .wakfu-spread-stack {
+            display: grid;
+            gap: 22px;
+        }
+
+        .wakfu-single-page-stack {
+            display: grid;
+            gap: 22px;
+            justify-items: center;
+        }
+
+        .wakfu-single-page-sheet {
+            width: min(100%, var(--wakfu-single-page-width, 780px));
+            min-height: var(--wakfu-single-page-min-height, 620px);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            isolation: isolate;
+            background-image: linear-gradient(var(--wakfu-sheet-overlay, rgba(0, 0, 0, 0)), var(--wakfu-sheet-overlay, rgba(0, 0, 0, 0))), var(--wakfu-single-page-bg-image);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100% 100%;
+            padding-top: var(--wakfu-single-page-padding-top, 80px);
+            padding-right: var(--wakfu-single-page-padding-right, 64px);
+            padding-bottom: var(--wakfu-single-page-padding-bottom, 48px);
+            padding-left: var(--wakfu-single-page-padding-left, 64px);
+        }
+
+        .wakfu-single-page-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            min-height: 100%;
+            color: var(--wakfu-content-text-color, var(--text-primary));
+            text-shadow: var(--wakfu-content-text-shadow, none);
+        }
+
+        .wakfu-single-page-content .wakfu-page-image-wrap {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .wakfu-single-page-content .wakfu-page-image-wrap .wakfu-page-image {
+            max-width: min(95%, 430px);
+        }
+
+        @media (max-width: 1000px) {
+            .wakfu-single-page-sheet {
+                width: 100%;
+                min-height: auto;
+                padding-top: clamp(18px, calc(var(--wakfu-single-page-padding-top, 80px) * 0.34), 40px);
+                padding-right: clamp(16px, calc(var(--wakfu-single-page-padding-right, 64px) * 0.34), 34px);
+                padding-bottom: clamp(16px, calc(var(--wakfu-single-page-padding-bottom, 48px) * 0.34), 30px);
+                padding-left: clamp(16px, calc(var(--wakfu-single-page-padding-left, 64px) * 0.34), 34px);
+            }
+        }
+
+        .wakfu-book-spread {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            background-image: linear-gradient(var(--wakfu-sheet-overlay, rgba(0, 0, 0, 0)), var(--wakfu-sheet-overlay, rgba(0, 0, 0, 0))), var(--wakfu-spread-bg-image);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100% 100%;
+            border-radius: 10px;
+            min-height: 560px;
+            overflow: hidden;
+            position: relative;
+            isolation: isolate;
+            padding-top: var(--wakfu-spread-padding-top, 20px);
+            padding-right: var(--wakfu-spread-padding-right, 20px);
+            padding-bottom: var(--wakfu-spread-padding-bottom, 20px);
+            padding-left: var(--wakfu-spread-padding-left, 20px);
+        }
+
+        .wakfu-spread-page {
+            position: relative;
+            z-index: 1;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            color: var(--wakfu-content-text-color, var(--text-primary));
+        }
+
+        .wakfu-spread-page.left {
+            padding-top: var(--wakfu-page-padding-top, 36px);
+            padding-right: var(--wakfu-page-padding-inner, 30px);
+            padding-bottom: var(--wakfu-page-padding-bottom, 34px);
+            padding-left: var(--wakfu-page-padding-outer, 38px);
+        }
+
+        .wakfu-spread-page.right {
+            padding-top: var(--wakfu-page-padding-top, 36px);
+            padding-right: var(--wakfu-page-padding-outer, 38px);
+            padding-bottom: var(--wakfu-page-padding-bottom, 34px);
+            padding-left: var(--wakfu-page-padding-inner, 30px);
+        }
+
+        .wakfu-spread-page-content {
+            width: 100%;
+            min-height: 100%;
+            text-shadow: var(--wakfu-content-text-shadow, none);
+        }
+
+        .wakfu-spread-page-content.wakfu-blank-page {
+            opacity: 0.35;
+        }
+
+        .wakfu-book-spread .wakfu-spread-page.left .wakfu-page-image-wrap {
+            justify-content: flex-start;
+            padding-left: 0;
+        }
+
+        .wakfu-book-spread .wakfu-spread-page.right .wakfu-page-image-wrap {
+            justify-content: flex-end;
+            padding-right: 0;
+        }
+
+        .wakfu-book-spread .wakfu-page-image-wrap .wakfu-page-image {
+            max-width: min(95%, 420px);
+        }
+
+        @media (max-width: 1000px) {
+            .wakfu-book-spread {
+                grid-template-columns: 1fr;
+                min-height: auto;
+                padding: 12px;
+                gap: 8px;
+            }
+
+            .wakfu-spread-page.left,
+            .wakfu-spread-page.right {
+                padding: 16px;
+            }
+
+            .wakfu-book-spread .wakfu-spread-page.right {
+                border-top: 1px dashed rgba(120, 96, 62, 0.35);
+            }
         }
 
         .wakfu-inline-icon-wrap {
@@ -1007,8 +1232,10 @@
         }
 
         .wakfu-inline-icon {
-            width: 1.15em;
-            height: 1.15em;
+            width: auto;
+            height: auto;
+            max-width: none;
+            max-height: none;
             margin: 0;
             border-radius: 0;
             box-shadow: none;
@@ -1017,8 +1244,8 @@
         }
 
         .wakfu-inline-icon-wrap.align-center .wakfu-inline-icon {
-            width: 1.85em;
-            height: 1.85em;
+            width: auto;
+            height: auto;
         }
 
         .wakfu-missing-asset-badge {
@@ -1063,6 +1290,8 @@
         }
 
         .wakfu-missing-asset-badge.background {
+            position: relative;
+            z-index: 3;
             display: flex;
             margin: 10px 12px;
             width: fit-content;
@@ -2325,6 +2554,7 @@
             syncScrollEnabled: true,
             documentsLoaded: false,
             loadedImagesCache: new Set(),
+            wakfuBackgroundDisplayEnabled: false,
             wakfuMissingAssets: {
                 kindBackground: new Set(),
                 pageImage: new Set(),
@@ -2380,6 +2610,115 @@
         const WAKFU_DEFAULT_INVERTED_DOC_ID = 281;
         const WAKFU_PAGE_SEPARATOR = "\n\n<hr class=\"page-break\">\n\n";
         const WAKFU_ICON_TOKEN_REGEX = /\[#icon\s+(\d+)(?::([^\]]+))?\]/gi;
+        const WAKFU_BACKGROUND_KIND_PROFILES = {
+            default: {
+                twoPage: false,
+                wrapperPadding: { top: 80, right: 64, bottom: 48, left: 64 },
+                pagePadding: { top: 38, bottom: 34, outer: 40, inner: 32 },
+                singlePageWidth: 620,
+                singlePageMinHeight: 844,
+                sheetOverlay: {
+                    light: "rgba(255, 251, 240, 0.12)",
+                    dark: "rgba(12, 16, 20, 0.22)",
+                    retro: "rgba(253, 241, 218, 0.16)"
+                },
+                textShadow: {
+                    light: "0 1px 1px rgba(255, 255, 255, 0.3)",
+                    dark: "0 1px 1px rgba(0, 0, 0, 0.45)",
+                    retro: "0 1px 1px rgba(255, 242, 214, 0.34)"
+                },
+                textColor: { light: "#2f2618", dark: "#f2e6cb", retro: "#5a4026" }
+            },
+            1: {
+                twoPage: false,
+                wrapperPadding: { top: 80, right: 64, bottom: 48, left: 64 },
+                textColor: { light: "#2b271f", dark: "#ede7db", retro: "#4b3f2a" }
+            },
+            2: {
+                twoPage: false,
+                wrapperPadding: { top: 140, right: 64, bottom: 48, left: 64 },
+                singlePageWidth: 620,
+                singlePageMinHeight: 960,
+                textColor: { light: "#3a331d", dark: "#f2e8c5", retro: "#5d4a25" }
+            },
+            3: {
+                twoPage: true,
+                wrapperPadding: { top: 16, right: 16, bottom: 16, left: 16 },
+                pagePadding: { top: 56, bottom: 44, outer: 44, inner: 40 },
+                textColor: { light: "#3a2d17", dark: "#f3e8c8", retro: "#5c4321" }
+            },
+            5: {
+                twoPage: false,
+                wrapperPadding: { top: 80, right: 64, bottom: 48, left: 64 },
+                textColor: { light: "#3f2f1b", dark: "#f4e9c9", retro: "#6a4b2a" }
+            },
+            6: {
+                twoPage: true,
+                wrapperPadding: { top: 14, right: 14, bottom: 14, left: 14 },
+                pagePadding: { top: 34, bottom: 36, outer: 34, inner: 30 },
+                sheetOverlay: {
+                    light: "rgba(7, 28, 36, 0.36)",
+                    dark: "rgba(4, 18, 24, 0.48)",
+                    retro: "rgba(8, 31, 38, 0.34)"
+                },
+                textShadow: {
+                    light: "0 1px 2px rgba(0, 0, 0, 0.7)",
+                    dark: "0 1px 2px rgba(0, 0, 0, 0.72)",
+                    retro: "0 1px 2px rgba(0, 0, 0, 0.66)"
+                },
+                textColor: { light: "#e8f7ff", dark: "#d9f6ff", retro: "#e4f4ff" }
+            },
+            7: {
+                twoPage: true,
+                wrapperPadding: { top: 16, right: 16, bottom: 16, left: 16 },
+                pagePadding: { top: 40, bottom: 32, outer: 34, inner: 36 },
+                textColor: { light: "#2f2b1c", dark: "#f0ebda", retro: "#51452d" }
+            },
+            8: {
+                twoPage: true,
+                wrapperPadding: { top: 16, right: 26, bottom: 16, left: 16 },
+                pagePadding: { top: 38, bottom: 30, outer: 34, inner: 34 },
+                textColor: { light: "#2f2616", dark: "#f3e8ca", retro: "#5a4120" }
+            },
+            9: {
+                twoPage: false,
+                wrapperPadding: { top: 80, right: 64, bottom: 48, left: 64 },
+                textColor: { light: "#312818", dark: "#efe1bf", retro: "#5b4223" }
+            },
+            10: {
+                twoPage: false,
+                wrapperPadding: { top: 80, right: 64, bottom: 48, left: 64 },
+                sheetOverlay: {
+                    light: "rgba(9, 29, 37, 0.34)",
+                    dark: "rgba(6, 19, 24, 0.46)",
+                    retro: "rgba(10, 31, 38, 0.32)"
+                },
+                textShadow: {
+                    light: "0 1px 2px rgba(0, 0, 0, 0.68)",
+                    dark: "0 1px 2px rgba(0, 0, 0, 0.72)",
+                    retro: "0 1px 2px rgba(0, 0, 0, 0.64)"
+                },
+                textColor: { light: "#ebf8ff", dark: "#d6f4ff", retro: "#e5f3ff" }
+            },
+            11: {
+                twoPage: false,
+                wrapperPadding: { top: 80, right: 64, bottom: 48, left: 64 },
+                textColor: { light: "#352b1c", dark: "#f4e8c8", retro: "#614728" }
+            },
+            12: {
+                twoPage: true,
+                wrapperPadding: { top: 16, right: 16, bottom: 16, left: 16 },
+                pagePadding: { top: 40, bottom: 32, outer: 40, inner: 32 },
+                textColor: { light: "#342a1a", dark: "#f2e7c8", retro: "#5d4426" }
+            }
+        };
+
+        const WAKFU_TWO_PAGE_BACKGROUND_IDS = new Set(
+            Object.entries(WAKFU_BACKGROUND_KIND_PROFILES)
+                .filter(([key, profile]) => key !== "default" && profile && profile.twoPage)
+                .map(([key]) => Number(key))
+                .filter(Number.isFinite)
+        );
         const WAKFU_ASSET_BASE_PATH = "data/wakfu/assets";
         const WAKFU_ASSET_REPORT_PATH = "data/wakfu/wakfu_asset_conversion_report.json";
         const dataSourceRuntimeCache = {
@@ -2659,6 +2998,172 @@
             });
         }
 
+        function isWakfuTwoPageBackground(kindId) {
+            const numericKindId = Number(kindId);
+            return Number.isFinite(numericKindId) && WAKFU_TWO_PAGE_BACKGROUND_IDS.has(numericKindId);
+        }
+
+        function getWakfuBackgroundKindProfile(kindId) {
+            const numericKindId = Number(kindId);
+            const fallback = WAKFU_BACKGROUND_KIND_PROFILES.default;
+            if (!Number.isFinite(numericKindId) || numericKindId <= 0) {
+                return fallback;
+            }
+            return WAKFU_BACKGROUND_KIND_PROFILES[numericKindId] || fallback;
+        }
+
+        function getWakfuTextColorForKind(kindId) {
+            const profile = getWakfuBackgroundKindProfile(kindId);
+            const theme = getCurrentTheme();
+            const colorMap = profile.textColor || {};
+            return colorMap[theme] || colorMap.light || WAKFU_BACKGROUND_KIND_PROFILES.default.textColor.light;
+        }
+
+        function getWakfuSheetOverlayForKind(kindId) {
+            const profile = getWakfuBackgroundKindProfile(kindId);
+            const theme = getCurrentTheme();
+            const overlayMap = profile.sheetOverlay || WAKFU_BACKGROUND_KIND_PROFILES.default.sheetOverlay || {};
+            return overlayMap[theme] || overlayMap.light || "rgba(0, 0, 0, 0)";
+        }
+
+        function getWakfuTextShadowForKind(kindId) {
+            const profile = getWakfuBackgroundKindProfile(kindId);
+            const theme = getCurrentTheme();
+            const shadowMap = profile.textShadow || WAKFU_BACKGROUND_KIND_PROFILES.default.textShadow || {};
+            return shadowMap[theme] || shadowMap.light || "none";
+        }
+
+        function splitWakfuContentIntoPages(contentHtml) {
+            if (typeof contentHtml !== "string" || contentHtml.trim().length === 0) {
+                return [];
+            }
+
+            const temp = document.createElement("div");
+            temp.innerHTML = contentHtml;
+
+            const pages = [];
+            let currentParts = [];
+
+            const pushPage = () => {
+                const pageHtml = currentParts.join("").replace(/^(?:<br\s*\/?>\s*)+|(?:<br\s*\/?>\s*)+$/gi, "").trim();
+                if (pageHtml.length > 0) {
+                    pages.push(pageHtml);
+                }
+                currentParts = [];
+            };
+
+            Array.from(temp.childNodes).forEach(node => {
+                if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "HR" && node.classList.contains("page-break")) {
+                    pushPage();
+                    return;
+                }
+
+                if (node.nodeType === Node.TEXT_NODE) {
+                    currentParts.push(node.textContent || "");
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    currentParts.push(node.outerHTML);
+                }
+            });
+
+            pushPage();
+            return pages;
+        }
+
+        function buildWakfuTwoPageSpreads(contentHtml, backgroundPath, kindId) {
+            const pages = splitWakfuContentIntoPages(contentHtml);
+            if (pages.length === 0) {
+                return contentHtml;
+            }
+
+            const profile = getWakfuBackgroundKindProfile(kindId);
+            const pagePadding = profile.pagePadding || WAKFU_BACKGROUND_KIND_PROFILES.default.pagePadding;
+            const spreadPadding = profile.wrapperPadding || WAKFU_BACKGROUND_KIND_PROFILES.default.wrapperPadding;
+
+            const spreads = [];
+            for (let index = 0; index < pages.length; index += 2) {
+                const leftPage = pages[index] || "";
+                const rightPage = pages[index + 1] || "";
+                const spreadStyle = [
+                    `--wakfu-spread-bg-image: url('${backgroundPath}')`,
+                    `--wakfu-spread-padding-top: ${spreadPadding.top}px`,
+                    `--wakfu-spread-padding-right: ${spreadPadding.right}px`,
+                    `--wakfu-spread-padding-bottom: ${spreadPadding.bottom}px`,
+                    `--wakfu-spread-padding-left: ${spreadPadding.left}px`,
+                    `--wakfu-page-padding-top: ${pagePadding.top}px`,
+                    `--wakfu-page-padding-bottom: ${pagePadding.bottom}px`,
+                    `--wakfu-page-padding-outer: ${pagePadding.outer}px`,
+                    `--wakfu-page-padding-inner: ${pagePadding.inner}px`
+                ].join("; ");
+
+                spreads.push(`
+                    <section class="wakfu-book-spread" style="${spreadStyle}">
+                        <article class="wakfu-spread-page left" data-wakfu-page-number="${index + 1}">
+                            <div class="wakfu-spread-page-content">${leftPage || ""}</div>
+                        </article>
+                        <article class="wakfu-spread-page right" data-wakfu-page-number="${index + 2}">
+                            <div class="wakfu-spread-page-content ${rightPage ? "" : "wakfu-blank-page"}">${rightPage || ""}</div>
+                        </article>
+                    </section>
+                `);
+            }
+
+            return `<div class="wakfu-spread-stack">${spreads.join("")}</div>`;
+        }
+
+        function buildWakfuSinglePageSheets(contentHtml, backgroundPath, kindId) {
+            const pages = splitWakfuContentIntoPages(contentHtml);
+            if (pages.length === 0) {
+                return contentHtml;
+            }
+
+            const profile = getWakfuBackgroundKindProfile(kindId);
+            const wrapperPadding = profile.wrapperPadding || WAKFU_BACKGROUND_KIND_PROFILES.default.wrapperPadding;
+            const defaultProfile = WAKFU_BACKGROUND_KIND_PROFILES.default;
+            const singlePageWidth = profile.singlePageWidth || defaultProfile.singlePageWidth;
+            const singlePageMinHeight = profile.singlePageMinHeight || defaultProfile.singlePageMinHeight;
+
+            const sheets = pages.map((pageHtml, index) => {
+                const sheetStyle = [
+                    `--wakfu-single-page-bg-image: url('${backgroundPath}')`,
+                    `--wakfu-single-page-width: ${singlePageWidth}px`,
+                    `--wakfu-single-page-min-height: ${singlePageMinHeight}px`,
+                    `--wakfu-single-page-padding-top: ${wrapperPadding.top}px`,
+                    `--wakfu-single-page-padding-right: ${wrapperPadding.right}px`,
+                    `--wakfu-single-page-padding-bottom: ${wrapperPadding.bottom}px`,
+                    `--wakfu-single-page-padding-left: ${wrapperPadding.left}px`
+                ].join("; ");
+
+                return `
+                    <section class="wakfu-single-page-sheet" style="${sheetStyle}" data-wakfu-page-number="${index + 1}">
+                        <article class="wakfu-single-page-content">${pageHtml}</article>
+                    </section>
+                `;
+            });
+
+            return `<div class="wakfu-single-page-stack">${sheets.join("")}</div>`;
+        }
+
+        function applyWakfuPageImageLayout(contentColumn, kindId) {
+            if (!contentColumn) {
+                return;
+            }
+
+            const pageImageWraps = contentColumn.querySelectorAll(".wakfu-page-image-wrap");
+            if (!pageImageWraps.length) {
+                return;
+            }
+
+            const twoPageBackground = isWakfuTwoPageBackground(kindId);
+            pageImageWraps.forEach((wrap, index) => {
+                wrap.classList.remove("single-page", "dual-left", "dual-right");
+                if (twoPageBackground) {
+                    wrap.classList.add(index % 2 === 0 ? "dual-left" : "dual-right");
+                } else {
+                    wrap.classList.add("single-page");
+                }
+            });
+        }
+
         // ===== IMAGE URL PROCESSOR =====
         function processImageUrls(htmlContent) {
             if (!config.features.imageProcessing) return htmlContent;
@@ -2683,7 +3188,7 @@
 
             // Convert img tags to lazy load - replace src with data-src
             // Remove src entirely and use only data-src for lazy loading
-            processed = processed.replace(/<img([^>]*?)src="([^"]*)"([^>]*)>/gi, (match, prefix, src, suffix) => {
+            processed = processed.replace(/<img([^>]*?)\ssrc="([^"]*)"([^>]*)>/gi, (match, prefix, src, suffix) => {
                 if (src) {
                     return `<img${prefix}data-src="${src}"${suffix}>`;
                 }
@@ -2750,6 +3255,17 @@
                 const iconAlign = sanitizeWakfuIconAlign(align);
                 return `<span class="wakfu-inline-icon-wrap align-${iconAlign}"><img class="wakfu-inline-icon" data-src="${iconPath}" data-wakfu-asset-type="textIcon" data-wakfu-asset-id="${numericIconId}" alt="Wakfu icon ${numericIconId}"></span>`;
             });
+        }
+
+        function normalizeWakfuIconBreakSpacing(htmlText) {
+            if (typeof htmlText !== "string" || htmlText.length === 0) {
+                return htmlText;
+            }
+
+            // Keep at most one explicit line break around centered icon blocks.
+            return htmlText
+                .replace(/(?:<br\s*\/?>\s*){1,}(<span class="wakfu-inline-icon-wrap align-center"[^>]*>[\s\S]*?<\/span>)/gi, "$1")
+                .replace(/(<span class="wakfu-inline-icon-wrap align-center"[^>]*>[\s\S]*?<\/span>)(?:\s*<br\s*\/?>){1,}/gi, "$1");
         }
 
         function applyWakfuBackgroundFallback(contentWrapper, kindId, backgroundPath) {
@@ -3371,6 +3887,19 @@
 
         async function toggleInvertedTextDecoding() {
             appState.invertedTextDecodeEnabled = !appState.invertedTextDecodeEnabled;
+            if (appState.currentDisplayedDocId) {
+                await loadAndScrollToDocument(appState.currentDisplayedDocId, {
+                    preserveInversionState: true
+                });
+            }
+        }
+
+        async function toggleWakfuBackgroundDisplay() {
+            if (appState.currentDataSource !== DofusSources.wakfu) {
+                return;
+            }
+
+            appState.wakfuBackgroundDisplayEnabled = !appState.wakfuBackgroundDisplayEnabled;
             if (appState.currentDisplayedDocId) {
                 await loadAndScrollToDocument(appState.currentDisplayedDocId, {
                     preserveInversionState: true
@@ -4028,7 +4557,8 @@
                 const decodedText = pageText
                     .replace(/\\r\\n/g, "\n")
                     .replace(/\\n/g, "\n")
-                    .replace(/\\t/g, "\t");
+                    .replace(/\\t/g, "\t")
+                    .replace(/^\n+/, "");
 
                 return decodedText
                     .replace(/\r\n?/g, "\n")
@@ -4040,28 +4570,33 @@
 
             const contentByLang = {};
             WAKFU_LANGUAGES.forEach(language => {
+                const shownPageImageIds = new Set();
                 const pageChunks = sortedPages
                     .map(page => {
                         const pageText = page && page.text_by_lang ? page.text_by_lang[language] : null;
                         const formattedText = typeof pageText === "string" && pageText.trim().length > 0
-                            ? replaceWakfuIconTokens(formatWakfuPageText(pageText))
+                            ? normalizeWakfuIconBreakSpacing(replaceWakfuIconTokens(formatWakfuPageText(pageText)))
                             : "";
                         const pageImageId = Number(page && page.image_id);
                         const hasImage = Number.isFinite(pageImageId) && pageImageId > 0;
+                        const shouldDisplayImage = hasImage && (!formattedText || !shownPageImageIds.has(pageImageId));
+                        const textWithoutLeadingBreaks = formattedText.replace(/^(?:\s|<br\s*\/?\s*>)+/gi, "");
 
-                        if (!formattedText && !hasImage) {
+                        if (!formattedText && !shouldDisplayImage) {
                             return "";
                         }
 
-                        const parts = [];
-                        if (hasImage) {
-                            parts.push(`##wakfu_page_image,${pageImageId}##`);
-                        }
-                        if (formattedText) {
-                            parts.push(formattedText);
+                        if (shouldDisplayImage && textWithoutLeadingBreaks) {
+                            shownPageImageIds.add(pageImageId);
+                            return `##wakfu_page_image,${pageImageId}##${textWithoutLeadingBreaks}`;
                         }
 
-                        return parts.join("<br>");
+                        if (shouldDisplayImage) {
+                            shownPageImageIds.add(pageImageId);
+                            return `##wakfu_page_image,${pageImageId}##`;
+                        }
+
+                        return textWithoutLeadingBreaks;
                     })
                     .filter(text => text.length > 0);
 
@@ -4257,6 +4792,10 @@
 
             if (source === DofusSources.wakfu && appState.dualIndexMode) {
                 await setDualIndexMode(false);
+            }
+
+            if (source === DofusSources.wakfu && appState.sidebarVisible) {
+                appState.wakfuBackgroundDisplayEnabled = false;
             }
 
             appState.crossSourceMatchDoc = null;
@@ -4624,10 +5163,34 @@
             content1 = processImageUrls(content1);
 
             const isWakfuDocument = appState.currentDataSource === DofusSources.wakfu;
-            const wakfuBackgroundPath = isWakfuDocument ? getWakfuKindBackgroundAssetPath(doc.typeId) : "";
-            const contentWrapperClass = `content-wrapper${wakfuBackgroundPath ? " wakfu-themed" : ""}`;
-            const contentWrapperStyle = wakfuBackgroundPath
-                ? ` style="--wakfu-background-image: url('${wakfuBackgroundPath}')"`
+            const wakfuBackgroundEnabled = isWakfuDocument && appState.wakfuBackgroundDisplayEnabled;
+            const wakfuKindProfile = getWakfuBackgroundKindProfile(doc.typeId);
+            const wakfuBackgroundPath = wakfuBackgroundEnabled ? getWakfuKindBackgroundAssetPath(doc.typeId) : "";
+            const contentWrapperClass = `content-wrapper${wakfuBackgroundEnabled ? " wakfu-themed" : ""}`;
+            const wakfuUseSpreadLayout = wakfuBackgroundEnabled && !appState.bilingualMode && !appState.crossSourceCompareActive && !!wakfuKindProfile.twoPage;
+            const wakfuUseSinglePageLayout = wakfuBackgroundEnabled && !appState.bilingualMode && !appState.crossSourceCompareActive && !wakfuKindProfile.twoPage;
+            const wakfuTextColor = wakfuBackgroundEnabled ? getWakfuTextColorForKind(doc.typeId) : "";
+            const wakfuSheetOverlay = wakfuBackgroundEnabled ? getWakfuSheetOverlayForKind(doc.typeId) : "";
+            const wakfuTextShadow = wakfuBackgroundEnabled ? getWakfuTextShadowForKind(doc.typeId) : "";
+            const wrapperStyleParts = [];
+            if (wakfuBackgroundEnabled) {
+                const wrapperPadding = wakfuKindProfile.wrapperPadding || WAKFU_BACKGROUND_KIND_PROFILES.default.wrapperPadding;
+                wrapperStyleParts.push(`--wakfu-column-padding-top: ${wrapperPadding.top}px`);
+                wrapperStyleParts.push(`--wakfu-column-padding-right: ${wrapperPadding.right}px`);
+                wrapperStyleParts.push(`--wakfu-column-padding-bottom: ${wrapperPadding.bottom}px`);
+                wrapperStyleParts.push(`--wakfu-column-padding-left: ${wrapperPadding.left}px`);
+                wrapperStyleParts.push(`--wakfu-content-text-color: ${wakfuTextColor}`);
+                wrapperStyleParts.push(`--wakfu-sheet-overlay: ${wakfuSheetOverlay}`);
+                wrapperStyleParts.push(`--wakfu-content-text-shadow: ${wakfuTextShadow}`);
+                if (!wakfuUseSpreadLayout && !wakfuUseSinglePageLayout && wakfuBackgroundPath) {
+                    wrapperStyleParts.push(`--wakfu-background-image: url('${wakfuBackgroundPath}')`);
+                }
+            }
+            const contentWrapperStyle = wrapperStyleParts.length > 0
+                ? ` style="${wrapperStyleParts.join("; ")}"`
+                : "";
+            const wakfuBackgroundLayerHtml = (wakfuBackgroundPath && !wakfuUseSpreadLayout && !wakfuUseSinglePageLayout)
+                ? `<div class="wakfu-background-layer" aria-hidden="true"></div>`
                 : "";
 
             const hasInvertedText = appState.currentDataSource === DofusSources.wakfu && (
@@ -4636,8 +5199,16 @@
             const invertToggleButtonHtml = hasInvertedText
                 ? `<button class="doc-invert-toggle-btn ${appState.invertedTextDecodeEnabled ? "active" : ""}" onclick="toggleInvertedTextDecoding()" title="${appState.invertedTextDecodeEnabled ? "Show original text" : "Decode inverted text"}" aria-label="${appState.invertedTextDecodeEnabled ? "Show original text" : "Decode inverted text"}">↔ Text</button>`
                 : "";
+            const wakfuBackgroundToggleButtonHtml = isWakfuDocument
+                ? `<button class="doc-wakfu-bg-toggle-btn ${wakfuBackgroundEnabled ? "active" : ""}" onclick="toggleWakfuBackgroundDisplay()" title="${wakfuBackgroundEnabled ? "Disable" : "Enable"} Wakfu backgrounds" aria-label="${wakfuBackgroundEnabled ? "Disable" : "Enable"} Wakfu backgrounds">🖼</button>`
+                : "";
 
             content1 = maybeDecodeInvertedTextInHtml(content1);
+            if (wakfuUseSpreadLayout) {
+                content1 = buildWakfuTwoPageSpreads(content1, wakfuBackgroundPath, doc.typeId);
+            } else if (wakfuUseSinglePageLayout) {
+                content1 = buildWakfuSinglePageSheets(content1, wakfuBackgroundPath, doc.typeId);
+            }
 
             const hasCrossSourceMatch = !appState.bilingualMode &&
                 String(doc.id) === String(appState.currentDisplayedDocId) &&
@@ -4658,6 +5229,7 @@
                 ? `
                     <div class="doc-compare-action">
                         ${invertToggleButtonHtml}
+                        ${wakfuBackgroundToggleButtonHtml}
                         ${charDiffButtonHtml}
                         ${paragraphDiffButtonHtml}
                         ${compareButtonOnlyHtml}
@@ -4683,6 +5255,7 @@
                             <div class="doc-context-badge">${escapeHtml(getSourceDisplayName(appState.currentDataSource))} vs ${escapeHtml(getSourceDisplayName(matchSource))} (${escapeHtml(appState.currentLanguage.toUpperCase())})</div>
                         </div>
                         <div class="${contentWrapperClass}"${contentWrapperStyle}>
+                            ${wakfuBackgroundLayerHtml}
                             <div class="content-column" id="content1-${doc.id}" data-doc-id="${doc.id}">
                                 <div class="source-chip">${escapeHtml(getSourceDisplayName(appState.currentDataSource))}</div>
                                 <div class="title-section">
@@ -4712,7 +5285,10 @@
 
                     const columns = section.querySelectorAll(".content-column");
                     columns.forEach(col => setupImageHoverLoading(col, { deferUntilVisible: isWakfuDocument }));
-                    if (isWakfuDocument) {
+                    if (isWakfuDocument && wakfuBackgroundEnabled && !wakfuUseSpreadLayout) {
+                        applyWakfuPageImageLayout(section.querySelector(`#content1-${doc.id}`), doc.typeId);
+                    }
+                    if (isWakfuDocument && wakfuBackgroundEnabled) {
                         applyWakfuBackgroundFallback(section.querySelector(`.${contentWrapperClass.split(" ").join(".")}`), doc.typeId, wakfuBackgroundPath);
                     }
                     highlightCrossSourceDiffs(
@@ -4731,6 +5307,7 @@
                             ${buildDocMetaRow(subtitle1, author1)}
                         </div>
                         <div class="${contentWrapperClass}"${contentWrapperStyle}>
+                            ${wakfuBackgroundLayerHtml}
                             <div class="content-column single" id="content1-${doc.id}" data-doc-id="${doc.id}">
                                 <div class="content">${content1}</div>
                             </div>
@@ -4747,7 +5324,10 @@
                     // Setup hover-based image loading
                     const contentColumn = section.querySelector(".content-column");
                     setupImageHoverLoading(contentColumn, { deferUntilVisible: isWakfuDocument });
-                    if (isWakfuDocument) {
+                    if (isWakfuDocument && wakfuBackgroundEnabled && !wakfuUseSpreadLayout) {
+                        applyWakfuPageImageLayout(contentColumn, doc.typeId);
+                    }
+                    if (isWakfuDocument && wakfuBackgroundEnabled) {
                         applyWakfuBackgroundFallback(section.querySelector(`.${contentWrapperClass.split(" ").join(".")}`), doc.typeId, wakfuBackgroundPath);
                     }
                 }
@@ -4767,6 +5347,7 @@
                         <div class="doc-context-badge">${escapeHtml(appState.currentLanguage.toUpperCase())} • ${escapeHtml(appState.secondLanguage.toUpperCase())}</div>
                     </div>
                     <div class="${contentWrapperClass}"${contentWrapperStyle}>
+                        ${wakfuBackgroundLayerHtml}
                         <div class="content-column" id="content1-${doc.id}" data-doc-id="${doc.id}">
                             <div class="title-section">
                                 <h2 class="title" style="font-size: 1.8em; margin-bottom: 15px;">${escapeHtml(title1)}</h2>
@@ -4798,7 +5379,11 @@
 
                 const columns = section.querySelectorAll(".content-column");
                 columns.forEach(col => setupImageHoverLoading(col, { deferUntilVisible: isWakfuDocument }));
-                if (isWakfuDocument) {
+                if (isWakfuDocument && wakfuBackgroundEnabled) {
+                    applyWakfuPageImageLayout(section.querySelector(`#content1-${doc.id}`), doc.typeId);
+                    applyWakfuPageImageLayout(section.querySelector(`#content2-${doc.id}`), doc.typeId);
+                }
+                if (isWakfuDocument && wakfuBackgroundEnabled) {
                     applyWakfuBackgroundFallback(section.querySelector(`.${contentWrapperClass.split(" ").join(".")}`), doc.typeId, wakfuBackgroundPath);
                 }
             }
@@ -5187,6 +5772,16 @@
                 sidebar.classList.remove("hidden");
                 mainContent.classList.remove("sidebar-hidden");
                 toggleBtn.classList.add("sidebar-open");
+
+                // Keep Wakfu backgrounds disabled when sidebar is open to preserve readability.
+                if (appState.currentDataSource === DofusSources.wakfu && appState.wakfuBackgroundDisplayEnabled) {
+                    appState.wakfuBackgroundDisplayEnabled = false;
+                    if (appState.currentDisplayedDocId) {
+                        loadAndScrollToDocument(appState.currentDisplayedDocId, {
+                            preserveInversionState: true
+                        }).catch((error) => console.error("Error reloading Wakfu document after sidebar toggle:", error));
+                    }
+                }
                 
                 // Show backdrop on mobile
                 if (window.innerWidth <= 768 && backdrop) {
