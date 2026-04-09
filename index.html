@@ -2221,6 +2221,7 @@
         };
         const DTOUCH_LANGUAGES = ["fr", "en", "es", "pt", "de"];
         const WAKFU_LANGUAGES = ["fr", "en", "es", "pt"];
+        const WAKFU_DEFAULT_INVERTED_DOC_ID = 281;
         const WAKFU_PAGE_SEPARATOR = "\n\n<hr class=\"page-break\">\n\n";
         const dataSourceRuntimeCache = {
             dofus3Docs: null,
@@ -2861,33 +2862,49 @@
             return Array.from(String(text || "")).reverse().join("");
         }
 
-        function isLikelyInvertedTextFragment(text) {
-            const normalized = String(text || "").replace(/\s+/g, " ").trim();
-            if (normalized.length < 30) {
-                return false;
+        function reverseTextOutsideParentheses(text) {
+            const source = String(text || "");
+            if (!source) {
+                return source;
             }
 
-            const words = normalized.match(/[A-Za-zÀ-ÖØ-öø-ÿ]{3,}/g) || [];
-            if (words.length < 6) {
-                return false;
+            let result = "";
+            let outsideBuffer = "";
+            let depth = 0;
+
+            for (const char of Array.from(source)) {
+                if (char === "(") {
+                    if (depth === 0 && outsideBuffer) {
+                        result += reverseStringByCodePoint(outsideBuffer);
+                        outsideBuffer = "";
+                    }
+                    depth += 1;
+                    result += char;
+                    continue;
+                }
+
+                if (char === ")" && depth > 0) {
+                    depth -= 1;
+                    result += char;
+                    continue;
+                }
+
+                if (depth > 0) {
+                    result += char;
+                } else {
+                    outsideBuffer += char;
+                }
             }
 
-            const uppercaseEndingCount = words.filter(word => /[A-ZÀ-ÖØ-Þ]$/.test(word)).length;
-            const uppercaseEndingRatio = uppercaseEndingCount / words.length;
-            const startsWithReversedPunctuation = /^[.!?…]\s*[a-zà-öø-ÿ]/.test(normalized);
+            if (outsideBuffer) {
+                result += reverseStringByCodePoint(outsideBuffer);
+            }
 
-            return (startsWithReversedPunctuation && uppercaseEndingRatio >= 0.12) || uppercaseEndingRatio >= 0.22;
+            return result;
         }
 
         function decodePotentiallyInvertedText(text) {
-            const fragments = String(text || "").split(/(?=[.!?…]\s*[a-zà-öø-ÿ])/);
-
-            return fragments.map(fragment => {
-                if (isLikelyInvertedTextFragment(fragment)) {
-                    return reverseStringByCodePoint(fragment);
-                }
-                return fragment;
-            }).join("");
+            return reverseTextOutsideParentheses(text);
         }
 
         function detectInvertedTextInHtml(contentHtml) {
@@ -2901,8 +2918,8 @@
             let currentNode;
 
             while ((currentNode = walker.nextNode())) {
-                const fragments = String(currentNode.textContent || "").split(/(?=[.!?…]\s*[a-zà-öø-ÿ])/);
-                if (fragments.some(isLikelyInvertedTextFragment)) {
+                const rawText = currentNode.textContent || "";
+                if (reverseTextOutsideParentheses(rawText) !== rawText) {
                     return true;
                 }
             }
@@ -2930,7 +2947,9 @@
         async function toggleInvertedTextDecoding() {
             appState.invertedTextDecodeEnabled = !appState.invertedTextDecodeEnabled;
             if (appState.currentDisplayedDocId) {
-                await loadAndScrollToDocument(appState.currentDisplayedDocId);
+                await loadAndScrollToDocument(appState.currentDisplayedDocId, {
+                    preserveInversionState: true
+                });
             }
         }
 
@@ -4117,8 +4136,7 @@
             content1 = processImageUrls(content1);
 
             const hasInvertedText = appState.currentDataSource === DofusSources.wakfu && (
-                detectInvertedTextInHtml(content1) ||
-                (appState.bilingualMode && detectInvertedTextInHtml(processImageUrls(getContent(doc, appState.secondLanguage))))
+                true
             );
             const invertToggleButtonHtml = hasInvertedText
                 ? `<button class="doc-invert-toggle-btn ${appState.invertedTextDecodeEnabled ? "active" : ""}" onclick="toggleInvertedTextDecoding()" title="${appState.invertedTextDecodeEnabled ? "Show original text" : "Decode inverted text"}" aria-label="${appState.invertedTextDecodeEnabled ? "Show original text" : "Decode inverted text"}">↔ Text</button>`
@@ -4567,12 +4585,21 @@
         }
 
         // ===== NAVIGATION =====
-        async function loadAndScrollToDocument(docId) {
+        async function loadAndScrollToDocument(docId, options = {}) {
+            const { preserveInversionState = false } = options;
+
             // Find the document in allDocuments - convert both to string for comparison
             const doc = appState.allDocuments.find(d => String(d.id) === String(docId));
             if (!doc) {
                 console.error("Document not found:", docId);
                 return;
+            }
+
+            if (!preserveInversionState) {
+                appState.invertedTextDecodeEnabled = (
+                    appState.currentDataSource === DofusSources.wakfu &&
+                    Number(doc.id) === WAKFU_DEFAULT_INVERTED_DOC_ID
+                );
             }
 
             // Track the currently displayed document
