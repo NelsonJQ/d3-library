@@ -1965,6 +1965,7 @@
                     <button class="source-btn active" data-source="dofus3" title="DOFUS 3 source">DOFUS3</button>
                     <button class="compare-toggle-btn" id="dualIndexToggleBtn" title="Compare both indexes side by side" aria-label="Compare both indexes side by side">🔀</button>
                     <button class="source-btn" data-source="dtouch" title="Dofus Touch source">DTouch</button>
+                    <button class="source-btn" data-source="wakfu" title="Wakfu source">Wakfu</button>
                 </div>
 
                 <div class="language-selector">
@@ -2111,7 +2112,13 @@
         let appState = {
             sidebarVisible: true,
             currentLanguage: config.ui.defaultLanguage,
-            currentDataSource: (localStorage.getItem("appDataSource") === "dtouch") ? "dtouch" : "dofus3",
+            currentDataSource: (() => {
+                const persistedSource = localStorage.getItem("appDataSource");
+                if (persistedSource === "dtouch" || persistedSource === "wakfu") {
+                    return persistedSource;
+                }
+                return "dofus3";
+            })(),
             bilingualMode: false,
             secondLanguage: "fr",
             currentSearchTerm: "",
@@ -2161,11 +2168,16 @@
         const SOURCE_STORAGE_KEY = "appDataSource";
         const DofusSources = {
             dofus3: "dofus3",
-            dtouch: "dtouch"
+            dtouch: "dtouch",
+            wakfu: "wakfu"
         };
         const DTOUCH_LANGUAGES = ["fr", "en", "es", "pt", "de"];
+        const WAKFU_LANGUAGES = ["fr", "en", "es", "pt"];
+        const WAKFU_PAGE_SEPARATOR = "\n\n--- PAGE BREAK ---\n\n";
         const dataSourceRuntimeCache = {
             dofus3Docs: null,
+            wakfuDocs: null,
+            wakfuInFlight: null,
             touchByLanguage: new Map(),
             touchInFlight: new Map()
         };
@@ -2318,6 +2330,47 @@
             document.querySelectorAll("#sourceToggle .source-btn").forEach(btn => {
                 btn.classList.toggle("active", btn.getAttribute("data-source") === appState.currentDataSource);
             });
+
+            const dualToggleBtn = document.getElementById("dualIndexToggleBtn");
+            const isWakfuSource = appState.currentDataSource === DofusSources.wakfu;
+            if (dualToggleBtn) {
+                dualToggleBtn.disabled = isWakfuSource;
+                dualToggleBtn.style.opacity = isWakfuSource ? "0.45" : "1";
+                dualToggleBtn.style.cursor = isWakfuSource ? "not-allowed" : "pointer";
+                dualToggleBtn.title = isWakfuSource
+                    ? "Dual-index compare is available only for DOFUS3 and DTouch"
+                    : "Compare both indexes side by side";
+                dualToggleBtn.setAttribute("aria-label", dualToggleBtn.title);
+            }
+        }
+
+        function updateSourceLanguageAvailability() {
+            const isWakfuSource = appState.currentDataSource === DofusSources.wakfu;
+            const deButtons = document.querySelectorAll('.lang-btn[data-lang="de"]');
+
+            deButtons.forEach(btn => {
+                btn.disabled = isWakfuSource;
+                btn.style.display = isWakfuSource ? "none" : "inline-flex";
+            });
+
+            if (isWakfuSource && appState.currentLanguage === "de") {
+                appState.currentLanguage = "en";
+            }
+
+            if (isWakfuSource && appState.secondLanguage === "de") {
+                appState.secondLanguage = getPreferredSecondLanguage(appState.currentLanguage);
+            }
+
+            document.querySelectorAll(".language-selector:not(#secondLanguageSelector) .lang-btn").forEach(btn => {
+                btn.classList.toggle("active", btn.getAttribute("data-lang") === appState.currentLanguage);
+            });
+
+            const secondLangSelector = document.getElementById("secondLanguageSelector");
+            if (secondLangSelector) {
+                secondLangSelector.querySelectorAll(".lang-btn").forEach(btn => {
+                    btn.classList.toggle("active", btn.getAttribute("data-lang") === appState.secondLanguage);
+                });
+            }
         }
 
         function getSearchFilteredDocs(docs, lang) {
@@ -2602,6 +2655,17 @@
                 return dataSourceRuntimeCache.dofus3Docs || [];
             }
 
+            if (source === DofusSources.wakfu) {
+                if (!dataSourceRuntimeCache.wakfuDocs || dataSourceRuntimeCache.wakfuDocs.length === 0) {
+                    if (appState.currentDataSource === DofusSources.wakfu) {
+                        await loadWakfuDocuments({ preserveCurrentDocument: false });
+                    } else {
+                        await fetchWakfuDocuments();
+                    }
+                }
+                return dataSourceRuntimeCache.wakfuDocs || [];
+            }
+
             const touchLanguage = DTOUCH_LANGUAGES.includes(appState.currentLanguage)
                 ? appState.currentLanguage
                 : "fr";
@@ -2661,6 +2725,11 @@
             const sidebar = document.getElementById("sidebar");
             const mainContent = document.getElementById("mainContent");
             const toggleBtn = document.getElementById("toggleBtn");
+            const dualIndexAvailable = appState.currentDataSource !== DofusSources.wakfu;
+
+            if (!dualIndexAvailable && appState.dualIndexMode) {
+                appState.dualIndexMode = false;
+            }
 
             if (dualToggleBtn) {
                 dualToggleBtn.classList.toggle("active", appState.dualIndexMode);
@@ -2691,6 +2760,10 @@
         }
 
         async function setDualIndexMode(enabled) {
+            if (enabled && appState.currentDataSource === DofusSources.wakfu) {
+                return;
+            }
+
             if (enabled) {
                 if (window.innerWidth > 768) {
                     const doubledWidth = appState.sidebarWidth * 2;
@@ -2727,7 +2800,13 @@
         }
 
         function getSourceDisplayName(source) {
-            return source === DofusSources.dtouch ? "DTouch" : "DOFUS3";
+            if (source === DofusSources.dtouch) {
+                return "DTouch";
+            }
+            if (source === DofusSources.wakfu) {
+                return "Wakfu";
+            }
+            return "DOFUS3";
         }
 
         function findBestCrossSourceMatch(currentDoc, otherSourceDocs) {
@@ -2764,7 +2843,11 @@
         }
 
         async function resolveCrossSourceMatch(currentDoc) {
-            if (appState.bilingualMode || !currentDoc) {
+            if (
+                appState.bilingualMode ||
+                !currentDoc ||
+                ![DofusSources.dofus3, DofusSources.dtouch].includes(appState.currentDataSource)
+            ) {
                 appState.crossSourceMatchDoc = null;
                 appState.crossSourceMatchSource = null;
                 appState.crossSourceCompareActive = false;
@@ -3362,6 +3445,110 @@
             }
         }
 
+        function normalizeWakfuDocument(rawDoc, fallbackId) {
+            const parsedId = Number(rawDoc.feedback_id ?? fallbackId);
+            const docId = Number.isFinite(parsedId) ? parsedId : Number(fallbackId);
+            const pages = Array.isArray(rawDoc.pages) ? [...rawDoc.pages] : [];
+            const sortedPages = pages.sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
+
+            const contentByLang = {};
+            WAKFU_LANGUAGES.forEach(language => {
+                const pageChunks = sortedPages
+                    .map(page => page && page.text_by_lang ? page.text_by_lang[language] : null)
+                    .filter(text => typeof text === "string" && text.trim().length > 0);
+
+                contentByLang[language] = pageChunks.join(WAKFU_PAGE_SEPARATOR);
+            });
+
+            return {
+                id: docId,
+                typeId: rawDoc.kind || null,
+                title: rawDoc.title_by_lang || {
+                    fr: `Background ${docId}`,
+                    en: `Background ${docId}`,
+                    es: `Background ${docId}`,
+                    pt: `Background ${docId}`
+                },
+                author: {},
+                subTitle: {},
+                content: contentByLang,
+                contentCSS: null
+            };
+        }
+
+        async function fetchWakfuDocuments() {
+            if (Array.isArray(dataSourceRuntimeCache.wakfuDocs) && dataSourceRuntimeCache.wakfuDocs.length > 0) {
+                return dataSourceRuntimeCache.wakfuDocs;
+            }
+
+            if (dataSourceRuntimeCache.wakfuInFlight) {
+                return dataSourceRuntimeCache.wakfuInFlight;
+            }
+
+            const loadPromise = (async () => {
+                const localUrl = "data/wakfu/wk_background_docs.json";
+                const githubUrl = "https://nelsonjq.github.io/d3-library/data/wakfu/wk_background_docs.json";
+
+                async function fetchJson(url) {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`Unable to load ${url} (${response.status})`);
+                    }
+                    return response.json();
+                }
+
+                let payload;
+                try {
+                    payload = await fetchJson(localUrl);
+                } catch (localError) {
+                    console.warn("Local Wakfu load failed, trying GitHub fallback", localError);
+                    payload = await fetchJson(githubUrl);
+                }
+
+                const books = Array.isArray(payload.books) ? payload.books : [];
+                const docs = books
+                    .map((book, index) => normalizeWakfuDocument(book || {}, index + 1))
+                    .sort((a, b) => Number(a.id) - Number(b.id));
+
+                dataSourceRuntimeCache.wakfuDocs = docs;
+                return docs;
+            })();
+
+            dataSourceRuntimeCache.wakfuInFlight = loadPromise;
+
+            try {
+                return await loadPromise;
+            } finally {
+                dataSourceRuntimeCache.wakfuInFlight = null;
+            }
+        }
+
+        async function loadWakfuDocuments(options = {}) {
+            const { preserveCurrentDocument = true } = options;
+            const previousDocId = appState.currentDisplayedDocId;
+
+            const wakfuDocs = await fetchWakfuDocuments();
+            appState.allDocuments = wakfuDocs;
+            appState.displayedDocuments = [...wakfuDocs];
+            appState.documentsLoaded = true;
+            updateUI();
+
+            if (appState.currentSearchTerm && appState.currentSearchTerm.length >= 3) {
+                performSearch();
+            } else {
+                renderIndexOnly();
+            }
+
+            if (preserveCurrentDocument && previousDocId) {
+                const stillExists = appState.allDocuments.some(doc => String(doc.id) === String(previousDocId));
+                if (stillExists) {
+                    loadAndScrollToDocument(previousDocId);
+                } else {
+                    appState.currentDisplayedDocId = null;
+                }
+            }
+        }
+
         async function loadDofus3Documents(options = {}) {
             const { preserveCurrentDocument = true } = options;
             const previousDocId = appState.currentDisplayedDocId;
@@ -3411,9 +3598,20 @@
             appState.currentDataSource = source;
             localStorage.setItem(SOURCE_STORAGE_KEY, source);
             updateSourceToggleButtons();
+            updateSourceLanguageAvailability();
+
+            if (source === DofusSources.wakfu && appState.dualIndexMode) {
+                await setDualIndexMode(false);
+            }
+
+            appState.crossSourceMatchDoc = null;
+            appState.crossSourceMatchSource = null;
+            appState.crossSourceCompareActive = false;
 
             if (source === DofusSources.dtouch) {
                 await refreshTouchDocuments({ showLoading: true, preserveCurrentDocument });
+            } else if (source === DofusSources.wakfu) {
+                await loadWakfuDocuments({ preserveCurrentDocument });
             } else {
                 await loadDofus3Documents({ preserveCurrentDocument });
             }
@@ -3605,7 +3803,7 @@
         // ===== UPDATE UI ELEMENTS =====
         function updateUI() {
             const docCount = document.getElementById("docCount");
-            const sourceLabel = appState.currentDataSource === DofusSources.dtouch ? "DTouch" : "DOFUS3";
+            const sourceLabel = getSourceDisplayName(appState.currentDataSource);
             docCount.textContent = `${appState.allDocuments.length} documents loaded (${sourceLabel})`;
         }
 
@@ -3920,7 +4118,12 @@
 
         // ===== HELPER FUNCTIONS =====
         function getTitle(doc, lang) {
-            const rawTitle = typeof doc.title === 'object' ? (doc.title[lang] || "Title not available") : "Title not available";
+            const effectiveLang = (appState.currentDataSource === DofusSources.wakfu && lang === "de") ? "en" : lang;
+            const titleMap = typeof doc.title === 'object' ? doc.title : null;
+            const fallbackTitle = titleMap
+                ? (titleMap[effectiveLang] || titleMap.fr || titleMap.en || titleMap.es || titleMap.pt)
+                : null;
+            const rawTitle = fallbackTitle || "Title not available";
             return cleanHtmlTags(rawTitle);
         }
 
@@ -3933,7 +4136,11 @@
         }
 
         function getContent(doc, lang) {
-            const content = typeof doc.content === 'object' ? (doc.content[lang] || "Content not available") : "Content not available";
+            const effectiveLang = (appState.currentDataSource === DofusSources.wakfu && lang === "de") ? "en" : lang;
+            const contentMap = typeof doc.content === 'object' ? doc.content : null;
+            const content = contentMap
+                ? (contentMap[effectiveLang] || contentMap.fr || contentMap.en || contentMap.es || contentMap.pt || "Content not available")
+                : "Content not available";
             return content;
         }
 
@@ -4290,6 +4497,10 @@
         }
 
         async function setLanguage(lang) {
+            if (appState.currentDataSource === DofusSources.wakfu && lang === "de") {
+                lang = "en";
+            }
+
             appState.currentLanguage = lang;
 
             document.querySelectorAll(".language-selector:not(#secondLanguageSelector) .lang-btn").forEach(btn => {
@@ -4381,6 +4592,10 @@
 
         // ===== SET SECOND LANGUAGE =====
         async function setSecondLanguage(lang) {
+            if (appState.currentDataSource === DofusSources.wakfu && lang === "de") {
+                lang = getPreferredSecondLanguage(appState.currentLanguage);
+            }
+
             if (lang === appState.currentLanguage) {
                 // Don't allow same language as primary
                 return;
