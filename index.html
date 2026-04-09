@@ -605,6 +605,26 @@
             text-overflow: ellipsis;
         }
 
+        .wakfu-links-row {
+            margin-top: 10px;
+            font-size: 0.82em;
+            color: inherit;
+            text-align: center;
+            line-height: 1.45;
+        }
+
+        .wakfu-links-row a {
+            color: inherit;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            margin: 0 2px;
+        }
+
+        .wakfu-links-row a:hover {
+            color: inherit;
+            opacity: 0.9;
+        }
+
         .doc-context-badge {
             display: inline-flex;
             align-items: center;
@@ -713,6 +733,33 @@
             border-color: rgba(255, 255, 255, 0.35);
             opacity: 0.55;
             filter: saturate(0.55);
+        }
+
+        .doc-invert-toggle-btn {
+            min-width: 34px;
+            height: 34px;
+            padding: 0 10px;
+            border: 2px solid rgba(255, 255, 255, 0.45);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.2px;
+        }
+
+        .doc-invert-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.32);
+            transform: translateY(-1px);
+        }
+
+        .doc-invert-toggle-btn.active {
+            background: #16a085;
+            border-color: #16a085;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(10, 82, 67, 0.35);
         }
 
         .doc-char-diff-btn:not(.inactive):not(.active),
@@ -2153,6 +2200,7 @@
             crossSourceMatchDoc: null,
             crossSourceMatchSource: null,
             crossSourceCompareActive: false,
+            invertedTextDecodeEnabled: false,
             paragraphLevelDiffEnabled: true,
             charGranularDiffEnabled: true,
             sidebarWidth: Number(localStorage.getItem("sidebarWidth")) || config.ui.sidebarWidth,
@@ -2173,7 +2221,7 @@
         };
         const DTOUCH_LANGUAGES = ["fr", "en", "es", "pt", "de"];
         const WAKFU_LANGUAGES = ["fr", "en", "es", "pt"];
-        const WAKFU_PAGE_SEPARATOR = "\n\n--- PAGE BREAK ---\n\n";
+        const WAKFU_PAGE_SEPARATOR = "\n\n<hr class=\"page-break\">\n\n";
         const dataSourceRuntimeCache = {
             dofus3Docs: null,
             wakfuDocs: null,
@@ -2807,6 +2855,83 @@
                 return "Wakfu";
             }
             return "DOFUS3";
+        }
+
+        function reverseStringByCodePoint(text) {
+            return Array.from(String(text || "")).reverse().join("");
+        }
+
+        function isLikelyInvertedTextFragment(text) {
+            const normalized = String(text || "").replace(/\s+/g, " ").trim();
+            if (normalized.length < 30) {
+                return false;
+            }
+
+            const words = normalized.match(/[A-Za-zÀ-ÖØ-öø-ÿ]{3,}/g) || [];
+            if (words.length < 6) {
+                return false;
+            }
+
+            const uppercaseEndingCount = words.filter(word => /[A-ZÀ-ÖØ-Þ]$/.test(word)).length;
+            const uppercaseEndingRatio = uppercaseEndingCount / words.length;
+            const startsWithReversedPunctuation = /^[.!?…]\s*[a-zà-öø-ÿ]/.test(normalized);
+
+            return (startsWithReversedPunctuation && uppercaseEndingRatio >= 0.12) || uppercaseEndingRatio >= 0.22;
+        }
+
+        function decodePotentiallyInvertedText(text) {
+            const fragments = String(text || "").split(/(?=[.!?…]\s*[a-zà-öø-ÿ])/);
+
+            return fragments.map(fragment => {
+                if (isLikelyInvertedTextFragment(fragment)) {
+                    return reverseStringByCodePoint(fragment);
+                }
+                return fragment;
+            }).join("");
+        }
+
+        function detectInvertedTextInHtml(contentHtml) {
+            if (!contentHtml || appState.currentDataSource !== DofusSources.wakfu) {
+                return false;
+            }
+
+            const container = document.createElement("div");
+            container.innerHTML = contentHtml;
+            const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+            let currentNode;
+
+            while ((currentNode = walker.nextNode())) {
+                const fragments = String(currentNode.textContent || "").split(/(?=[.!?…]\s*[a-zà-öø-ÿ])/);
+                if (fragments.some(isLikelyInvertedTextFragment)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function maybeDecodeInvertedTextInHtml(contentHtml) {
+            if (!contentHtml || !appState.invertedTextDecodeEnabled || appState.currentDataSource !== DofusSources.wakfu) {
+                return contentHtml;
+            }
+
+            const container = document.createElement("div");
+            container.innerHTML = contentHtml;
+            const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+            let currentNode;
+
+            while ((currentNode = walker.nextNode())) {
+                currentNode.textContent = decodePotentiallyInvertedText(currentNode.textContent || "");
+            }
+
+            return container.innerHTML;
+        }
+
+        async function toggleInvertedTextDecoding() {
+            appState.invertedTextDecodeEnabled = !appState.invertedTextDecodeEnabled;
+            if (appState.currentDisplayedDocId) {
+                await loadAndScrollToDocument(appState.currentDisplayedDocId);
+            }
         }
 
         function findBestCrossSourceMatch(currentDoc, otherSourceDocs) {
@@ -3451,18 +3576,41 @@
             const pages = Array.isArray(rawDoc.pages) ? [...rawDoc.pages] : [];
             const sortedPages = pages.sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
 
+            function formatWakfuPageText(pageText) {
+                if (typeof pageText !== "string") {
+                    return "";
+                }
+
+                const decodedText = pageText
+                    .replace(/\\r\\n/g, "\n")
+                    .replace(/\\n/g, "\n")
+                    .replace(/\\t/g, "\t");
+
+                return decodedText
+                    .replace(/\r\n?/g, "\n")
+                    .replace(/\n\s*####\s*\n/g, "\n<hr class=\"page-break\">\n")
+                    .replace(/\n{2,}/g, "<br><br>")
+                    .replace(/\n/g, "<br>")
+                    .trim();
+            }
+
             const contentByLang = {};
             WAKFU_LANGUAGES.forEach(language => {
                 const pageChunks = sortedPages
                     .map(page => page && page.text_by_lang ? page.text_by_lang[language] : null)
                     .filter(text => typeof text === "string" && text.trim().length > 0);
 
-                contentByLang[language] = pageChunks.join(WAKFU_PAGE_SEPARATOR);
+                contentByLang[language] = pageChunks
+                    .map(formatWakfuPageText)
+                    .filter(text => text.length > 0)
+                    .join(WAKFU_PAGE_SEPARATOR);
             });
 
             return {
                 id: docId,
                 typeId: rawDoc.kind || null,
+                // Wakfu normalization intentionally uses only: feedback_id, kind,
+                // title_by_lang, and pages(text_by_lang ordered by page order).
                 title: rawDoc.title_by_lang || {
                     fr: `Background ${docId}`,
                     en: `Background ${docId}`,
@@ -3964,8 +4112,19 @@
             const title1 = getTitle(doc, appState.currentLanguage);
             const subtitle1 = getSubtitle(doc, appState.currentLanguage);
             const author1 = cleanHtmlTags(getAuthor(doc, appState.currentLanguage));
+            const wakfuReferenceLinksHtml = buildWakfuLibraryLinksLine();
             let content1 = getContent(doc, appState.currentLanguage);
             content1 = processImageUrls(content1);
+
+            const hasInvertedText = appState.currentDataSource === DofusSources.wakfu && (
+                detectInvertedTextInHtml(content1) ||
+                (appState.bilingualMode && detectInvertedTextInHtml(processImageUrls(getContent(doc, appState.secondLanguage))))
+            );
+            const invertToggleButtonHtml = hasInvertedText
+                ? `<button class="doc-invert-toggle-btn ${appState.invertedTextDecodeEnabled ? "active" : ""}" onclick="toggleInvertedTextDecoding()" title="${appState.invertedTextDecodeEnabled ? "Show original text" : "Decode inverted text"}" aria-label="${appState.invertedTextDecodeEnabled ? "Show original text" : "Decode inverted text"}">↔ Text</button>`
+                : "";
+
+            content1 = maybeDecodeInvertedTextInHtml(content1);
 
             const hasCrossSourceMatch = !appState.bilingualMode &&
                 String(doc.id) === String(appState.currentDisplayedDocId) &&
@@ -3979,12 +4138,16 @@
             const charDiffButtonHtml = isCrossSourceCompareActive
                 ? `<button class="doc-char-diff-btn ${appState.charGranularDiffEnabled && appState.paragraphLevelDiffEnabled ? "" : "inactive"}" onclick="toggleCharGranularDiff()" title="${appState.paragraphLevelDiffEnabled ? (appState.charGranularDiffEnabled ? "Disable" : "Enable") : "Enable"} character-level diff" aria-label="${appState.paragraphLevelDiffEnabled ? (appState.charGranularDiffEnabled ? "Disable" : "Enable") : "Enable"} character-level diff">🧬</button>`
                 : "";
-            const compareButtonHtml = hasCrossSourceMatch
+            const compareButtonOnlyHtml = hasCrossSourceMatch
+                ? `<button class="doc-compare-btn ${isCrossSourceCompareActive ? "active" : ""} ${shouldNotifyCompare ? "notify-match" : ""}" onclick="toggleCrossSourceCompare()" title="Compare with ${escapeHtml(getSourceDisplayName(appState.crossSourceMatchSource))}" aria-label="Compare with ${escapeHtml(getSourceDisplayName(appState.crossSourceMatchSource))}">🔁</button>`
+                : "";
+            const headerActionsHtml = (invertToggleButtonHtml || compareButtonOnlyHtml || charDiffButtonHtml || paragraphDiffButtonHtml)
                 ? `
                     <div class="doc-compare-action">
+                        ${invertToggleButtonHtml}
                         ${charDiffButtonHtml}
                         ${paragraphDiffButtonHtml}
-                        <button class="doc-compare-btn ${isCrossSourceCompareActive ? "active" : ""} ${shouldNotifyCompare ? "notify-match" : ""}" onclick="toggleCrossSourceCompare()" title="Compare with ${escapeHtml(getSourceDisplayName(appState.crossSourceMatchSource))}" aria-label="Compare with ${escapeHtml(getSourceDisplayName(appState.crossSourceMatchSource))}">🔁</button>
+                        ${compareButtonOnlyHtml}
                     </div>
                 `
                 : "";
@@ -3998,11 +4161,12 @@
                     const author2 = cleanHtmlTags(getAuthor(matchDoc, appState.currentLanguage));
                     let content2 = getContent(matchDoc, appState.currentLanguage);
                     content2 = processImageUrls(content2);
+                    content2 = maybeDecodeInvertedTextInHtml(content2);
 
                     section.innerHTML = `
                         <div class="document-anchor" id="anchor-${doc.id}"></div>
                         <div class="header">
-                            ${compareButtonHtml}
+                            ${headerActionsHtml}
                             <div class="doc-context-badge">${escapeHtml(getSourceDisplayName(appState.currentDataSource))} vs ${escapeHtml(getSourceDisplayName(matchSource))} (${escapeHtml(appState.currentLanguage.toUpperCase())})</div>
                         </div>
                         <div class="content-wrapper">
@@ -4029,6 +4193,7 @@
                             <div class="metadata-item"><strong>Class:</strong> ${doc.className || "N/A"}</div>
                             <div class="metadata-item"><strong>Created:</strong> ${doc.createdAt || "N/A"}</div>
                             <div class="metadata-item"><strong>Updated:</strong> ${doc.updatedAt || "N/A"}</div>
+                            ${wakfuReferenceLinksHtml}
                         </div>
                     `;
 
@@ -4043,7 +4208,7 @@
                     section.innerHTML = `
                         <div class="document-anchor" id="anchor-${doc.id}"></div>
                         <div class="header">
-                            ${compareButtonHtml}
+                            ${headerActionsHtml}
                             <div class="title-section">
                                 <h1 class="title">${escapeHtml(title1)}</h1>
                             </div>
@@ -4059,6 +4224,7 @@
                             <div class="metadata-item"><strong>Class:</strong> ${doc.className || "N/A"}</div>
                             <div class="metadata-item"><strong>Created:</strong> ${doc.createdAt || "N/A"}</div>
                             <div class="metadata-item"><strong>Updated:</strong> ${doc.updatedAt || "N/A"}</div>
+                            ${wakfuReferenceLinksHtml}
                         </div>
                     `;
 
@@ -4073,11 +4239,12 @@
                 const author2 = cleanHtmlTags(getAuthor(doc, appState.secondLanguage));
                 let content2 = getContent(doc, appState.secondLanguage);
                 content2 = processImageUrls(content2);
+                content2 = maybeDecodeInvertedTextInHtml(content2);
 
                 section.innerHTML = `
                     <div class="document-anchor" id="anchor-${doc.id}"></div>
                     <div class="header">
-                        ${compareButtonHtml}
+                        ${headerActionsHtml}
                         <div class="doc-context-badge">${escapeHtml(appState.currentLanguage.toUpperCase())} • ${escapeHtml(appState.secondLanguage.toUpperCase())}</div>
                     </div>
                     <div class="content-wrapper">
@@ -4101,6 +4268,7 @@
                         <div class="metadata-item"><strong>Class:</strong> ${doc.className || "N/A"}</div>
                         <div class="metadata-item"><strong>Created:</strong> ${doc.createdAt || "N/A"}</div>
                         <div class="metadata-item"><strong>Updated:</strong> ${doc.updatedAt || "N/A"}</div>
+                        ${wakfuReferenceLinksHtml}
                     </div>
                 `;
 
@@ -4132,6 +4300,9 @@
         }
 
         function getAuthor(doc, lang) {
+            if (appState.currentDataSource === DofusSources.wakfu) {
+                return "";
+            }
             return typeof doc.author === 'object' ? (doc.author[lang] || "Author not available") : "Author not available";
         }
 
@@ -4162,6 +4333,22 @@
                 return '';
             }
             return `<div class="doc-meta-row">${chips.join('')}</div>`;
+        }
+
+        function buildWakfuLibraryLinksLine() {
+            if (appState.currentDataSource !== DofusSources.wakfu) {
+                return "";
+            }
+
+            return `
+                <div class="wakfu-links-row">
+                    Explore the library with images posted by
+                    <a href="https://methodwakfu.com/divers/bibliotheques-du-krosmoz/" target="_blank" rel="noopener noreferrer">MethodWakfu (FR, to date)</a>,
+                    <a href="https://www.wakfu.com/es/foro/537-charlas-generales/112661-biblioteca-stasiada-recopilando-nuestra-historia" target="_blank" rel="noopener noreferrer">Biblioteca Stasiada (ES, 2014)</a>
+                    and
+                    <a href="https://www.wakfu.com/en/forum/537-general-discussions/184314-books-wakfu" target="_blank" rel="noopener noreferrer">Books of Wakfu (EN, 2015)</a>.
+                </div>
+            `;
         }
 
         function shouldNotifyCrossSourceMatch(docId, matchSource) {
