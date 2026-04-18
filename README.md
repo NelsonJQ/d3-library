@@ -12,11 +12,12 @@ https://nelsonjq.github.io/d3-library/
 ### 1. **UI Elements and Features**
 The application provides a rich and interactive user interface designed for ease of use, comparison workflows, and accessibility. Below are the key UI elements and features:
 
-#### **3 Data Sources**
-- The application supports two document sources:
+#### **4 Data Sources**
+- The application supports four document sources:
   - **Dofus 3 / DofusDB source**
   - **Dofus Touch source**
   - **Wakfu source**
+  - **Islands of Wakfu (IoW) source**
 - Users can switch source with the **Source Selector** in the sidebar.
 - The selected source is persisted between sessions.
 
@@ -27,7 +28,10 @@ The application provides a rich and interactive user interface designed for ease
   - **French (FR)**
   - **Portuguese (PT)**
   - **German (DE)**
+  - **Italian (IT)** (Islands of Wakfu only)
+  - **Japanese (JA)** (Islands of Wakfu only)
 - Users can switch between these languages using the **Language Selector** in the sidebar.
+- Language availability is source-aware (for example, Wakfu has fewer language variants, while IoW adds IT and JA).
 
 #### **Bilingual and Bisource Modes**
 - **Single-Language Mode**: Displays content in one selected language.
@@ -38,6 +42,12 @@ The application provides a rich and interactive user interface designed for ease
   - The app resolves best cross-source matches by normalized titles.
   - Source context is displayed in each document header.
   - Quick compare actions are available directly from document cards.
+
+#### **Islands of Wakfu (IoW) Experience**
+- IoW uses a dedicated source with 9 mystery documents from `data/islandswakfu/mysteries.json`.
+- IoW exposes a source-specific **All Cards** control that is enabled by default to display all IoW docs in a card grid.
+- IoW metadata includes a dedicated CTA block linking to Ankama's game page and Xbox Store.
+- IoW documents display **Chibi** as the default author chip.
 
 #### **Dual-Index View and Filters**
 - **Dual-Index View**: Displays two synchronized index columns (one per source).
@@ -100,7 +110,10 @@ The application provides a rich and interactive user interface designed for ease
 
 #### **Data Sources**
 - **Dofus 3 / DofusDB API** (`https://api.beta.dofusdb.fr`) for Dofus 3 documents.
-- **Dofus Touch and Wakfu JSON payloads** from the local `data/touch/` and `data/wakfu/` dataset (`fr`, `en`, `es`, `pt`, `de`).
+- **Dofus Touch, Wakfu, and Islands of Wakfu JSON payloads** from local datasets:
+  - `data/touch/` (`fr`, `en`, `es`, `pt`, `de`)
+  - `data/wakfu/` (`fr`, `en`, `es`, `pt`)
+  - `data/islandswakfu/mysteries.json` (`fr`, `en`, `es`, `de`, `it`, `ja`)
 
 #### **Copyright Disclaimer**
 - All data and content displayed in this application are the property of **Ankama Games**.

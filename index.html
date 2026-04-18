@@ -457,6 +457,27 @@
             width: 100%;
         }
 
+        .documents-scroll-container.iow-grid-mode {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            align-items: start;
+            padding-bottom: 12px;
+        }
+
+        .documents-scroll-container.iow-grid-mode .document-section {
+            margin-bottom: 0;
+            height: 100%;
+        }
+
+        .source-metadata {
+            margin: 0 4px 16px;
+        }
+
+        .source-metadata .metadata-item {
+            line-height: 1.5;
+        }
+
         /* Prevent scrollbar from overlapping content */
         .main-content::-webkit-scrollbar {
             width: 16px;
@@ -2391,6 +2412,7 @@
                     <button class="compare-toggle-btn" id="dualIndexToggleBtn" title="Compare both indexes side by side" aria-label="Compare both indexes side by side">🔀</button>
                     <button class="source-btn" data-source="dtouch" title="Dofus Touch source">DTouch</button>
                     <button class="source-btn" data-source="wakfu" title="Wakfu source">Wakfu</button>
+                    <button class="source-btn" data-source="islandswakfu" title="Islands of Wakfu source">IslandsWakfu</button>
                 </div>
 
                 <div class="language-selector">
@@ -2399,6 +2421,8 @@
                     <button class="lang-btn" data-lang="fr" title="Français">FR</button>
                     <button class="lang-btn" data-lang="pt" title="Português">PT</button>
                     <button class="lang-btn" data-lang="de" title="Deutsch">DE</button>
+                    <button class="lang-btn" data-lang="it" title="Italiano">IT</button>
+                    <button class="lang-btn" data-lang="ja" title="Japanese">JA</button>
                 </div>
 
                 <div class="view-mode-toggle">
@@ -2406,12 +2430,19 @@
                     <button class="view-mode-btn" data-mode="bilingual" title="Bilingual view">Bilingual</button>
                 </div>
 
+                <div class="view-mode-toggle" id="iowAllCardsToggleRow" style="display: none;">
+                    <button class="view-mode-btn active" id="iowAllCardsToggleBtn" title="Display all IslandsWakfu documents in a card grid" aria-label="Display all IslandsWakfu documents in a card grid" aria-pressed="true">All Cards</button>
+                </div>
+
                 <div id="secondLanguageSelector" class="language-selector" style="display: none; margin-top: 10px;">
                     <span style="display: block; font-size: 12px; color: #bdc3c7; margin-bottom: 5px;">Second language:</span>
+                    <button class="lang-btn" data-lang="es" title="Español">ES</button>
                     <button class="lang-btn" data-lang="fr" title="Français">FR</button>
                     <button class="lang-btn" data-lang="en" title="English">EN</button>
                     <button class="lang-btn" data-lang="pt" title="Português">PT</button>
                     <button class="lang-btn" data-lang="de" title="Deutsch">DE</button>
+                    <button class="lang-btn" data-lang="it" title="Italiano">IT</button>
+                    <button class="lang-btn" data-lang="ja" title="Japanese">JA</button>
                 </div>
 
                 <div class="search-container">
@@ -2496,8 +2527,10 @@
                 </div>
             </div>
 
+            <div class="metadata source-metadata" id="sourceMetadata" style="display: none;"></div>
+
             <!-- Footer disclaimer moved inside mainContent -->
-            <footer class="footer-disclaimer">
+            <footer class="footer-disclaimer" id="footerDisclaimer">
                 Data copyright belongs to Ankama Games (c) https://www.ankama.com/fr/games, data retrieved via DofusDB.fr
             </footer>
         </div>
@@ -2516,7 +2549,7 @@
             ui: {
                 sidebarWidth: 320,
                 defaultLanguage: "es",
-                supportedLanguages: ["en", "fr", "es", "pt", "de", "it"],
+                supportedLanguages: ["en", "fr", "es", "pt", "de", "it", "ja"],
                 enableBilingualMode: true
             },
             features: {
@@ -2539,7 +2572,7 @@
             currentLanguage: config.ui.defaultLanguage,
             currentDataSource: (() => {
                 const persistedSource = localStorage.getItem("appDataSource");
-                if (persistedSource === "dtouch" || persistedSource === "wakfu") {
+                if (persistedSource === "dtouch" || persistedSource === "wakfu" || persistedSource === "islandswakfu") {
                     return persistedSource;
                 }
                 return "dofus3";
@@ -2586,6 +2619,7 @@
             crossSourceMatchDoc: null,
             crossSourceMatchSource: null,
             crossSourceCompareActive: false,
+            iowShowAllCardsEnabled: true,
             invertedTextDecodeEnabled: false,
             paragraphLevelDiffEnabled: true,
             charGranularDiffEnabled: true,
@@ -2603,10 +2637,22 @@
         const DofusSources = {
             dofus3: "dofus3",
             dtouch: "dtouch",
-            wakfu: "wakfu"
+            wakfu: "wakfu",
+            islandswakfu: "islandswakfu"
         };
+        const DOFUS3_LANGUAGES = ["fr", "en", "es", "pt", "de"];
         const DTOUCH_LANGUAGES = ["fr", "en", "es", "pt", "de"];
         const WAKFU_LANGUAGES = ["fr", "en", "es", "pt"];
+        const ISLANDSWAKFU_LANGUAGES = ["fr", "en", "es", "de", "it", "ja"];
+        const ISLANDSWAKFU_LANGUAGE_TO_LOCALE = {
+            de: "de-de",
+            en: "en-en",
+            es: "es-es",
+            fr: "fr-fr",
+            it: "it-it",
+            ja: "ja-jp"
+        };
+        const ISLANDSWAKFU_XBOX_URL = "https://www.xbox.com/games/store/islands-of-wakfu/9ntr8x5r7q0w";
         const WAKFU_DEFAULT_INVERTED_DOC_ID = 281;
         const WAKFU_PAGE_SEPARATOR = "\n\n<hr class=\"page-break\">\n\n";
         const WAKFU_ICON_TOKEN_REGEX = /\[#icon\s+(\d+)(?::([^\]]+))?\]/gi;
@@ -2724,7 +2770,9 @@
         const dataSourceRuntimeCache = {
             dofus3Docs: null,
             wakfuDocs: null,
+            islandswakfuDocs: null,
             wakfuInFlight: null,
+            islandswakfuInFlight: null,
             wakfuAssetReportInFlight: null,
             touchByLanguage: new Map(),
             touchInFlight: new Map()
@@ -3322,32 +3370,60 @@
             });
 
             const dualToggleBtn = document.getElementById("dualIndexToggleBtn");
-            const isWakfuSource = appState.currentDataSource === DofusSources.wakfu;
+            const dualIndexBlocked = appState.currentDataSource === DofusSources.wakfu || appState.currentDataSource === DofusSources.islandswakfu;
             if (dualToggleBtn) {
-                dualToggleBtn.disabled = isWakfuSource;
-                dualToggleBtn.style.opacity = isWakfuSource ? "0.45" : "1";
-                dualToggleBtn.style.cursor = isWakfuSource ? "not-allowed" : "pointer";
-                dualToggleBtn.title = isWakfuSource
+                dualToggleBtn.disabled = dualIndexBlocked;
+                dualToggleBtn.style.opacity = dualIndexBlocked ? "0.45" : "1";
+                dualToggleBtn.style.cursor = dualIndexBlocked ? "not-allowed" : "pointer";
+                dualToggleBtn.title = dualIndexBlocked
                     ? "Dual-index compare is available only for DOFUS3 and DTouch"
                     : "Compare both indexes side by side";
                 dualToggleBtn.setAttribute("aria-label", dualToggleBtn.title);
             }
+
+            updateIowAllCardsToggleUI();
+            updateSourceMetadata();
+        }
+
+        function getSupportedLanguagesForSource(source) {
+            if (source === DofusSources.dtouch) {
+                return DTOUCH_LANGUAGES;
+            }
+            if (source === DofusSources.wakfu) {
+                return WAKFU_LANGUAGES;
+            }
+            if (source === DofusSources.islandswakfu) {
+                return ISLANDSWAKFU_LANGUAGES;
+            }
+            return DOFUS3_LANGUAGES;
+        }
+
+        function getPreferredLanguageForSource(source, preferred = "en") {
+            const supported = getSupportedLanguagesForSource(source);
+            if (supported.includes(preferred)) {
+                return preferred;
+            }
+            if (supported.includes("en")) {
+                return "en";
+            }
+            return supported[0] || "fr";
         }
 
         function updateSourceLanguageAvailability() {
-            const isWakfuSource = appState.currentDataSource === DofusSources.wakfu;
-            const deButtons = document.querySelectorAll('.lang-btn[data-lang="de"]');
+            const supportedLanguages = new Set(getSupportedLanguagesForSource(appState.currentDataSource));
 
-            deButtons.forEach(btn => {
-                btn.disabled = isWakfuSource;
-                btn.style.display = isWakfuSource ? "none" : "inline-flex";
+            document.querySelectorAll(".language-selector .lang-btn").forEach(btn => {
+                const lang = btn.getAttribute("data-lang");
+                const isSupported = supportedLanguages.has(lang);
+                btn.disabled = !isSupported;
+                btn.style.display = isSupported ? "inline-flex" : "none";
             });
 
-            if (isWakfuSource && appState.currentLanguage === "de") {
-                appState.currentLanguage = "en";
+            if (!supportedLanguages.has(appState.currentLanguage)) {
+                appState.currentLanguage = getPreferredLanguageForSource(appState.currentDataSource, appState.currentLanguage);
             }
 
-            if (isWakfuSource && appState.secondLanguage === "de") {
+            if (!supportedLanguages.has(appState.secondLanguage) || appState.secondLanguage === appState.currentLanguage) {
                 appState.secondLanguage = getPreferredSecondLanguage(appState.currentLanguage);
             }
 
@@ -3361,6 +3437,9 @@
                     btn.classList.toggle("active", btn.getAttribute("data-lang") === appState.secondLanguage);
                 });
             }
+
+            updateIowAllCardsToggleUI();
+            updateSourceMetadata();
         }
 
         function getSearchFilteredDocs(docs, lang) {
@@ -3656,6 +3735,17 @@
                 return dataSourceRuntimeCache.wakfuDocs || [];
             }
 
+            if (source === DofusSources.islandswakfu) {
+                if (!dataSourceRuntimeCache.islandswakfuDocs || dataSourceRuntimeCache.islandswakfuDocs.length === 0) {
+                    if (appState.currentDataSource === DofusSources.islandswakfu) {
+                        await loadIslandsWakfuDocuments({ preserveCurrentDocument: false });
+                    } else {
+                        await fetchIslandsWakfuDocuments();
+                    }
+                }
+                return dataSourceRuntimeCache.islandswakfuDocs || [];
+            }
+
             const touchLanguage = DTOUCH_LANGUAGES.includes(appState.currentLanguage)
                 ? appState.currentLanguage
                 : "fr";
@@ -3715,7 +3805,7 @@
             const sidebar = document.getElementById("sidebar");
             const mainContent = document.getElementById("mainContent");
             const toggleBtn = document.getElementById("toggleBtn");
-            const dualIndexAvailable = appState.currentDataSource !== DofusSources.wakfu;
+            const dualIndexAvailable = appState.currentDataSource !== DofusSources.wakfu && appState.currentDataSource !== DofusSources.islandswakfu;
 
             if (!dualIndexAvailable && appState.dualIndexMode) {
                 appState.dualIndexMode = false;
@@ -3750,7 +3840,7 @@
         }
 
         async function setDualIndexMode(enabled) {
-            if (enabled && appState.currentDataSource === DofusSources.wakfu) {
+            if (enabled && (appState.currentDataSource === DofusSources.wakfu || appState.currentDataSource === DofusSources.islandswakfu)) {
                 return;
             }
 
@@ -3795,6 +3885,9 @@
             }
             if (source === DofusSources.wakfu) {
                 return "Wakfu";
+            }
+            if (source === DofusSources.islandswakfu) {
+                return "IslandsWakfu";
             }
             return "DOFUS3";
         }
@@ -4739,6 +4832,154 @@
             }
         }
 
+        function getIslandsWakfuLineText(line, language) {
+            const t = line && typeof line.t === "object" ? line.t : null;
+            if (!t) {
+                return "";
+            }
+
+            const preferredLocale = ISLANDSWAKFU_LANGUAGE_TO_LOCALE[language];
+            const fallbackLocales = [preferredLocale, "en-en", "fr-fr", "es-es", "de-de", "it-it", "ja-jp"];
+            const firstText = fallbackLocales
+                .map(locale => (locale ? t[locale] : ""))
+                .find(value => typeof value === "string" && value.trim().length > 0);
+
+            return firstText ? firstText.trim() : "";
+        }
+
+        function normalizeIslandsWakfuGroup(group, fallbackId) {
+            const groupId = Number(group && group.groupId);
+            const docId = Number.isFinite(groupId) ? groupId : Number(fallbackId);
+            const lines = Array.isArray(group && group.lines) ? group.lines : [];
+
+            const title = {};
+            const author = {};
+            const content = {};
+
+            ISLANDSWAKFU_LANGUAGES.forEach((language) => {
+                const localizedLines = lines
+                    .map(line => getIslandsWakfuLineText(line, language))
+                    .filter(text => text.length > 0);
+
+                const fallbackTitle = `Mystery ${docId}`;
+                title[language] = localizedLines[0] || fallbackTitle;
+                author[language] = "Chibi";
+                content[language] = localizedLines.map(line => escapeHtml(line)).join("<br>");
+            });
+
+            return {
+                id: docId,
+                typeId: "iow-mystery",
+                title,
+                author,
+                subTitle: {},
+                content,
+                contentCSS: null
+            };
+        }
+
+        async function fetchIslandsWakfuDocuments() {
+            if (Array.isArray(dataSourceRuntimeCache.islandswakfuDocs) && dataSourceRuntimeCache.islandswakfuDocs.length > 0) {
+                return dataSourceRuntimeCache.islandswakfuDocs;
+            }
+
+            if (dataSourceRuntimeCache.islandswakfuInFlight) {
+                return dataSourceRuntimeCache.islandswakfuInFlight;
+            }
+
+            const loadPromise = (async () => {
+                const localUrl = "data/islandswakfu/mysteries.json";
+                const githubUrl = "https://nelsonjq.github.io/d3-library/data/islandswakfu/mysteries.json";
+
+                async function fetchJson(url) {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`Unable to load ${url} (${response.status})`);
+                    }
+                    return response.json();
+                }
+
+                let payload;
+                try {
+                    payload = await fetchJson(localUrl);
+                } catch (localError) {
+                    console.warn("Local IslandsWakfu load failed, trying GitHub fallback", localError);
+                    payload = await fetchJson(githubUrl);
+                }
+
+                const groups = Array.isArray(payload && payload.groups) ? payload.groups : [];
+                const docs = groups
+                    .map((group, index) => normalizeIslandsWakfuGroup(group || {}, index + 1))
+                    .sort((a, b) => Number(a.id) - Number(b.id));
+
+                dataSourceRuntimeCache.islandswakfuDocs = docs;
+                return docs;
+            })();
+
+            dataSourceRuntimeCache.islandswakfuInFlight = loadPromise;
+
+            try {
+                return await loadPromise;
+            } finally {
+                dataSourceRuntimeCache.islandswakfuInFlight = null;
+            }
+        }
+
+        async function loadIslandsWakfuDocuments(options = {}) {
+            const { preserveCurrentDocument = true } = options;
+            const previousDocId = appState.currentDisplayedDocId;
+
+            try {
+                const iowDocs = await fetchIslandsWakfuDocuments();
+                appState.allDocuments = iowDocs;
+                appState.displayedDocuments = [...iowDocs];
+                appState.documentsLoaded = true;
+                updateUI();
+
+                if (appState.currentSearchTerm && appState.currentSearchTerm.length >= 3) {
+                    performSearch();
+                } else if (appState.iowShowAllCardsEnabled) {
+                    renderDocuments();
+                } else {
+                    renderIndexOnly();
+                }
+
+                if (preserveCurrentDocument && previousDocId) {
+                    const stillExists = appState.allDocuments.some(doc => String(doc.id) === String(previousDocId));
+                    if (stillExists && !appState.iowShowAllCardsEnabled) {
+                        loadAndScrollToDocument(previousDocId);
+                    } else if (!stillExists) {
+                        appState.currentDisplayedDocId = null;
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to load IslandsWakfu documents:", error);
+
+                // Prevent stale index/documents from previously selected sources.
+                appState.allDocuments = [];
+                appState.displayedDocuments = [];
+                appState.currentDisplayedDocId = null;
+                appState.documentsLoaded = true;
+                updateUI();
+
+                const indexList = document.getElementById("indexList");
+                if (indexList) {
+                    indexList.innerHTML = '<li style="text-align: center; padding: 20px; color: #bdc3c7;">No documents found</li>';
+                }
+
+                const container = document.getElementById("documentsContainer");
+                if (container) {
+                    container.classList.remove("iow-grid-mode");
+                    container.innerHTML = `
+                        <div class="error-message">
+                            <h3>Error Loading IslandsWakfu</h3>
+                            <p>Unable to load IslandsWakfu documents right now.</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+
         async function loadDofus3Documents(options = {}) {
             const { preserveCurrentDocument = true } = options;
             const previousDocId = appState.currentDisplayedDocId;
@@ -4794,8 +5035,16 @@
                 await setDualIndexMode(false);
             }
 
+            if (source === DofusSources.islandswakfu && appState.dualIndexMode) {
+                await setDualIndexMode(false);
+            }
+
             if (source === DofusSources.wakfu && appState.sidebarVisible) {
                 appState.wakfuBackgroundDisplayEnabled = false;
+            }
+
+            if (source === DofusSources.islandswakfu) {
+                appState.iowShowAllCardsEnabled = true;
             }
 
             appState.crossSourceMatchDoc = null;
@@ -4806,6 +5055,8 @@
                 await refreshTouchDocuments({ showLoading: true, preserveCurrentDocument });
             } else if (source === DofusSources.wakfu) {
                 await loadWakfuDocuments({ preserveCurrentDocument });
+            } else if (source === DofusSources.islandswakfu) {
+                await loadIslandsWakfuDocuments({ preserveCurrentDocument });
             } else {
                 await loadDofus3Documents({ preserveCurrentDocument });
             }
@@ -5008,6 +5259,11 @@
                 return;
             }
 
+            const container = document.getElementById("documentsContainer");
+            if (container) {
+                container.classList.remove("iow-grid-mode");
+            }
+
             const indexList = document.getElementById("indexList");
             indexList.innerHTML = "";
 
@@ -5047,7 +5303,6 @@
             });
 
             // Clear main content and show empty message
-            const container = document.getElementById("documentsContainer");
             if (container) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 60px 20px; color: #6c757d;">
@@ -5099,6 +5354,10 @@
             }
             
             container.innerHTML = "";
+            container.classList.toggle(
+                "iow-grid-mode",
+                appState.currentDataSource === DofusSources.islandswakfu && appState.iowShowAllCardsEnabled
+            );
 
             if (appState.displayedDocuments.length === 0) {
                 container.innerHTML = '<div class="error-message"><h3>No documents to display</h3></div>';
@@ -5393,10 +5652,9 @@
 
         // ===== HELPER FUNCTIONS =====
         function getTitle(doc, lang) {
-            const effectiveLang = (appState.currentDataSource === DofusSources.wakfu && lang === "de") ? "en" : lang;
             const titleMap = typeof doc.title === 'object' ? doc.title : null;
             const fallbackTitle = titleMap
-                ? (titleMap[effectiveLang] || titleMap.fr || titleMap.en || titleMap.es || titleMap.pt)
+                ? (titleMap[lang] || titleMap.en || titleMap.fr || titleMap.es || titleMap.pt || titleMap.de || titleMap.it || titleMap.ja)
                 : null;
             const rawTitle = fallbackTitle || "Title not available";
             return cleanHtmlTags(rawTitle);
@@ -5410,14 +5668,13 @@
             if (appState.currentDataSource === DofusSources.wakfu) {
                 return "";
             }
-            return typeof doc.author === 'object' ? (doc.author[lang] || "Author not available") : "Author not available";
+            return typeof doc.author === 'object' ? (doc.author[lang] || doc.author.en || doc.author.fr || doc.author.es || doc.author.pt || doc.author.de || doc.author.it || doc.author.ja || "Author not available") : "Author not available";
         }
 
         function getContent(doc, lang) {
-            const effectiveLang = (appState.currentDataSource === DofusSources.wakfu && lang === "de") ? "en" : lang;
             const contentMap = typeof doc.content === 'object' ? doc.content : null;
             const content = contentMap
-                ? (contentMap[effectiveLang] || contentMap.fr || contentMap.en || contentMap.es || contentMap.pt || "Content not available")
+                ? (contentMap[lang] || contentMap.en || contentMap.fr || contentMap.es || contentMap.pt || contentMap.de || contentMap.it || contentMap.ja || "Content not available")
                 : "Content not available";
             return content;
         }
@@ -5458,6 +5715,63 @@
             `;
         }
 
+        function updateSourceMetadata() {
+            const sourceMetadata = document.getElementById("sourceMetadata");
+            if (!sourceMetadata) {
+                return;
+            }
+
+            if (appState.currentDataSource !== DofusSources.islandswakfu) {
+                sourceMetadata.style.display = "none";
+                sourceMetadata.innerHTML = "";
+                return;
+            }
+
+            sourceMetadata.style.display = "block";
+            sourceMetadata.innerHTML = `
+                <div class="metadata-item">
+                    Interested in the full experience? Explore the official
+                    <a href="https://www.ankama.com/fr/games#:~:text=ISLANDS%20OF%20WAKFU" target="_blank" rel="noopener noreferrer">Islands of Wakfu page</a>
+                    and
+                    <a href="${ISLANDSWAKFU_XBOX_URL}" target="_blank" rel="noopener noreferrer">play the game on Xbox Store</a>.
+                </div>
+            `;
+        }
+
+        function updateIowAllCardsToggleUI() {
+            const row = document.getElementById("iowAllCardsToggleRow");
+            const button = document.getElementById("iowAllCardsToggleBtn");
+            const isIowSource = appState.currentDataSource === DofusSources.islandswakfu;
+            if (!row || !button) {
+                return;
+            }
+
+            row.style.display = isIowSource ? "flex" : "none";
+            button.classList.toggle("active", appState.iowShowAllCardsEnabled);
+            button.setAttribute("aria-pressed", appState.iowShowAllCardsEnabled ? "true" : "false");
+            button.title = appState.iowShowAllCardsEnabled
+                ? "Disable all-cards grid for IslandsWakfu"
+                : "Display all IslandsWakfu documents in a card grid";
+            button.setAttribute("aria-label", button.title);
+        }
+
+        function toggleIowAllCardsMode() {
+            if (appState.currentDataSource !== DofusSources.islandswakfu) {
+                return;
+            }
+
+            appState.iowShowAllCardsEnabled = !appState.iowShowAllCardsEnabled;
+            updateIowAllCardsToggleUI();
+
+            if (appState.iowShowAllCardsEnabled) {
+                appState.currentDisplayedDocId = null;
+                appState.displayedDocuments = [...appState.allDocuments];
+                renderDocuments();
+            } else {
+                renderIndexOnly();
+            }
+        }
+
         function shouldNotifyCrossSourceMatch(docId, matchSource) {
             if (appState.bilingualMode) {
                 return false;
@@ -5492,6 +5806,9 @@
                 document.getElementById("searchResults").textContent = "";
                 if (appState.dualIndexMode) {
                     renderDualIndex();
+                } else if (appState.currentDataSource === DofusSources.islandswakfu && appState.iowShowAllCardsEnabled) {
+                    appState.displayedDocuments = [...appState.allDocuments];
+                    renderDocuments();
                 }
                 return;
             }
@@ -5515,8 +5832,11 @@
                 clearBtn.style.display = "block";
                 document.getElementById("searchResults").textContent = `${resultCount} result(s)`;
 
-                // Only update the index, don't render all documents
-                renderSearchIndex();
+                if (appState.currentDataSource === DofusSources.islandswakfu && appState.iowShowAllCardsEnabled) {
+                    renderDocuments();
+                } else {
+                    renderSearchIndex();
+                }
             }, 300);
         }
 
@@ -5583,7 +5903,11 @@
             }
 
             // Just update the index, show initial document selection screen
-            renderIndexOnly();
+            if (appState.currentDataSource === DofusSources.islandswakfu && appState.iowShowAllCardsEnabled) {
+                renderDocuments();
+            } else {
+                renderIndexOnly();
+            }
         }
 
         // ===== TOOLBAR TOGGLE =====
@@ -5696,6 +6020,19 @@
 
             await resolveCrossSourceMatch(doc);
 
+            if (appState.currentDataSource === DofusSources.islandswakfu && appState.iowShowAllCardsEnabled) {
+                appState.displayedDocuments = [...appState.allDocuments];
+                renderDocuments();
+                setTimeout(() => {
+                    updateActiveIndex(docId);
+                    const anchor = document.getElementById(`anchor-${docId}`);
+                    if (anchor) {
+                        anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                }, 50);
+                return;
+            }
+
             // Clear main content and render just this document
             const container = document.getElementById("documentsContainer");
             if (!container) {
@@ -5803,15 +6140,18 @@
         function getPreferredSecondLanguage(primaryLang) {
             const selector = document.getElementById("secondLanguageSelector");
             const available = selector
-                ? Array.from(selector.querySelectorAll(".lang-btn")).map(btn => btn.getAttribute("data-lang"))
+                ? Array.from(selector.querySelectorAll(".lang-btn"))
+                    .filter(btn => btn.style.display !== "none" && !btn.disabled)
+                    .map(btn => btn.getAttribute("data-lang"))
                 : DTOUCH_LANGUAGES;
 
             return available.find(lang => lang && lang !== primaryLang) || "fr";
         }
 
         async function setLanguage(lang) {
-            if (appState.currentDataSource === DofusSources.wakfu && lang === "de") {
-                lang = "en";
+            const supported = getSupportedLanguagesForSource(appState.currentDataSource);
+            if (!supported.includes(lang)) {
+                lang = getPreferredLanguageForSource(appState.currentDataSource, appState.currentLanguage);
             }
 
             appState.currentLanguage = lang;
@@ -5844,7 +6184,12 @@
             if (appState.currentSearchTerm && appState.currentSearchTerm.length >= 3) {
                 performSearch();
             } else {
-                renderIndexOnly();
+                if (appState.currentDataSource === DofusSources.islandswakfu && appState.iowShowAllCardsEnabled) {
+                    appState.displayedDocuments = [...appState.allDocuments];
+                    renderDocuments();
+                } else {
+                    renderIndexOnly();
+                }
             }
 
             if (appState.currentDisplayedDocId) {
@@ -5899,13 +6244,19 @@
             if (appState.currentSearchTerm && appState.currentSearchTerm.length >= 3) {
                 performSearch();
             } else {
-                renderIndexOnly();
+                if (appState.currentDataSource === DofusSources.islandswakfu && appState.iowShowAllCardsEnabled) {
+                    appState.displayedDocuments = [...appState.allDocuments];
+                    renderDocuments();
+                } else {
+                    renderIndexOnly();
+                }
             }
         }
 
         // ===== SET SECOND LANGUAGE =====
         async function setSecondLanguage(lang) {
-            if (appState.currentDataSource === DofusSources.wakfu && lang === "de") {
+            const supported = getSupportedLanguagesForSource(appState.currentDataSource);
+            if (!supported.includes(lang)) {
                 lang = getPreferredSecondLanguage(appState.currentLanguage);
             }
 
@@ -5932,6 +6283,9 @@
             // If a document is currently displayed, reload it with new second language
             if (appState.bilingualMode && appState.currentDisplayedDocId) {
                 loadAndScrollToDocument(appState.currentDisplayedDocId);
+            } else if (appState.bilingualMode && appState.currentDataSource === DofusSources.islandswakfu && appState.iowShowAllCardsEnabled) {
+                appState.displayedDocuments = [...appState.allDocuments];
+                renderDocuments();
             }
         }
 
@@ -6369,6 +6723,11 @@
                     lineHeightSlider.addEventListener("input", (e) => {
                         changeLineHeight(e.target.value);
                     });
+                }
+
+                const iowAllCardsToggleBtn = document.getElementById("iowAllCardsToggleBtn");
+                if (iowAllCardsToggleBtn) {
+                    iowAllCardsToggleBtn.addEventListener("click", toggleIowAllCardsMode);
                 }
 
                 // First language selector (primary language)
